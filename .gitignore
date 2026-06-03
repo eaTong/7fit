@@ -1,0 +1,57 @@
+# ───────── 操作系统 ─────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ───────── Node / Remotion 通用 ─────────
+node_modules/
+dist/
+out/
+.env
+.env.local
+.env.*.local
+
+# ───────── 渲染产物（已通过 remotion.config.ts 输出到 out/）─────────
+*.mp4
+*.mov
+*.webm
+*.gif
+!docs/**/*.gif
+!docs/**/*.mp4
+
+# ───────── 视频草稿（用户在 resources/videos/ 提供，不进 git）─────────
+# 这些是用户拍摄的训练视频，占空间大，由用户本地管理
+resources/videos/*
+!resources/videos/.gitkeep
+
+# ───────── 音频素材（mmx 生成 + 用户提供）─────────
+resources/audios/*
+!resources/audios/.gitkeep
+!resources/audios/bgm/.gitkeep
+
+# ───────── 图片素材（mmx 生成 + 用户截图）─────────
+resources/images/*
+!resources/images/.gitkeep
+
+# ───────── 临时/中间产物 ─────────
+.tmp/
+.cache/
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ───────── IDE ─────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+
+# ───────── 不要忽略的例外（重要规则文件必须进 git）─────────
+# .gitkeep 文件用于保留空目录结构
+!.gitkeep
