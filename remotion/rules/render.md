@@ -1,0 +1,342 @@
+# 渲染规范（remotion）
+
+> 阶段：**渲染（render）—— 视频导出 + 质量保证**
+> 适用场景：视频 Scene 组件实现完毕，准备输出最终视频
+> 来源：用户硬约束
+> 状态：✅ 生效
+> 上下游：上游 = `checklist.md`（必须全部 ✅）；下游 = 用户最终审核
+
+---
+
+## 1. ⚠️ 渲染触发硬规则（最重要）
+
+**默认行为：只启动 Studio 预览，**不**直接渲染。**
+
+### 1.1 默认流程
+
+```
+1. 视频实现完成
+       ↓
+2. 跑 checklist.md 自检 → 全 ✅
+       ↓
+3. 默认动作 = 启动 Studio 预览
+       cd remotion
+       npm run dev
+       ↓
+4. 告诉用户"已启动预览，请打开 http://localhost:4000 确认效果"
+       ↓
+5. ⏸️ 等待用户审核
+       ↓
+6. 用户确认后，**用户**说"开始渲染"（或"渲染吧" / "render" / "导出视频"）
+       ↓
+7. 收到"开始渲染"指令 → 才执行 npx remotion render
+```
+
+### 1.2 ❌ 绝对禁止的自动行为
+
+- ❌ 实现完 Scene 组件后**自动**执行 `npx remotion render`
+- ❌ 看到用户没反对就**默认**渲染
+- ❌ 跑完自检清单就**立即**渲染（自检通过 ≠ 用户确认）
+
+### 1.3 触发渲染的有效用户指令
+
+必须包含以下**任一关键词**才算"用户明确授权"：
+
+- "开始渲染" / "开始导出" / "渲染吧" / "渲染视频"
+- "render" / "export" / "导出"
+- "ok 渲染" / "可以渲染" / "确认渲染"
+- "看起来 OK，渲染一下"
+
+> **模糊措辞不算授权**：用户说"看起来不错"、"还行"、"OK"——不视为渲染授权，必须再问一次。
+
+### 1.4 没收到指令时怎么办
+
+直接告诉用户：
+
+> "视频 Scene 组件已实现完毕，自检全部 ✅。Studio 预览已启动，请打开 http://localhost:4000 查看效果。确认 OK 后告诉我'开始渲染'，我再执行 `npx remotion render` 导出视频。"
+
+---
+
+## 2. 渲染前最后检查（必走）
+
+虽然 [checklist.md](remotion/rules/checklist.md) 已经覆盖大部分，**渲染前**还要额外确认：
+
+- [ ] Studio 预览跑通，无控制台错误
+- [ ] 时间线对得上（用 ffmpeg probe 一下 mp3 时长，对比字幕/storyboard 的总 end）
+- [ ] BGM 和旁白都听得到、音量比例对（旁白主体，BGM 不抢）
+- [ ] 转场流畅，没有"卡一下"的感觉
+- [ ] 字体在预览中能正常渲染（不出现方框/豆腐字）
+- [ ] 顶部/底部/左右安全区不踩到边缘
+
+---
+
+## 3. 防卡帧 / 质量保证（核心）
+
+视频输出后**不能有卡顿、跳帧、撕裂、掉帧**。以下 7 类问题必须避免：
+
+### 3.1 ❌ 问题 1：转场硬切（无重叠）
+
+**症状**：Sequence 之间无 fade，前一段最后一帧和后一段第一帧突变 → 视觉跳跃
+**原因**：Sequence 没做帧重叠（参考 [animation.md 第 3.5 节](remotion/rules/animation.md#35-series-与-sequence-重叠)）
+**解决**：
+
+```tsx
+// ✅ 正确：转场 ≥ 0.3s 用帧重叠
+<Sequence from={0} durationInFrames={90}>
+  <SceneA />
+</Sequence>
+<Sequence from={81} durationInFrames={120}>   {/* 81 = 90 - 9 (0.3s) */}
+  <SceneB />
+</Sequence>
+```
+
+### 3.2 ❌ 问题 2：动效未在动画范围外 clamp
+
+**症状**：动画结束后元素位置/透明度"乱跑"
+**原因**：`interpolate` 没加 `extrapolateLeft/Right: "clamp"`
+**解决**：
+
+```tsx
+const opacity = interpolate(frame, [0, 60], [0, 1], {
+  extrapolateRight: "clamp",  // ← 必加
+  extrapolateLeft: "clamp",   // ← 必加
+});
+```
+
+### 3.3 ❌ 问题 3：未 premount 大 Sequence
+
+**症状**：渲染时前 1-2s 出现"黑屏/白屏"或卡顿
+**原因**：Sequence 内容没预加载，渲染到那里才开始解码
+**解决**：所有 Sequence 都加 `premountFor={1 * fps}`
+
+```tsx
+<Sequence from={0} durationInFrames={90} premountFor={30}>
+  <SceneA />
+</Sequence>
+```
+
+### 3.4 ❌ 问题 4：资产未预加载（prefetch）
+
+**症状**：图片/视频第一次出现时位置错乱或延迟
+**原因**：`<Img>` `<Video>` `<Audio>` 第一次加载有解码延迟
+**解决**：
+
+```tsx
+import { prefetch } from "remotion";
+
+prefetch("/videos/卧推80KG_10.mov");  // 渲染前预热
+prefetch("/images/chat_demo.png");
+```
+
+或在 remotion.config.ts 里加 `Config.setConcurrency(4)` 并行渲染。
+
+### 3.5 ❌ 问题 5：frame 用错（本地 vs 全局）
+
+**症状**：Sequence 内的动效"突然从头开始"或"卡住不动"
+**原因**：把全局 `frame` 直接传给子组件，期望按 Sequence 偏移
+**解决**：
+
+```tsx
+// ❌ 错：把全局 frame 传进 Sequence 内
+<Sequence from={60} durationInFrames={30}>
+  <Child frame={frame} />  {/* frame 是全局 60-90，Child 内部 interpolate 用这个会错 */}
+</Sequence>
+
+// ✅ 对：用 useCurrentFrame()，在 Sequence 内自动返回 0-29
+<Sequence from={60} durationInFrames={30}>
+  <Child />  {/* Child 内部 useCurrentFrame() 拿 0-29 */}
+</Sequence>
+```
+
+### 3.6 ❌ 问题 6：长 Sequence 嵌套没设 layout="none"
+
+**症状**：Sequence 被强制套了 `absolute fill`，导致父 Sequence 的 position 错乱
+**原因**：Remotion 默认给 Sequence 套 absolute fill
+**解决**：内嵌 Sequence 加 `layout="none"`
+
+```tsx
+<Sequence from={0} durationInFrames={120}>
+  <Background />
+  <Sequence from={15} durationInFrames={90} layout="none">  {/* ← layout="none" */}
+    <Title />
+  </Sequence>
+</Sequence>
+```
+
+### 3.7 ❌ 问题 7：音频/字幕时长不匹配
+
+**症状**：视频末段静音或字幕提前消失
+**原因**：Composition durationInFrames 与音频/字幕总时长不对齐
+**解决**：
+
+```tsx
+// 用 ffmpeg 拿真实音频时长
+import { getAudioDuration } from "@remotion/media-utils";
+const audioDuration = await getAudioDuration(staticFile("audios/workout_intro.mp3"));
+const durationInFrames = Math.ceil(audioDuration * 30);  // 30fps
+
+<Composition
+  id="workout_intro"
+  component={WorkoutIntro}
+  durationInFrames={durationInFrames}  {/* ← 用真实时长，不要猜 */}
+  fps={30}
+  width={1080}
+  height={1920}  {/* ← 竖屏！见第 4 节 */}
+/>
+```
+
+---
+
+## 4. 默认竖屏（Portrait）—— 强制
+
+**所有七练视频默认 1080×1920 竖屏**（9:16，手机端为主）。
+
+### 4.1 画布尺寸
+
+| 项 | 默认值 | 说明 |
+|---|---|---|
+| `width` | **1080** | 9:16 竖屏宽度 |
+| `height` | **1920** | 9:16 竖屏高度 |
+| 比例 | **9:16** | 抖音/小红书/视频号标准竖屏 |
+| fps | **30** | 七练默认 |
+
+### 4.2 ❌ 禁止默认横屏
+
+- ❌ 1280×720（16:9 横屏）
+- ❌ 1920×1080（横屏全高清）
+- ❌ 任何 width > height 的画布
+
+### 4.3 例外情况
+
+如果用户**明确**说"这次做横屏"（如要做 YouTube 横屏视频），才允许：
+
+```tsx
+<Composition
+  width={1920}    // 横屏
+  height={1080}
+  ...
+/>
+```
+
+**例外原则**：竖屏是默认，**横屏是 opt-in**（用户必须明确要求）。
+
+### 4.4 安全区重算
+
+竖屏的安全区与横屏不同（参考 [script.md 第 3、4 节](remotion/rules/script.md)）：
+
+- 字幕安全区：左/右 ≥ 64px，底部 ≥ 80px（按 1080 宽度算比例）
+- 顶部标题安全区：≥ 120px（顶部"摄像头遮挡"区域）
+- 数字大小、字号建议 1080×1920 画布为基准
+
+---
+
+## 5. 渲染命令
+
+### 5.1 标准命令
+
+```bash
+cd remotion
+
+# 单条视频（最常用）
+npx remotion render <CompositionId> out/<name>.mp4
+
+# 完整示例
+npx remotion render workout_intro out/workout_intro_2026-06-04.mp4
+```
+
+### 5.2 渲染参数（按需加）
+
+```bash
+# 提升并发（多核机器）
+npx remotion render workout_intro out/workout_intro.mp4 --concurrency=4
+
+# 限制帧率（debug 用）
+npx remotion render workout_intro out/test.mp4 --frames=0-300
+
+# 指定 codec
+npx remotion render workout_intro out/workout_intro.mp4 --codec=h264
+```
+
+### 5.3 输出文件命名约定
+
+```
+out/<视频主题>_<日期>_<版本>.mp4
+```
+
+示例：
+- `out/workout_intro_2026-06-04_v1.mp4`
+- `out/weekly_review_2026-06-04_v2.mp4`
+
+> 不要把视频输出到 git（`out/` 已在 `.gitignore`）。
+
+### 5.4 单帧渲染（质量抽检用）
+
+```bash
+# 渲染某一帧做静态检查
+npx remotion still workout_intro --frame=90  # 30fps 第 3 秒
+```
+
+---
+
+## 6. 渲染失败的回退
+
+如果 `npx remotion render` 失败：
+
+1. **查控制台错误**——通常是 missing asset / 帧数错误 / 类型错误
+2. **对照 checklist.md D 节（素材）和 E 节（分镜）**——大部分错误来自这里
+3. **尝试单帧定位**：`npx remotion still <id> --frame=<出错帧>` 看具体哪里崩
+4. **回到对应 rules 文件查细节**（如 `animation.md` 第 4.3 节查 extrapolate）
+
+---
+
+## 7. 渲染后必须自检
+
+渲染完成后**必须**做 3 件事：
+
+1. **打开视频看一遍**（不要只看产物存在就觉得 OK）
+2. **听 BGM 音量**（旁白是否清晰）
+3. **看转场是否流畅**（有无卡顿/跳帧）
+
+如果发现质量问题，回到第 3 节排查。
+
+---
+
+## 8. 速查清单（只列**本文件专属**项）
+
+> **跨文件去重原则**：通用检查见 [checklist.md](remotion/rules/checklist.md)；本节只列**渲染输出**的专属项。
+
+**渲染触发**
+
+- [ ] **收到用户"开始渲染"指令**才执行 `npx remotion render`（绝对禁止自动渲染）
+- [ ] 默认动作 = 启动 Studio 预览（`npm run dev`），不直接渲染
+- [ ] 模糊措辞（"OK"/"不错"）不视为渲染授权
+
+**质量保证（防卡帧 7 类问题）**
+
+- [ ] 转场帧重叠 ≥ 0.3s（防硬切）
+- [ ] `interpolate` 都加 `extrapolateLeft/Right: "clamp"`（防乱跑）
+- [ ] 所有 Sequence 加 `premountFor={1 * fps}`（防黑屏）
+- [ ] 资产 `prefetch()` 预加载（防延迟）
+- [ ] Sequence 内用 `useCurrentFrame()` 拿本地帧（防时间错乱）
+- [ ] 内嵌 Sequence 加 `layout="none"`（防定位错乱）
+- [ ] 音频/字幕/Composition 时长对齐（防末段静音/字幕提前消失）
+
+**画布尺寸**
+
+- [ ] 默认 1080×1920 竖屏（9:16）
+- [ ] fps 30
+- [ ] 横屏需要用户明确 opt-in
+
+**渲染命令**
+
+- [ ] 用 `npx remotion render <CompositionId> out/<主题>_<日期>_v<N>.mp4`
+- [ ] 输出文件不提交 git
+
+**渲染后**
+
+- [ ] 打开视频看一遍（不是只看产物存在）
+- [ ] 检查 BGM 音量、转场流畅度
+- [ ] 单帧抽检（`npx remotion still`）查可疑帧
+
+**其他维度的自检**（不在本文件）：
+- 综合自检 → [checklist.md](remotion/rules/checklist.md) 第 2 节（master）
