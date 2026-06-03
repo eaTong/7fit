@@ -30,7 +30,7 @@
 4. 已有 → 复制到 remotion/public/<主题>/
    缺失 → 列出"待生成"，给 mmx prompt
        ↓
-5. 输出 assets.md
+5. 输出 assets.md（按本文件 §2 格式）
        ↓
 6. （下一步）实现 Scene 组件时直接 import 资源
 ```
@@ -54,38 +54,67 @@ remotion/src/scenes/<视频主题>/
 
 ## 2. 素材清单格式（assets.md）
 
-### 2.1 完整模板
+### 2.1 必填字段（每个素材必须有）
+
+> 2026-06-04 升级：每个素材行**必须**包含完整 5 字段，不能简写。
+
+| 字段 | 必填 | 说明 |
+|---|---|---|
+| **#** | ✅ | 编号（用于组件 import 时引用）|
+| **文件名** | ✅ | 含项目相对路径（用于代码中 `staticFile()` 调用）|
+| **类型** | ✅ | `video` / `image` / `audio` / `bgm` / `voiceover` / `font` |
+| **描述** | ✅ | 这个素材是什么（1-2 句中文，**画面/声音内容描述**）|
+| **来源 / 目标位置** | ✅ | `resources/<目录>/<文件名>` 或 `mmx 生成` 或 `用户提供` |
+
+### 2.2 视频素材的"拍摄要求"（必填）
+
+> 视频素材**必须**额外填写"拍摄要求"字段——这是为了让你（或拍摄者）在拍摄前就清楚规格，
+> 避免拍完发现不能用、白费时间。
+
+**拍摄要求包含 5 个维度**：
+
+| 维度 | 说明 | 示例 |
+|---|---|---|
+| **机位/角度** | 拍哪里、从什么方向拍 | "背对镜头 / 镜头平齐肩部" |
+| **光线** | 自然光/室内光/具体方向 | "自然光从左前方 / 避免顶光" |
+| **时长** | 镜头要多长 | "≥ 5s（视频类镜头硬约束）" |
+| **动作要求** | 慢/快、几遍、关键发力点 | "正常速度 1 遍 + 0.5x 慢动作 1 遍（关键发力点）" |
+| **其他** | 着装/避免遮挡/杂物等 | "穿贴身衣 / 露出肩胛骨 / 背景简洁" |
+
+### 2.3 完整模板
 
 ```markdown
 # 素材清单：<视频主题>
 
 **视频主题**：<主题>
+**视频类型**：<A/B/C>
+**目标账号**：<main/sub>
 **生成日期**：<YYYY-MM-DD>
 **关联脚本**：resources/docs/copy/<主题>.md
 **关联分镜**：storyboard.md
 
 ---
 
-## 1. 已就位素材（已从 resources/ 复制到 remotion/public/<主题>/）
+## 1. 视频素材（用户自拍为主）
 
-| # | 文件名 | 类型 | 来源 | 目标位置 | 用途（哪个分镜/场景）| 备注 |
-|---|--------|------|------|----------|---------------------|------|
-| 1 | 卧推80KG_10.mov | video | resources/videos/卧推80KG_10.mov | remotion/public/<主题>/videos/ | S01 / S05 训练演示 | — |
-| 2 | 微信截图_对话.png | image | resources/images/微信截图_对话.png | remotion/public/<主题>/images/ | S02 AI 对话演示 | — |
+| # | 文件名（含项目相对路径）| 描述 | 来源 | 目标位置 | 拍摄要求 |
+|---|---|---|---|---|---|
+| 1 | `resources/videos/<scene>_001_hook.mov` | 用户背对镜头，肩胛骨翼状 vs 正常对比演示 | 用户自拍 | `remotion/public/<scene>/videos/001_hook.mov` | 机位：背对镜头 / 镜头平齐肩部<br>光线：自然光从左前方 / 避免顶光<br>时长：≥ 10s（钩子画面）<br>动作：自然站立 / 双手垂在身侧 / 缓慢转身 30°<br>其他：穿贴身衣 / 露出肩胛骨 / 背景简洁 |
+| 2 | `resources/videos/<scene>_002_wall_push.mov` | 推墙测试自测 | 用户自拍 | `remotion/public/<scene>/videos/002_wall_push.mov` | 机位：正侧面或斜 45°<br>光线：均匀<br>时长：≥ 5s（自测演示）<br>动作：面对墙、双臂前平举推墙<br>其他：需要朋友从背后拍或后期加箭头标注 |
+| ... |
 
-## 2. 缺失素材（需要生成或获取）
+## 2. 图片素材（mmx 生成或用户截图）
 
-| # | 类型 | 用途（哪个分镜）| 推荐生成方式 | mmx prompt / 获取来源 | 目标位置 |
-|---|------|----------------|--------------|----------------------|----------|
-| 1 | image | S03 周报数据图表 | mmx 生成图片 | `data visualization, dark theme, neon orange highlights, weekly training report, 7-day bar chart` | remotion/public/<主题>/images/weekly_report.png |
-| 2 | video | S04 PR 突破 | 等待用户拍摄 | 用户手机拍摄后放到 resources/videos/PR_突破_2026-06-XX.mov | remotion/public/<主题>/videos/ |
+| # | 文件名 | 描述 | 来源 | 目标位置 | 备注 |
+|---|---|---|---|---|---|
+| 1 | `resources/images/<scene>_scapula_anatomy.png` | 翼状肩 vs 正常肩胛 示意（用于钩子背景）| mmx 生成 | `remotion/public/<scene>/images/scapula_anatomy.png` | 1080×1920 竖屏 / 暗色背景 / 橙红色高亮 / 半透明 |
 
-## 3. 音频素材（如有）
+## 3. 音频素材
 
-| # | 文件名 | 类型 | 来源 | 用途 | 备注 |
-|---|--------|------|------|------|------|
-| 1 | workout_intro.mp3 | voiceover | resources/audios/workout_intro.mp3 | 全程旁白 | — |
-| 2 | cyber_pulse_default.mp3 | bgm | resources/audios/bgm/cyber_pulse_default.mp3 | 全程 BGM | Cyber Pulse 类型 |
+| # | 文件名 | 描述 | 来源 | 目标位置 | 备注 |
+|---|---|---|---|---|---|
+| 1 | `resources/audios/<scene>.mp3` | 旁白（4.8 字/秒）| 用户自录 或 mmx TTS | `remotion/public/<scene>/audios/<scene>.mp3` | ~50s / MP3 / 128kbps+ |
+| 2 | `resources/audios/bgm/power_build.mp3` | BGM（Power Build 类型）| mmx 生成 | `remotion/public/<scene>/audios/bgm/power_build.mp3` | 105 BPM / tech house / ≥ 50s 可循环 |
 
 ## 4. 状态汇总
 
@@ -93,24 +122,32 @@ remotion/src/scenes/<视频主题>/
 - 待生成/获取：<M> 项
 - 阻塞情况：<如果某些分镜没素材就实现不了，列出来>
 
-## 5. 下一步
+## 5. 拍摄清单（执行前自检）
+
+- [ ] 所有视频素材**有具体机位/光线/时长/动作**描述
+- [ ] 着装：穿贴身运动衣 / 不遮挡肩胛骨
+- [ ] 背景：简洁（健身房一角 / 居家干净墙角 / 浅色墙）
+- [ ] 设备：三脚架 或 找朋友帮拍
+- [ ] 画质：1080p / 30fps / 4K 更好
+- [ ] 收音：安静环境 / 嘴距话筒 10-20cm
+
+## 6. 下一步
 
 - [ ] 用户确认缺失素材的优先级
 - [ ] mmx 生成图片 / 等待用户拍摄
 - [ ] 所有素材就位后开始实现 Scene 组件
 ```
 
-### 2.2 字段说明
+### 2.4 字段说明
 
 | 字段 | 必填 | 说明 |
 |---|---|---|
 | `#` | ✅ | 编号（用于组件 import 时引用）|
-| `文件名` | ✅ | 实际文件名（用于代码中 `staticFile()` 调用）|
-| `类型` | ✅ | `video` / `image` / `audio` / `bgm` / `voiceover` / `font` |
+| `文件名` | ✅ | 含**项目相对路径**（`resources/videos/...` 或 `remotion/public/...`） |
+| `描述` | ✅ | 这个素材展示/播放的内容（1-2 句中文）|
 | `来源` | ✅ | `resources/<目录>/<文件名>` 或 `mmx 生成` 或 `用户提供` |
 | `目标位置` | ✅ | `remotion/public/<主题>/<子目录>/<文件名>` |
-| `用途` | ✅ | 对应分镜 ID（如 `S01`）或场景描述 |
-| `mmx prompt` | 仅缺失时 | 直接可复制的 prompt |
+| `拍摄要求` | 仅视频 | 5 维度（机位/光线/时长/动作/其他）|
 | `备注` | 可选 | 特殊说明（如"需裁剪"、"需转码"）|
 
 ---

@@ -255,6 +255,7 @@ Scene 组件名反映**分镜内容**（不是 S01/S02 编号），与 `script.m
 每个分镜的 `content_source` 字段会自动成为 `assets.md` 的一行。`assets.md` 输出时：
 - 已有素材 → 自动复制到 `remotion/public/<主题>/`
 - 缺失素材 → 列在"缺失"节，配 mmx prompt
+- **视频素材必须包含"拍摄要求"**（5 维度：机位/光线/时长/动作/其他）—— 见 [assets.md 第 2.2 节](remotion/rules/assets.md)
 - 实现 Scene 组件前，先查 `assets.md` 的"已就位"列表——只有素材就位才能 import
 
 详见 [remotion/rules/assets.md](remotion/rules/assets.md)。

@@ -93,10 +93,12 @@
 
 ### 3.2 素材完成
 
+- [ ] **assets.md 包含每个素材的"拍摄要求"**（视频素材必填 5 维度：机位/光线/时长/动作/其他）—— 见 [assets.md 第 2.2 节](../../remotion/rules/assets.md)
 - [ ] 通过 [assets.md](../../remotion/rules/assets.md) 自动复制已有素材到 `remotion/public/<主题>/`
 - [ ] 缺失素材 0 项（或明确标注"等待生成"）
 - [ ] 训练动作视频 ≥ 5s（[storyboard.md 第 3.1 节](../../remotion/rules/storyboard.md)）
 - [ ] 文件名一致（resources/、assets.md、组件 staticFile 三处）
+- [ ] **拍摄前**：assets.md §5 拍摄清单 7 项全部确认
 
 **门控**：素材缺失 → 阻塞，不能进入实现
 
