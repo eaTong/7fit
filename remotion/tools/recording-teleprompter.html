@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七练录音辅助工具 · v1</title>
+<style>
+:root {
+  --bg: #0A0A0A;
+  --card: #1A1A1A;
+  --card-2: #252525;
+  --primary: #FF4500;
+  --secondary: #DC143C;
+  --text: #FFFFFF;
+  --text-2: #888888;
+  --border: #333333;
+  --success: #4CAF50;
+  --warning: #FFA726;
+  --error: #F44336;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 20px;
+}
+.app { max-width: 1200px; margin: 0 auto; }
+
+header {
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.title-block h1 {
+  font-size: 22px;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+.title-block .subtitle {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.timer-block { text-align: right; }
+.timer-big {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  line-height: 1;
+}
+.timer-block .target { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+
+.scene-selector {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.scene-selector label { font-size: 13px; color: var(--text-2); }
+.scene-selector select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  min-width: 280px;
+  cursor: pointer;
+}
+.scene-selector select:focus { outline: 2px solid var(--primary); }
+.scene-selector .scene-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.scene-selector .badge {
+  background: var(--card-2);
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: var(--text-2);
+}
+.scene-selector .badge.main { background: rgba(255, 69, 0, 0.2); color: var(--primary); }
+.scene-selector .badge.sub { background: rgba(220, 20, 60, 0.2); color: var(--secondary); }
+
+.teleprompter-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 14px;
+  min-height: 280px;
+}
+.teleprompter-card h2 { font-size: 14px; margin-bottom: 12px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1.5px; }
+
+.teleprompter {
+  font-size: 30px;
+  line-height: 1.85;
+  letter-spacing: 0.5px;
+}
+.teleprompter .seg-meta {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.teleprompter .seg-meta span { color: var(--text-2); }
+.teleprompter .seg-meta strong { color: var(--text); }
+.teleprompter .pause-cue {
+  display: inline-block;
+  background: var(--secondary);
+  color: var(--text);
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 18px;
+  margin: 0 4px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.teleprompter .highlight {
+  color: var(--primary);
+  font-weight: 700;
+}
+.teleprompter .hint-banner {
+  font-size: 14px;
+  color: var(--warning);
+  margin-top: 18px;
+  padding: 10px 14px;
+  background: rgba(255, 167, 38, 0.08);
+  border-left: 3px solid var(--warning);
+  border-radius: 4px;
+}
+.next-seg {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  color: var(--text-2);
+  font-size: 16px;
+}
+.next-seg .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+
+.dash {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+@media (max-width: 768px) {
+  .dash { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.card h2 { font-size: 14px; margin-bottom: 12px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1.5px; }
+
+.speed-meter {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metric {
+  background: var(--card-2);
+  padding: 14px 8px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', monospace;
+}
+.metric-value.fast { color: var(--error); }
+.metric-value.slow { color: var(--warning); }
+.metric-value.good { color: var(--success); }
+.metric-label {
+  font-size: 11px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+button {
+  background: var(--primary);
+  color: var(--text);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+button:hover:not(:disabled) { opacity: 0.85; }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.secondary { background: var(--card-2); }
+button.ghost { background: transparent; border: 1px solid var(--border); }
+
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--card-2);
+  border-radius: 6px;
+  font-size: 13px;
+  border-left: 3px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.progress-item:hover { background: var(--bg); }
+.progress-item.done {
+  border-left-color: var(--success);
+  opacity: 0.5;
+}
+.progress-item.active {
+  border-left-color: var(--primary);
+  background: rgba(255, 69, 0, 0.15);
+  font-weight: 600;
+}
+.progress-item .timecode {
+  color: var(--text-2);
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  min-width: 70px;
+}
+.progress-item .label { flex: 1; }
+.progress-item .status { font-size: 14px; min-width: 20px; text-align: center; }
+
+.checklist { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.checklist label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.checklist input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+.checklist code {
+  background: var(--card-2);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-2);
+}
+.empty-state h2 {
+  color: var(--text);
+  margin-bottom: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 18px;
+}
+.empty-state button {
+  margin-top: 16px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px 0;
+  color: var(--text-2);
+  font-size: 12px;
+}
+footer a { color: var(--primary); text-decoration: none; }
+footer code {
+  background: var(--card-2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'SF Mono', monospace;
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="title-block">
+      <h1>七练录音辅助工具</h1>
+      <div class="subtitle">v1 · 所有场景通用 · 配合 <code>regenerate-scenes.js</code> 使用</div>
+    </div>
+    <div class="timer-block">
+      <div class="timer-big" id="timerDisplay">00:00</div>
+      <div class="target" id="targetTime">/ 00:50</div>
+    </div>
+  </header>
+
+  <!-- 场景选择 -->
+  <div class="scene-selector">
+    <label for="sceneSelect">选择场景：</label>
+    <select id="sceneSelect">
+      <option value="">— 请选择 —</option>
+    </select>
+    <div class="scene-meta" id="sceneMeta"></div>
+  </div>
+
+  <!-- 主提示区 -->
+  <div class="teleprompter-card" id="teleprompterCard">
+    <h2>当前段落</h2>
+    <div id="content">
+      <div class="empty-state" id="emptyState">
+        <h2>👆 上方选择场景开始</h2>
+        <p>如果你刚添加了新场景，运行 <code>node tools/regenerate-scenes.js</code> 刷新列表</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 控制 + 进度 + 清单 -->
+  <div class="dash">
+    <div class="card">
+      <h2>录制控制</h2>
+      <div class="speed-meter">
+        <div class="metric">
+          <div class="metric-value" id="currentSpeed">--</div>
+          <div class="metric-label">当前 字/秒</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="targetSpeed">4.8</div>
+          <div class="metric-label">目标 字/秒</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="wordsRemaining">--</div>
+          <div class="metric-label">剩余 字数</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="startBtn">▶ 开始</button>
+        <button id="pauseBtn" class="secondary" disabled>⏸ 暂停</button>
+        <button id="resetBtn" class="ghost">↺ 重置</button>
+        <button id="skipBtn" class="ghost">⏭ 跳过本段</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>段落进度（点击跳转）</h2>
+      <div class="progress-list" id="progressList">
+        <div class="empty-state" style="padding: 20px;">
+          <p>请先选择场景</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📋 录音清单（每条录音前确认）</h2>
+    <div class="checklist">
+      <label><input type="checkbox"> 安静环境（关窗、关空调、避马路）</label>
+      <label><input type="checkbox"> 嘴距话筒 10-20cm（不要太近，否则喷麦）</label>
+      <label><input type="checkbox"> 破折号 "——" 念到时停顿 0.3-0.5s</label>
+      <label><input type="checkbox"> 数字念出（"十二次" 而不是 "123"）</label>
+      <label><input type="checkbox"> 句尾"?"问号要带语气（不是平铺直叙）</label>
+      <label><input type="checkbox" id="outputPathCheck"> 目标输出：<code id="outputPath">resources/audios/<scene>.mp3</code></label>
+      <label><input type="checkbox"> 录完听一遍，检查清晰度和节奏</label>
+    </div>
+  </div>
+
+  <footer>
+    💡 添加新场景？写 <code>resources/docs/copy/&lt;scene&gt;.md</code> → 跑 <code>node tools/regenerate-scenes.js</code> → 刷新本页面
+  </footer>
+</div>
+
+<script>
+/* === Configuration === */
+const DEFAULT_TARGET_SPEED = 4.8;  // 通用兜底
+
+/* === SCENES_DATA_START === */
+const SCENES_DATA = {"generatedAt":"2026-06-03T17:55:16.689Z","totalScenes":1,"scenes":[{"id":"winged_scapula_b3","title":"文案稿：翼状肩胛自测 + 改善：4 个动作","account":"主号（健身博主号）","type":"B 类 — 健身知识","duration":50,"bgm":"Power Build（105 BPM, tech house）","channel":"抖音主号（B 类）","audioPath":"../../resources/audios/winged_scapula_b3.mp3","copyFile":"winged_scapula_b3.md"}]};
+/* === SCENES_DATA_END === */
+
+/* === State === */
+let scenes = SCENES_DATA.scenes || [];
+let currentScene = null;
+let segments = [];
+let currentSegIdx = 0;
+let isPlaying = false;
+let startTime = 0;
+let elapsedWhenPaused = 0;
+let timerInterval = null;
+
+/* === Utilities === */
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+function countChars(text) {
+  const cn = (text.match(/[一-鿿]/g) || []).length;
+  const en = (text.match(/[a-zA-Z]+/g) || []).length;
+  const num = (text.match(/\d+/g) || []).length;
+  return cn + en + num;
+}
+
+/* === Parsing copy.md === */
+function parseScript(md) {
+  const sections = [];
+  const sectionRegex = /##\s*(.+?)\n([\s\S]*?)(?=^##\s|\Z)/gm;
+  let m;
+  while ((m = sectionRegex.exec(md)) !== null) {
+    sections.push({ title: m[1].trim(), content: m[2].trim() });
+  }
+
+  const segs = [];
+  let segIdx = 0;
+  let elapsedSec = 0;
+  const targetSpeed = currentScene ? currentScene.duration / currentScene.totalChars * 10 : DEFAULT_TARGET_SPEED;
+  // 简化：用全局目标速度
+  const useSpeed = DEFAULT_TARGET_SPEED;
+
+  for (const section of sections) {
+    const lines = section.content.split('\n')
+      .map(l => l.replace(/^>\s*/, '').replace(/^-\s*\[[ x]\]\s*/, '').trim())
+      .filter(l => l.length > 0);
+
+    if (lines.length === 0) continue;
+
+    for (const text of lines) {
+      // Strip bold for char count, but keep for display
+      const cleanText = text.replace(/\*\*/g, '');
+      const words = countChars(cleanText);
+      const duration = words / useSpeed;
+      const tcStart = elapsedSec;
+      const tcEnd = elapsedSec + duration;
+
+      const hints = generateHints(cleanText);
+      segs.push({
+        id: segIdx++,
+        sectionTitle: section.title.split('（')[0].trim(),
+        text: cleanText,
+        words,
+        duration,
+        tcStart,
+        tcEnd,
+        hints
+      });
+      elapsedSec = tcEnd;
+    }
+  }
+  return segs;
+}
+
+function generateHints(text) {
+  const hints = [];
+  if (text.includes('——')) {
+    const n = (text.match(/——/g) || []).length;
+    hints.push(`⏸ 破折号 ${n} 个，念到时停顿 0.3-0.5 秒`);
+  }
+  if (text.match(/\d+\s*次.*\d+\s*组/)) {
+    hints.push('🔢 数字要念出（"十二次三组"），不要说"123"');
+  }
+  if (text.match(/^\d+\s*个动作/)) {
+    hints.push('🔁 段间过渡，可稍重读"4 个动作改善"');
+  }
+  if (text.match(/^(第一个|第二个|第三个|第四个)/)) {
+    hints.push('👉 过渡词，配合手指指示或重音');
+  }
+  if (text.match(/你(试了|可能有|是)/)) {
+    hints.push('❓ 问句要带"?"语气，节奏稍放慢');
+  }
+  if (text.match(/^(评论告诉我|关注我)/)) {
+    hints.push('💬 CTA 软引导，热情但不强推');
+  }
+  if (text.match(/^(哎|好|来)/)) {
+    hints.push('🗣  语气词，念出时稍顿，让节奏自然');
+  }
+  return hints;
+}
+
+/* === Scene Management === */
+function populateSceneSelector() {
+  const sel = document.getElementById('sceneSelect');
+  // Clear except first option
+  while (sel.options.length > 1) sel.remove(1);
+  scenes.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    const accountTag = s.account === 'main' ? '🏠' : s.account === 'sub' ? '🪪' : '❓';
+    opt.textContent = `${accountTag} ${s.id}  ·  ${s.title}  (${s.duration}s)`;
+    sel.appendChild(opt);
+  });
+}
+
+function selectScene(sceneId) {
+  currentScene = scenes.find(s => s.id === sceneId);
+  if (!currentScene) {
+    document.getElementById('emptyState').style.display = 'block';
+    return;
+  }
+
+  // Update scene meta
+  const meta = document.getElementById('sceneMeta');
+  meta.innerHTML = '';
+  if (currentScene.account) {
+    const acc = document.createElement('span');
+    acc.className = 'badge ' + (currentScene.account === 'main' ? 'main' : 'sub');
+    acc.textContent = currentScene.account === 'main' ? '🏠 主号' : currentScene.account === 'sub' ? '🪪 副号' : currentScene.account;
+    meta.appendChild(acc);
+  }
+  if (currentScene.type) {
+    const t = document.createElement('span');
+    t.className = 'badge';
+    t.textContent = currentScene.type;
+    meta.appendChild(t);
+  }
+  if (currentScene.bgm) {
+    const b = document.createElement('span');
+    b.className = 'badge';
+    b.textContent = '🎵 ' + currentScene.bgm;
+    meta.appendChild(b);
+  }
+
+  // Update output path
+  document.getElementById('outputPath').textContent = currentScene.audioPath;
+  document.getElementById('targetTime').textContent = '/ ' + formatTime(currentScene.duration);
+
+  // Reset
+  resetTimer();
+  loadSceneScript();
+}
+
+async function loadSceneScript() {
+  // Try fetch first, then fall back to a default demo
+  if (!currentScene) return;
+
+  // Build the segments from embedded metadata
+  // We need the actual copy.md content
+  // Since HTML can't directly read filesystem, we use a "load via file picker" fallback
+
+  // For now: show a message asking user to load the script
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="empty-state">
+      <h2>请加载脚本内容</h2>
+      <p>场景 <code>${currentScene.id}</code> 已选择</p>
+      <p>请把 <code>resources/docs/copy/${currentScene.copyFile}</code> 的内容粘贴到下方：</p>
+      <textarea id="scriptTextarea" placeholder="把 copy.md 内容粘贴到这里..." style="margin-top: 12px; min-height: 200px; width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: 'SF Mono', monospace; font-size: 13px;"></textarea>
+      <button id="loadScriptBtn" style="margin-top: 12px;">加载并解析</button>
+    </div>
+  `;
+  document.getElementById('loadScriptBtn').addEventListener('click', () => {
+    const text = document.getElementById('scriptTextarea').value.trim();
+    if (!text) {
+      alert('请先粘贴 copy.md 内容');
+      return;
+    }
+    finishLoadScript(text);
+  });
+}
+
+function finishLoadScript(md) {
+  segments = parseScript(md);
+  currentSegIdx = 0;
+  elapsedWhenPaused = 0;
+  document.getElementById('timerDisplay').textContent = '00:00';
+  renderAll();
+}
+
+/* === Rendering === */
+function renderTeleprompter() {
+  if (segments.length === 0) return;
+
+  const seg = segments[currentSegIdx];
+  const next = segments[currentSegIdx + 1];
+
+  // Process text: bold (**x**) → highlighted, —— → pause cue
+  let html = seg.text;
+  // First handle bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<span class="highlight">$1</span>');
+  // Then handle pause cue (insert in the middle of text)
+  // We'll do it as a line break + cue
+  const parts = html.split('——');
+  if (parts.length > 1) {
+    let result = parts[0];
+    for (let i = 1; i < parts.length; i++) {
+      result += '<span class="pause-cue">⏸ 0.5s</span>' + parts[i];
+    }
+    html = result;
+  }
+  // Convert \n to <br>
+  html = html.replace(/\n/g, '<br>');
+
+  const meta = `
+    <div class="seg-meta">
+      <span>⏱ <strong>${formatTime(seg.tcStart)}</strong> → <strong>${formatTime(seg.tcEnd)}</strong></span>
+      <span>📂 ${seg.sectionTitle}</span>
+      <span>🔢 ${seg.words} 字</span>
+      <span>🎯 目标 ${formatTime(seg.tcEnd - seg.tcStart)}</span>
+    </div>
+    <div>${html}</div>
+  `;
+
+  let hintHtml = '';
+  if (seg.hints.length > 0) {
+    hintHtml = `<div class="hint-banner">${seg.hints.join(' · ')}</div>`;
+  }
+
+  let nextHtml = '';
+  if (next) {
+    nextHtml = `
+      <div class="next-seg">
+        <div class="label">下一段</div>
+        <div>${formatTime(next.tcStart)} - ${formatTime(next.tcEnd)} · ${next.text.slice(0, 60)}${next.text.length > 60 ? '...' : ''}</div>
+      </div>
+    `;
+  }
+
+  document.getElementById('content').innerHTML = meta + hintHtml + nextHtml;
+}
+
+function renderProgress() {
+  const list = document.getElementById('progressList');
+  list.innerHTML = '';
+  segments.forEach((seg, idx) => {
+    const item = document.createElement('div');
+    item.className = 'progress-item';
+    if (idx < currentSegIdx) item.classList.add('done');
+    if (idx === currentSegIdx) item.classList.add('active');
+    item.innerHTML = `
+      <span class="timecode">${formatTime(seg.tcStart)}</span>
+      <span class="label">${seg.text.slice(0, 40)}${seg.text.length > 40 ? '...' : ''}</span>
+      <span class="status">${idx < currentSegIdx ? '✓' : idx === currentSegIdx ? '▶' : '○'}</span>
+    `;
+    item.addEventListener('click', () => {
+      currentSegIdx = idx;
+      if (isPlaying) {
+        elapsedWhenPaused = seg.tcStart;
+        startTime = performance.now() - elapsedWhenPaused * 1000;
+      }
+      renderAll();
+    });
+    list.appendChild(item);
+  });
+}
+
+function renderMetrics() {
+  if (segments.length === 0) {
+    document.getElementById('wordsRemaining').textContent = '--';
+    document.getElementById('currentSpeed').textContent = '--';
+    return;
+  }
+  const totalWords = segments.reduce((s, x) => s + x.words, 0);
+  const doneWords = segments.slice(0, currentSegIdx).reduce((s, x) => s + x.words, 0);
+  document.getElementById('wordsRemaining').textContent = totalWords - doneWords;
+}
+
+function renderAll() {
+  renderTeleprompter();
+  renderProgress();
+  renderMetrics();
+}
+
+/* === Timer === */
+function startTimer() {
+  if (segments.length === 0) {
+    alert('请先选择场景并加载脚本');
+    return;
+  }
+  if (isPlaying) return;
+  isPlaying = true;
+  startTime = performance.now() - elapsedWhenPaused * 1000;
+
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('pauseBtn').disabled = false;
+
+  timerInterval = setInterval(() => {
+    const elapsed = (performance.now() - startTime) / 1000;
+    document.getElementById('timerDisplay').textContent = formatTime(elapsed);
+
+    if (currentSegIdx < segments.length) {
+      const seg = segments[currentSegIdx];
+      const segElapsed = elapsed - seg.tcStart;
+
+      // Real-time speed
+      if (segElapsed > 0.5 && seg.words > 0) {
+        const currentSpeed = seg.words / segElapsed;
+        const speedEl = document.getElementById('currentSpeed');
+        speedEl.textContent = currentSpeed.toFixed(1);
+        speedEl.className = 'metric-value';
+        if (currentSpeed > DEFAULT_TARGET_SPEED * 1.2) speedEl.classList.add('fast');
+        else if (currentSpeed < DEFAULT_TARGET_SPEED * 0.8) speedEl.classList.add('slow');
+        else speedEl.classList.add('good');
+      }
+
+      // Auto-advance
+      if (elapsed >= seg.tcEnd - 0.001) {
+        currentSegIdx++;
+        renderAll();
+      }
+    } else {
+      // Done
+      stopTimer();
+      const path = document.getElementById('outputPath').textContent;
+      alert(`🎉 录音完成！\n\n请检查音频文件：\n${path}\n\n(建议听一遍，验证清晰度)`);
+    }
+  }, 100);
+}
+
+function pauseTimer() {
+  if (!isPlaying) return;
+  isPlaying = false;
+  elapsedWhenPaused = (performance.now() - startTime) / 1000;
+  clearInterval(timerInterval);
+
+  document.getElementById('startBtn').disabled = false;
+  document.getElementById('pauseBtn').disabled = true;
+}
+
+function stopTimer() {
+  isPlaying = false;
+  clearInterval(timerInterval);
+  document.getElementById('startBtn').disabled = false;
+  document.getElementById('pauseBtn').disabled = true;
+}
+
+function resetTimer() {
+  stopTimer();
+  elapsedWhenPaused = 0;
+  currentSegIdx = 0;
+  document.getElementById('timerDisplay').textContent = '00:00';
+  document.getElementById('currentSpeed').textContent = '--';
+  document.getElementById('currentSpeed').className = 'metric-value';
+  renderAll();
+}
+
+function skipSegment() {
+  if (currentSegIdx < segments.length - 1) {
+    currentSegIdx++;
+    if (isPlaying) {
+      elapsedWhenPaused = segments[currentSegIdx].tcStart;
+      startTime = performance.now() - elapsedWhenPaused * 1000;
+    }
+    renderAll();
+  }
+}
+
+/* === Event Bindings === */
+document.getElementById('sceneSelect').addEventListener('change', (e) => {
+  selectScene(e.target.value);
+});
+
+document.getElementById('startBtn').addEventListener('click', startTimer);
+document.getElementById('pauseBtn').addEventListener('click', pauseTimer);
+document.getElementById('resetBtn').addEventListener('click', resetTimer);
+document.getElementById('skipBtn').addEventListener('click', skipSegment);
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    isPlaying ? pauseTimer() : startTimer();
+  } else if (e.code === 'ArrowRight') {
+    e.preventDefault();
+    skipSegment();
+  } else if (e.code === 'KeyR') {
+    e.preventDefault();
+    resetTimer();
+  }
+});
+
+/* === Init === */
+populateSceneSelector();
+
+// Show scene count in footer
+const sceneCount = scenes.length;
+document.querySelector('footer').innerHTML = sceneCount > 0
+  ? `📂 已加载 <strong>${sceneCount}</strong> 个场景 · 写新 copy.md 后跑 <code>node tools/regenerate-scenes.js</code> 刷新`
+  : `💡 暂无场景 — 写 <code>resources/docs/copy/&lt;scene&gt;.md</code> 后跑 <code>node tools/regenerate-scenes.js</code> 刷新本页面`;
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-06-03T17:55:16.689Z",
+  "totalScenes": 1,
+  "scenes": [
+    {
+      "id": "winged_scapula_b3",
+      "title": "文案稿：翼状肩胛自测 + 改善：4 个动作",
+      "account": "主号（健身博主号）",
+      "type": "B 类 — 健身知识",
+      "duration": 50,
+      "bgm": "Power Build（105 BPM, tech house）",
+      "channel": "抖音主号（B 类）",
+      "audioPath": "../../resources/audios/winged_scapula_b3.mp3",
+      "copyFile": "winged_scapula_b3.md"
+    }
+  ]
+}
