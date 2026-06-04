@@ -57,8 +57,8 @@ remotion/src/scenes/<视频主题>/
 | `start` | 起始时间（秒，对齐字幕） | `0.0` |
 | `end` | 结束时间（秒） | `2.4` |
 | `duration` | 镜头时长（秒） | `2.4` |
-| `content_type` | 内容类型 | `video` / `image` / `animation` / `data_viz` |
-| `content_source` | 素材路径（`resources/...`）或 `generate:<mmx_prompt>` | `resources/videos/卧推80KG_10.mov` |
+| `content_type` | 内容类型 | `video` / `image` / `animation` / `data_viz` / `code_component` |
+| `content_source` | 素材路径（`resources/...`） / `generate:<mmx_prompt>` / `<组件名 prop=...>` | `resources/videos/卧推80KG_10.mov` / `<ActionDataCard reps="12-15" sets="3" />` |
 | `voiceover` | 对齐的字幕 ID | `1`（即 `subtitles.json[0]`） |
 | `description` | 这个镜头在讲什么 | `演示用户用 3 秒一句话记录训练` |
 | `overlay_text` | 主区域叠加的少量文字（≤ 6 字，可选） | `3 秒` |
@@ -144,14 +144,20 @@ remotion/src/scenes/<视频主题>/
 
 ### 4.1 允许的 content_type
 
-| 类型 | 说明 | 示例 |
-|---|---|---|
-| `video` | 实拍视频素材 | 健身动作演示、训练 vlog |
-| `image` | 图片素材/截图 | 界面截图、产品图 |
-| `animation` | Remotion 内的动效组件 | 数字滚动、3D 元素入场 |
-| `data_viz` | 数据可视化 | 折线图、柱状图、训练容量 |
-| `screen_recording` | 屏幕录制 | 演示 AI 对话流程 |
-| `composite` | 多层叠加 | 视频底层 + 数据前景层 |
+| 类型 | 说明 | 示例 | 是否需要外部素材 |
+|---|---|---|---|
+| `video` | 实拍视频素材 | 健身动作演示、训练 vlog | ✅ 需 `resources/videos/` |
+| `image` | 图片素材/截图 | 界面截图、产品图 | ✅ 需 `resources/images/` |
+| `animation` | Remotion 内的动效组件 | 数字滚动、3D 元素入场 | ❌ 纯代码 |
+| `data_viz` | 数据可视化 | 折线图、柱状图、训练容量 | ❌ 纯代码 |
+| `screen_recording` | 屏幕录制 | 演示 AI 对话流程 | ✅ 需用户录屏 |
+| `composite` | 多层叠加 | 视频底层 + 数据前景层 | 视子层而定 |
+| **`code_component`** | **可复用数据组件** | **数据卡 / 标题 / 列表 / CTA / Badge** | **❌ 纯代码，不进 assets.md** |
+
+> **`code_component` 是 2026-06-04 新增**——详见 [assets.md §1.4](assets.md#14-⚠️-可代码实现的内容不进-assetsmd强约束)。
+> 触发场景：分镜要展示"数据卡 / 数字高亮 / 章节标题 / 列表 / 按钮 / Badge"等可用代码渲染的内容。
+> `content_source` 字段写组件名 + props，例如 `<ActionDataCard name="壁虎推墙" reps="12-15" sets="3" />`。
+> **不**进 `assets.md`（不消耗 mmx / 不占 `public/` 配额）。
 
 ### 4.2 ❌ 禁止的"伪内容"
 

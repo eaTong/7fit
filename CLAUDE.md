@@ -129,16 +129,18 @@ export const RemotionRoot: React.FC = () => {
 - **图片/视频素材**：按视频内容命名（例如 `卧推80KG*10.mov`、`深蹲_100KG.mov`）。在 `resources/images/` 或 `resources/videos/` 下按文件名查找。
 - **代码/产品文档/PRD/git 记录**：直接读取 `/Users/eatong/eaTong_projects/fit_lc`（重点是 `docs/PRD.md`、`docs/PRD-planning.md`、`docs/architecture/`、`docs/PRD-details/`、各 `routes/` 源码），按需用代码块展示给用户，不要让用户提供截图。
 - **品牌/对外文案/转化漏斗**：读取 `/Users/eatong/eaTong_projects/7fit_opc`（重点是 `north-star.md`、`outputs/02-niche-positioning/02-niche-statement-v4.md`、`outputs/03-value-proposition/`、`outputs/07-conversion-loop/`）。
+- **音频（旁白）**：用户**自录**（**不用 TTS**）—— 详见 [`copy.md §9`](remotion/rules/copy.md)
 - **音频/BGM 和图片生成**：使用 **mmx**（minimax）能力
 - **音频 → 字幕转写**：也使用 **mmx**（minimax）能力，输出 `remotion/src/scenes/<主题>/subtitles.json`（详见 `remotion/rules/subtitle.md`）
 
 ## 文档同步工作流（生成视频脚本前的强制步骤）
 
-在写视频脚本前，必须**先把两个外部仓库的文档增量同步到 `resources/docs/`**，并生成项目级总结：
+在写视频脚本前，必须**先把两个外部仓库的文档增量同步到 `resources/docs/`**，并生成项目级总结。
+**完整规范见 [`docs-sync.md`](remotion/rules/docs-sync.md)**，本节只摘工作流概览：
 
 1. 扫描 `/Users/eatong/eaTong_projects/fit_lc/docs/` 与 `/Users/eatong/eaTong_projects/7fit_opc/outputs/` 的最近变更
 2. 把与视频主题相关的文档增量复制到 `resources/docs/`（按子目录或主题命名，例如 `prd.md`、`opc-niche.md`、`opc-headline.md`）
-3. 写一份总结性 markdown 放在 `resources/docs/SUMMARY.md`（哪些文档已同步、各自关键信息、视频脚本可用的"事实清单"）
+3. 写一份总结性 markdown 放在 `resources/docs/SUMMARY.md`（哪些文档已同步、各自关键信息、视频脚本可用的"事实清单"）—— 模板见 [`docs-sync.md §2`](remotion/rules/docs-sync.md)
 4. 后续所有视频脚本都基于 `resources/docs/SUMMARY.md` + `resources/docs/` 下具体文档撰写
 
 **不要假设视频脚本作者记得外部仓库的细节**——每条引用都要可追溯到 `resources/docs/` 下的某个文件。
@@ -146,24 +148,27 @@ export const RemotionRoot: React.FC = () => {
 ## 视频制作总流程
 
 ```
+-2. 【必做】读 OPC 文档（北极星/利基/PRD）      [video-types.md §0 + 7fit_opc/]
 -1. 【必做】确定视频类型 A/B/C                    [video-types.md]  ← 第一件事
-0. 写文案稿 → resources/docs/copy/<主题>.md      [copy.md]        ← 写文案/旁白
-1. 文档同步 → resources/docs/ + SUMMARY.md
-2. TTS 生成旁白音频 → resources/audios/<主题>.mp3  [copy.md → mmx]
-3. 选型/生成 BGM → resources/audios/bgm/<类型>.mp3  [bgm.md]
-4. mmx 识别旁白 → subtitles.json                  [subtitle.md]
-5. 按字幕设计分镜 → storyboard.md / .json         [storyboard.md]
-6. 配套输出素材清单 → assets.md + 自动复制已有素材 [assets.md]
-7. 【开工前自检】跑 checklist.md 6 大块检查        [checklist.md]   ← 全部 ✅ 才能进下一步
-8. 实现分镜 → 每个 Shot 一个组件                  [script.md + animation.md]
-9. 在 Composition 中组装 + 转场 + BGM             [script.md 第 8 节 + animation.md 第 7 节 + bgm.md 第 7 节]
+0.  写文案稿 → resources/docs/copy/<主题>.md      [copy.md]        ← 写文案/旁白
+1.  文档同步 → resources/docs/ + SUMMARY.md        [docs-sync.md]   ← 必走，引用要可追溯
+2.  用户自录旁白 → resources/audios/<主题>.mp3     [copy.md §9]     ← 不用 TTS
+3.  选型/生成 BGM → resources/audios/bgm/<类型>.mp3  [bgm.md]
+4.  mmx 识别旁白 → subtitles.json                  [subtitle.md]
+5.  按字幕设计分镜 → storyboard.md / .json         [storyboard.md]
+6.  配套输出素材清单 → assets.md + 自动复制已有素材 [assets.md] + 批量生成验收 [assets.md §4.4]
+7.  【开工前自检】跑 checklist.md 6 大块检查        [checklist.md]   ← 全部 ✅ 才能进下一步
+8.  实现分镜 → 每个 Shot 一个组件                  [script.md + animation.md]
+9.  在 Composition 中组装 + 转场 + BGM             [script.md 第 8 节 + animation.md 第 7 节 + bgm.md 第 7 节]
 10. 【渲染前自检】再跑一次 checklist.md            [checklist.md]   ← 全部 ✅ 才能 render
 11. ⚠️ 【默认只预览】启动 Studio 让用户审核         [render.md]       ← 不自动 render
 12. 收到"开始渲染"指令 → npx remotion render      [render.md]       ← 必须显式触发
 13. 渲染后自检（看视频/听 BGM/查转场）              [render.md] 第 7 节
+14. 【必做】发布到平台（账号/平台/标题/封面/标签/时间）  [publish.md §1-§8]
+15. 【必做】24h + 7d 数据复盘，反哺 OPC 文档        [publish.md §9]
 ```
 
-每一步开工前先读对应 rules 文件，**不要跳步**（尤其是**类型判断**/文案/文档同步/分镜/素材清单/自检/渲染触发）。**写组件时同步翻 `animation.md` 查动效 API**。
+每一步开工前先读对应 rules 文件，**不要跳步**（尤其是**类型判断**/文档同步/文案/分镜/素材清单/自检/渲染触发/发布/复盘）。**写组件时同步翻 `animation.md` 查动效 API**。
 
 ## 视频制作阶段与 rules 规范
 
@@ -171,18 +176,20 @@ export const RemotionRoot: React.FC = () => {
 
 | 阶段 | 规范文件 | 说明 |
 |---|---|---|
-| **视频类型** | `remotion/rules/video-types.md` | **3 类视频分类**（A 个人人设 / B 健身知识 / C 七练介绍），开工前必看 |
-| 文案 | `remotion/rules/copy.md` | 口语化、前 3 秒钩子、生活化对话、抖音/小红书违禁词 |
-| 脚本 | `remotion/rules/script.md` | 入口命名、场景命名、字幕/标题安全区、配色、风格、转场、素材框 |
+| **视频类型** | `remotion/rules/video-types.md` | **3 类视频分类**（A 个人人设 / B 健身知识 / C 七练介绍），开工前必看 + §0 OPC 文档同步指针 |
+| **文档同步** | `remotion/rules/docs-sync.md` | **外部 2 个仓库**（fit_lc / 7fit_opc）增量同步到 `resources/docs/` + SUMMARY.md 模板（必走，引用要可追溯）|
+| 文案 | `remotion/rules/copy.md` | 口语化、前 3 秒钩子、生活化对话、抖音/小红书违禁词 + §9 用户自录旁白规范（不用 TTS）|
+| 脚本 | `remotion/rules/script.md` | 入口命名、场景命名、字幕/标题安全区、配色、风格、转场、素材框 + §10 可复用数据组件库 |
 | 字幕 | `remotion/rules/subtitle.md` | 音频 → 字幕自动转写、字幕样式、弹跳动效、主体区域让位 |
-| 分镜 | `remotion/rules/storyboard.md` | 按字幕设计分镜、时长约束（视频 > 5s）、每镜必有实内容 |
+| 分镜 | `remotion/rules/storyboard.md` | 按字幕设计分镜、时长约束（视频 > 5s）、每镜必有实内容 + `code_component` 类型 |
 | 动效 | `remotion/rules/animation.md` | interpolate/spring/easing/sequence/transitions/light-leaks/音频可视化/3D/Lottie |
 | BGM | `remotion/rules/bgm.md` | 4 类情绪 × 4 种用途、synthwave/tech-house/ambient/glitch-hop、BPM 75-115、ducking |
-| 素材清单 | `remotion/rules/assets.md` | 脚本/分镜生成时配套输出，列出每个素材 + 自动复制已有素材到 `public/<主题>/` |
+| 素材清单 | `remotion/rules/assets.md` | 脚本/分镜生成时配套输出，列出每个素材 + 自动复制已有素材到 `public/<主题>/` + §1.4 可代码实现内容不进 assets.md + §4.4 批量 prompt + 验收 |
 | 自检 | `remotion/rules/checklist.md` | 每个视频需求开工前/渲染前 | 6 大块 30+ 项检查，输出 Ready/Blocked 决策，缺失项给修复建议 |
 | 渲染 | `remotion/rules/render.md` | 渲染输出阶段 | ⚠️ 默认只预览不渲染；必须"开始渲染"才执行；默认 1080×1920 竖屏；防卡帧 7 类问题 |
+| **发布与复盘** | `remotion/rules/publish.md` | **账号矩阵（主/副号）+ 平台矩阵（抖音/小红书/视频号/B站）+ 标题/封面/标签/时间 + 24h + 7d 数据复盘**（视频投出去才算闭环）|
 
-**当前已落地的规范**：视频类型 + 文案 + 脚本 + 字幕 + 分镜 + 动效 + BGM + 素材清单 + 自检 + 渲染。所有 rules 已落地。
+**当前已落地的规范**：视频类型 + 文档同步 + 文案 + 脚本 + 字幕 + 分镜 + 动效 + BGM + 素材清单 + 自检 + 渲染 + 发布与复盘。共 12 个 rules 文件，覆盖内容创作 → 拍摄 → 剪辑 → 成片 → 发布 → 复盘 全流程。
 
 **脚本核心硬约束速览**（详见 `remotion/rules/script.md`）：
 

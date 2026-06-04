@@ -350,3 +350,84 @@
 - 描边 2-3px（与第 7 节"力量感"的粗描边一致）
 - 圆角 6-12px（避免过圆）
 - 内边距 12-24px（给素材留呼吸）
+
+---
+
+## 10. 可复用数据组件库（强约束——配合 [assets.md §1.4](assets.md#14-⚠️-可代码实现的内容不进-assetsmd强约束)）
+
+> **触发规则**：分镜的 `content_type` 是 `code_component` 时（数据卡 / 标题 / 列表 / CTA / Badge / 进度条），
+> **必须**用本节列出的标准组件实现，不允许每个视频现场造轮子。组件统一放在
+> `remotion/src/components/`（跨视频复用）或 `remotion/src/scenes/<主题>/components/`（视频专属）。
+
+### 10.1 必备组件清单（先建这 7 个，新视频按需扩展）
+
+| 组件 | 用途 | 典型 props | 配套分镜场景 |
+|---|---|---|---|
+| `<ActionDataCard>` | 动作参数卡（"X 次 × Y 组"）| `name` / `reps` / `sets` / `rpe?` / `rest?` | 4 个动作演示 |
+| `<StatOverlay>` | 数字高亮（"PR 80KG" / "7 天"）| `label` / `value` / `unit?` / `color?` | 关键数据/钩子 |
+| `<SectionTitle>` | 章节标题（"4 个动作" / "自测 1"）| `title` / `subtitle?` / `number?` | 段落开场 |
+| `<BulletList>` | 列表/要点（"3 个误区"）| `items: string[]` / `numbered?` | 知识罗列 |
+| `<PrimaryCTA>` | 主 CTA 按钮（"立即开始"）| `text` / `onClick?` / `href?` | 视频结尾 |
+| `<Badge>` | 标签（"B 类知识" / "POWER BUILD"）| `text` / `color?` / `icon?` | 视频角落/分类 |
+| `<ProgressBar>` | 进度条 | `value` / `max` / `color?` / `label?` | 训练计划/容量 |
+
+### 10.2 组件设计硬约束（与现有 rules 对齐）
+
+- **半透明彩色背景**：参考第 5.1 节 + 9.2 节——`bg-[#FF4500]/10-20` + `border-[#FF4500]/30-50`
+- **纯白标题**：`#FFFFFF` + 700 字重 + 适度字号（动作名 ≥ 36px，数字 ≥ 64px）
+- **spring 入场**：参考 [animation.md](animation.md) 第 3.2 节——`{ damping: 8, stiffness: 200, mass: 0.5 }`
+- **数字滚动**（`StatOverlay` 内部）：用 `interpolate` + `Math.round` 计数，禁止用 CSS 动画
+- **描述 + 关键词**：`ActionDataCard` 等组件**结构稳定**（永远是"动作名 / reps / sets"），但**内容可变**（用 props 传）——这样换数据不用改组件源码
+
+### 10.3 实现示例（`<ActionDataCard>` 骨架）
+
+```tsx
+// remotion/src/components/ActionDataCard.tsx
+import { spring, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
+
+export const ActionDataCard: React.FC<{
+  name: string;      // 动作名："壁虎推墙"
+  reps: string;      // 次数："12-15"
+  sets: string;      // 组数："3"
+  rpe?: string;      // 可选：强度
+  rest?: string;     // 可选：休息
+  delay?: number;    // 入场延迟（帧）
+}> = ({ name, reps, sets, rpe, rest, delay = 0 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const entrance = spring({
+    frame: frame - delay,
+    fps,
+    config: { damping: 8, stiffness: 200, mass: 0.5 },
+  });
+
+  return (
+    <div
+      className="bg-[#FF4500]/20 border-2 border-[#FF4500]/50 rounded-lg p-6"
+      style={{ transform: `scale(${interpolate(entrance, [0, 1], [0.85, 1])})`, opacity: entrance }}
+    >
+      <div className="text-white text-4xl font-bold">{name}</div>
+      <div className="mt-3 flex gap-6 text-white">
+        <div><span className="text-[#FF4500] text-5xl font-bold">{reps}</span> 次</div>
+        <div><span className="text-[#FF4500] text-5xl font-bold">{sets}</span> 组</div>
+        {rpe && <div>RPE <span className="text-[#FF4500]">{rpe}</span></div>}
+        {rest && <div>休息 <span className="text-[#FF4500]">{rest}</span></div>}
+      </div>
+    </div>
+  );
+};
+```
+
+### 10.4 在分镜里怎么引用
+
+```json
+{
+  "shot_id": "S05",
+  "content_type": "code_component",
+  "content_source": "<ActionDataCard name=\"壁虎推墙\" reps=\"12-15\" sets=\"3\" rpe=\"7\" />",
+  "description": "动作 1 数据卡：橙底数据卡 + spring 弹入"
+}
+```
+
+> **不要**在分镜里写 `content_source: "resources/images/param_1.png"` 然后让 mmx 生成静态图——那就是本规则的**反例**。

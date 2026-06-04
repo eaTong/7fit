@@ -4,7 +4,30 @@
 > 适用场景：用户提出"做一条视频"时，**第一件事就是判断属于 3 类中的哪一类**
 > 来源：用户硬约束
 > 状态：✅ 生效
-> 上下游：上游 = `copy.md`（确定主题后归类）；下游 = 全部其他 rules（不同类型的实现方式不同）
+> 上下游：上游 = `7fit_opc/` 战略文档（北极星/利基/钩子句）+ `docs-sync.md`（同步到 `resources/docs/`）；下游 = 全部其他 rules（不同类型的实现方式不同）
+
+---
+
+## 0. ⚠️ 开工前必读（先于类型判断）
+
+> **类型判断不是凭空做的**——必须先看 OPC 文档确认"这条视频在战略上对不对"。
+
+| 视频类型 | 开工前必读的 OPC 文档 | 读完要回答的问题 |
+|---|---|---|
+| **A 个人人设** | `/Users/eatong/eaTong_projects/7fit_opc/north-star.md`（北极星）<br>+ `outputs/02-niche-positioning/02-niche-statement-v4.md`<br>+ `outputs/03-value-proposition/05-founders-note.md` | 这条视频在"用产品思维去健身，用健身改造产品"主线吗？<br>用谁的故事 / 哪个反思？<br>会强化"产品思维"还是"健身改造"哪一面？|
+| **B 健身知识** | `outputs/02-niche-positioning/02-niche-statement-v4.md`（看用户痛点）<br>+ `outputs/03-value-proposition/03-headline-candidates.md`（钩子候选）| 选题是不是"中级健身者真正痛"的？<br>有没有现成的钩子句可用？<br>医学/解剖事实有外部参考吗？|
+| **C 七练介绍** | `/Users/eatong/eaTong_projects/eaTong_projects/fit_lc/docs/PRD.md`<br>+ `fit_lc/docs/PRD-details/`（与本视频相关的子模块）<br>+ `7fit_opc/outputs/03-value-proposition/04-landing-page-skeleton.md` | 这条视频对应 PRD 哪个功能？<br>功能最新定价 / 数据是什么？<br>landing page 上有没有现成文案可借鉴？|
+
+### 0.1 同步到 `resources/docs/`
+
+读完 OPC 文档后，**必须**按 [docs-sync.md](docs-sync.md) 把相关文档增量复制到 `resources/docs/`，并写 `SUMMARY.md`。
+视频脚本里**只引用** `resources/docs/` 里的内容——不直接读 OPC 仓库。
+
+### 0.2 反例（**禁止**）
+
+- ❌ "做一条 X 视频" → 不读 OPC → 直接写文案 → 文案与品牌调性不符 → 返工
+- ❌ "做一条 X 视频" → 凭印象写"七练有 X 功能" → PRD 里其实没有 → 失实
+- ❌ "做一条 X 视频" → 不查 OPC 已有钩子句 → 重新发明 → 错过已被验证的钩子
 
 ---
 

@@ -200,8 +200,8 @@ bouncy bass, light synth melody, no vocals, no lyrics,
 
 ```
 resources/audios/
-├── workout_intro.mp3          # 旁白/TTS 音频
-├── weekly_review.mp3          # 旁白/TTS 音频
+├── workout_intro.mp3          # 旁白音频（**用户自录**，不用 TTS）
+├── weekly_review.mp3          # 旁白音频（**用户自录**，不用 TTS）
 └── bgm/                       # 背景音乐（与旁白分开管理）
     ├── cyber_pulse_default.mp3
     ├── power_build_cta.mp3
