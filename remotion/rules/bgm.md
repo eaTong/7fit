@@ -6,6 +6,11 @@
 > 状态：✅ 生效
 > 上下游：上游 = `copy.md`（确定视频情绪基调）+ `video-types.md`（类型 A/B/C 决定默认 BGM）；下游 = `script.md`（在 Composition 中集成）+ `subtitle.md`（与字幕时间线对齐）
 
+> ⏰ **2026-06-04 强制**：BGM 时长 ≥ 全文 + 3s fade out buffer，**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
+> 当前 winged_scapula_b3：BGM ≥ 65s（全文 62s 含段间停顿 + 3s fade）。改主体时长或段间停顿 → BGM 必须重生。
+>
+> **2026-06-04 流程变更**：BGM trigger 移到 **Phase 6**（视频总时长确定后）。详见 [CLAUDE.md 视频制作总流程](../CLAUDE.md#视频制作总流程6-阶段--后期)。
+
 ---
 
 ## 1. BGM 与七练品牌的契合点
@@ -117,10 +122,12 @@
 | 元素 | 推荐音量（相对） | 说明 |
 |---|---|---|
 | 旁白/人声 | 0 dB（参考点）| 主体 |
-| BGM（**旁白期间**）| **-12 dB**（即人声的 25%）| ducking 状态（见 3.4 节）|
-| BGM（**无人声期间**）| **-8 dB**（即人声的 40%）| 主体时略高 |
+| BGM（**旁白期间**）| **-16 dB**（即人声的 15%，volume ≈ 0.15）| ducking 状态（见 3.4 节）|
+| BGM（**无人声期间**）| **-12 dB**（即人声的 25%，volume ≈ 0.25）| 主体时略高 |
 | 音效（按钮音、转场音）| -18 dB ~ -15 dB | 装饰，不能抢戏 |
 
+> **2026-06-05 调整**：基线从 -12/-8 dB 降到 -16/-12 dB。**用户反馈旧基线 BGM 仍盖过人声**（winged_scapula_b3 v1 验证）。新基线保证旁白始终清晰，BGM 永远不抢主体。
+>
 > 七练硬规则：**BGM 永远不能盖过人声**。这是 ducking 的设计目标。
 
 ### 3.3 入场与出场
@@ -131,7 +138,7 @@
 
 ### 3.4 ⚠️ ducking（闪避）规则
 
-**当旁白进入时，BGM 自动从 -8 dB 降到 -12 dB**；**旁白结束后，BGM 升回 -8 dB**。
+**当旁白进入时，BGM 自动从 -12 dB 降到 -16 dB**；**旁白结束后，BGM 升回 -12 dB**。
 
 > ⚠️ **本节 3.4 是 3.2 的精确版**：3.2 给的是基线范围，3.4 给的是按时间窗的精确曲线。实现 ducking 时以 3.4 为准。
 
@@ -140,11 +147,11 @@
 - 或在混音阶段用音频编辑工具（Audition、Logic）做 sidechain ducking
 
 ```tsx
-// 示例：旁白期间的 BGM 音量
+// 示例：旁白期间的 BGM 音量（2026-06-05 新基线）
 const voiceActive = (t) => t >= 0.5 && t < 12.0;  // 旁白时间窗
 const bgmVolume = voiceActive
-  ? 0.25  // 旁白时 -12 dB
-  : 0.4;  // 无人声 -8 dB
+  ? 0.15  // 旁白时 -16 dB
+  : 0.25; // 无人声 -12 dB
 
 <Audio src={staticFile("bgm_cyber_pulse.mp3")} volume={bgmVolume} />
 ```
@@ -153,7 +160,19 @@ const bgmVolume = voiceActive
 
 ## 4. BGM 的来源与生成
 
-### 4.1 优先级
+### 4.1 触发时机（2026-06-04 流程变更）
+
+> ⚠️ **BGM 是视频制作流程的最后一环**——在 **Phase 6** 选型。
+> 原因：BGM 时长必须 = 视频总时长（含段间停顿）。**总时长只有 Phase 6 之前才确定**（= 钩子 + 主体 + 段间停顿×N + 收尾 + 5s buffer）。
+> 提前选 BGM 长度会错，重生浪费 mmx 配额。
+
+| 阶段 | BGM 状态 |
+|---|---|
+| Phase 1-5 | ❌ **不能选 BGM**（总时长未定）|
+| Phase 6 | ✅ **选型 + 生成 + 时长对齐** |
+| 后期 | 集成到 Composition（与 ducking / 段间停顿配合）|
+
+### 4.2 优先级
 
 | 优先级 | 来源 | 适用 |
 |---|---|---|
@@ -162,7 +181,7 @@ const bgmVolume = voiceActive
 | 3 | 第三方平台购买 | Epidemic Sound / Artlist / Musicbed（商用授权）|
 | 4 | Royalty-free 库 | Pixabay Music / Uppbeat / Bensound（需自验授权）|
 
-### 4.2 mmx 生成 prompt 模板
+### 4.3 mmx 生成 prompt 模板
 
 使用 mmx 生成 BGM 时，按下面 4 个 prompt 模板之一：
 
@@ -194,7 +213,7 @@ bouncy bass, light synth melody, no vocals, no lyrics,
 20 seconds, loopable, suitable for tutorial steps
 ```
 
-### 4.3 输出位置
+### 4.4 输出位置
 
 生成的 BGM 放在 `resources/audios/bgm/`：
 
@@ -210,7 +229,7 @@ resources/audios/
 
 > BGM 与旁白**分开文件管理**，方便调音量、调时间、做混音。
 
-### 4.4 时长处理
+### 4.5 时长处理
 
 - 如果生成的 BGM 短于视频，用剪辑工具（Audition、ffmpeg）做无缝循环
 - 如果 BGM 长于视频，淡出在最后
@@ -223,7 +242,7 @@ resources/audios/
 ### 5.1 与 `subtitle.md` 协同
 
 - 字幕入场用 `spring({ damping: 8, stiffness: 200, mass: 0.5 })`（弹跳）
-- BGM 在旁白期间做 ducking（降到 -12 dB）
+- BGM 在旁白期间做 ducking（降到 -16 dB，2026-06-05 调整）
 - 字幕动效 + BGM 节奏 = 整体"科技感 + 力量感"听感
 
 ### 5.2 与 `copy.md` 协同
@@ -273,8 +292,8 @@ resources/audios/
 ```
 ❌ 旁白 -3dB, BGM -3dB  （人声和 BGM 同样响，听不清）
 ❌ BGM 全程 -6dB  （ducking 没做）
-❌ BGM 突然从 -12dB 跳到 -3dB  （爆音）
-❌ 旁白结束后 BGM 没回升到 -8dB（应回升到 -8 dB，不是 -10 dB）
+❌ BGM 突然从 -16dB 跳到 -3dB  （爆音，2026-06-05 旧值已更新为 -16dB）
+❌ 旁白结束后 BGM 没回升到 -12dB（应回升到 -12 dB，不是 -10 dB）
 ```
 
 ---
@@ -386,8 +405,8 @@ import { Sequence, Audio } from "remotion";
 
 **混音阶段**
 
-- [ ] 旁白期间 BGM = -12 dB（ducking 状态，见第 3.2 / 3.4 节）
-- [ ] 无人声期间 BGM = -8 dB
+- [ ] 旁白期间 BGM = -16 dB（ducking 状态，见第 3.2 / 3.4 节，2026-06-05 调整）
+- [ ] 无人声期间 BGM = -12 dB（2026-06-05 调整）
 - [ ] 视频末 2-3s fade out
 - [ ] 段落切换用 0.3-0.5s 短 fade，不用硬切
 - [ ] 音量变化用 `lerp`/`interpolate`，不用阶跃
