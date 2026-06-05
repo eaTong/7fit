@@ -105,16 +105,39 @@ header {
   border-radius: 12px;
   padding: 28px;
   margin-bottom: 14px;
-  min-height: 280px;
+  min-height: 480px;
 }
 .teleprompter-card h2 { font-size: 14px; margin-bottom: 12px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1.5px; }
 
-.teleprompter {
-  font-size: 30px;
-  line-height: 1.85;
-  letter-spacing: 0.5px;
+/* 当前要念的台词：超大 + 醒目 */
+.current-text {
+  font-size: 64px;              /* 桌面端录旁白用的字号，再大自己再调 */
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 1.5px;
+  padding: 28px 0;
+  text-align: left;
+  word-break: break-word;
 }
-.teleprompter .seg-meta {
+.current-text .highlight {
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 1em;
+  text-shadow: 0 0 12px rgba(255, 69, 0, 0.35);
+}
+.current-text .pause-cue {
+  font-size: 0.28em;        /* 相对 current-text 缩小 */
+  background: var(--secondary);
+  color: var(--text);
+  padding: 4px 14px;
+  border-radius: 4px;
+  font-weight: 700;
+  vertical-align: middle;
+  margin: 0 10px;
+  white-space: nowrap;
+}
+.teleprompter-card .seg-meta {
   font-size: 13px;
   color: var(--text-2);
   margin-bottom: 18px;
@@ -124,9 +147,9 @@ header {
   gap: 16px;
   flex-wrap: wrap;
 }
-.teleprompter .seg-meta span { color: var(--text-2); }
-.teleprompter .seg-meta strong { color: var(--text); }
-.teleprompter .pause-cue {
+.teleprompter-card .seg-meta span { color: var(--text-2); }
+.teleprompter-card .seg-meta strong { color: var(--text); }
+.teleprompter-card .pause-cue {
   display: inline-block;
   background: var(--secondary);
   color: var(--text);
@@ -137,11 +160,11 @@ header {
   font-weight: 600;
   vertical-align: middle;
 }
-.teleprompter .highlight {
+.teleprompter-card .highlight {
   color: var(--primary);
   font-weight: 700;
 }
-.teleprompter .hint-banner {
+.teleprompter-card .hint-banner {
   font-size: 14px;
   color: var(--warning);
   margin-top: 18px;
@@ -188,6 +211,45 @@ header {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
   margin-bottom: 16px;
+}
+/* 速度档位选择 */
+.speed-control {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+.speed-control .label {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-right: 4px;
+}
+.speed-btn {
+  background: var(--card-2);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.speed-btn:hover:not(.active) {
+  background: var(--bg);
+  color: var(--text);
+}
+.speed-btn.active {
+  background: var(--primary);
+  color: var(--text);
+  border-color: var(--primary);
+}
+.speed-btn .hint {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-left: 4px;
 }
 .metric {
   background: var(--card-2);
@@ -272,6 +334,25 @@ button.ghost { background: transparent; border: 1px solid var(--border); }
 }
 .progress-item .label { flex: 1; }
 .progress-item .status { font-size: 14px; min-width: 20px; text-align: center; }
+/* CTA 段：橙色左边框 + 徽章 */
+.progress-item.cta-item {
+  border-left-color: var(--primary);
+  background: rgba(255, 69, 0, 0.06);
+}
+.progress-item.cta-item.active {
+  background: rgba(255, 69, 0, 0.20);
+}
+.progress-item .cta-badge {
+  background: var(--primary);
+  color: var(--text);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
 
 .checklist { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
 .checklist label {
@@ -356,7 +437,8 @@ footer code {
     <div id="content">
       <div class="empty-state" id="emptyState">
         <h2>👆 上方选择场景开始</h2>
-        <p>如果你刚添加了新场景，运行 <code>node tools/regenerate-scenes.js</code> 刷新列表</p>
+        <p>选择场景后旁白会自动加载，无需手动复制</p>
+        <p>如果刚改了 <code>copy/&lt;scene&gt;.md</code>，跑 <code>node tools/regenerate-scenes.js</code> 刷新</p>
       </div>
     </div>
   </div>
@@ -371,13 +453,19 @@ footer code {
           <div class="metric-label">当前 字/秒</div>
         </div>
         <div class="metric">
-          <div class="metric-value" id="targetSpeed">4.8</div>
+          <div class="metric-value" id="targetSpeed">3.4</div>
           <div class="metric-label">目标 字/秒</div>
         </div>
         <div class="metric">
           <div class="metric-value" id="wordsRemaining">--</div>
           <div class="metric-label">剩余 字数</div>
         </div>
+      </div>
+      <div class="speed-control">
+        <span class="label">速度：</span>
+        <button class="speed-btn" data-speed="2.5">慢 <span class="hint">2.5</span></button>
+        <button class="speed-btn active" data-speed="3.4">中 <span class="hint">3.4</span></button>
+        <button class="speed-btn" data-speed="4.0">快 <span class="hint">4.0</span></button>
       </div>
       <div class="controls">
         <button id="startBtn">▶ 开始</button>
@@ -417,10 +505,17 @@ footer code {
 
 <script>
 /* === Configuration === */
-const DEFAULT_TARGET_SPEED = 4.8;  // 通用兜底
+// 中速 = 主体字数 / 主体时长（主体 50s 为锚点；当前主体 196 字 → 中速 3.4 字/秒）
+// 详见 remotion/rules/timing-sync.md
+const DEFAULT_TARGET_SPEED = 3.4;  // 中速（用户可调：2.5 / 3.4 / 4.0）
+const SPEED_OPTIONS = [2.5, 3.4, 4.0];
+// 段间停顿（timing-sync.md §0：段间 0.5-1s 可调 + §3 破折号 0.3-0.5s）
+// 0.5s 起步对应"可调"档位的下限；如需慢节奏录制可改 0.7/1.0
+const INTER_SEGMENT_PAUSE = 0.5;   // 每段后停顿（最后一段不计）
+const DASH_PAUSE = 0.3;             // 每个 "——" 念到时额外停顿
 
 /* === SCENES_DATA_START === */
-const SCENES_DATA = {"generatedAt":"2026-06-03T17:55:16.689Z","totalScenes":1,"scenes":[{"id":"winged_scapula_b3","title":"文案稿：翼状肩胛自测 + 改善：4 个动作","account":"主号（健身博主号）","type":"B 类 — 健身知识","duration":50,"bgm":"Power Build（105 BPM, tech house）","channel":"抖音主号（B 类）","audioPath":"../../resources/audios/winged_scapula_b3.mp3","copyFile":"winged_scapula_b3.md"}]};
+const SCENES_DATA = {"generatedAt":"2026-06-05T02:16:38.752Z","totalScenes":1,"scenes":[{"id":"winged_scapula_b3","title":"文案稿：翼状肩胛自测 + 改善：4 个动作","account":"主号（健身博主号）","type":"B 类 — 健身知识","duration":60,"bgm":"Power Build（105 BPM, tech house）","channel":"抖音主号（B 类）","audioPath":"../../resources/audios/winged_scapula_b3.m4a","scriptText":"## 钩子（前 3 秒）\n夏天穿衣，后背鼓起来一块？\n\n## 主体（~50 秒，196 字，**中 3.4 字/秒**）\n你可能有翼状肩胛。\n先用两个动作自测一下。\n第一个：背对镜子站好，肩膀放松手垂下来。\n肩胛骨内侧明显突出，就是翼状。\n第二个：双手推墙，让朋友看背后。\n肩胛骨像长了翅膀翘起来，基本没跑了。\n别担心，今天教你 4 个动作改善一下。\n第一个，**壁虎推墙**。\n前臂贴墙往上滑，肩胛骨要往下沉。12 次 3 组。\n第二个，俯卧撑变体。\n肩胛骨先往前推再收回，激活**前锯肌**。8 次 3 组。\n第三个，**YTWL**。\nY T W L 四个字母各停 2 秒，感受肩胛骨向中间夹。\n第四个，弹力带后收。\n双手向两侧拉开，重点是肩胛骨夹紧。15 次 3 组。\n\n## 收尾（~7 秒）\n这 4 个动作，每天 10 分钟就够。\n去试试，评论区交作业。","copyFile":"winged_scapula_b3.md"}]};
 /* === SCENES_DATA_END === */
 
 /* === State === */
@@ -431,6 +526,7 @@ let currentSegIdx = 0;
 let isPlaying = false;
 let startTime = 0;
 let elapsedWhenPaused = 0;
+let targetSpeed = DEFAULT_TARGET_SPEED;   // 用户可改：3.5 / 4.2 / 5.0
 let timerInterval = null;
 
 /* === Utilities === */
@@ -450,21 +546,52 @@ function countChars(text) {
 /* === Parsing copy.md === */
 function parseScript(md) {
   const sections = [];
-  const sectionRegex = /##\s*(.+?)\n([\s\S]*?)(?=^##\s|\Z)/gm;
+  // 不用 lookahead regex——Node.js 里 \Z 在 lookahead 中不工作，
+  // $ 太宽（匹配任意行尾）会吞 0 字 body。
+  // 改用「扫 H2 位置 + slice」两步走，可靠。
+
+  // 第 1 步：扫所有 H2 标题位置
+  const h2Regex = /^## (.+)$/gm;
+  const positions = [];
   let m;
-  while ((m = sectionRegex.exec(md)) !== null) {
-    sections.push({ title: m[1].trim(), content: m[2].trim() });
+  while ((m = h2Regex.exec(md)) !== null) {
+    positions.push({ title: m[1].trim(), start: m.index });
+  }
+  if (positions.length === 0) return [];
+
+  // 第 2 步：给每个 H2 算 end（下一个 H2 的 start，或文件末尾）
+  for (let i = 0; i < positions.length; i++) {
+    positions[i].end = i + 1 < positions.length
+      ? positions[i + 1].start
+      : md.length;
+  }
+
+  // 第 3 步：取 title + body
+  for (const pos of positions) {
+    const body = md.slice(pos.start, pos.end);
+    sections.push({ title: pos.title, content: body });
+  }
+
+  // 预计算总段数：用于判断"最后一段"（最后一段不计 INTER_SEGMENT_PAUSE）
+  let totalLineCount = 0;
+  for (const section of sections) {
+    const lines = section.content.split('\n')
+      .slice(1)
+      .map(l => l.replace(/^>\s*/, '').replace(/^-\s*\[[ x]\]\s*/, '').trim())
+      .filter(l => l.length > 0);
+    totalLineCount += lines.length;
   }
 
   const segs = [];
   let segIdx = 0;
   let elapsedSec = 0;
-  const targetSpeed = currentScene ? currentScene.duration / currentScene.totalChars * 10 : DEFAULT_TARGET_SPEED;
-  // 简化：用全局目标速度
-  const useSpeed = DEFAULT_TARGET_SPEED;
+  // 用模块级 targetSpeed（用户可在 UI 切换：3.5/4.2/5.0）
+  const useSpeed = targetSpeed;
 
   for (const section of sections) {
+    // section.content 第一行是 `## 钩子（前 3 秒）` 这种 H2 标题——跳过，不当朗读段
     const lines = section.content.split('\n')
+      .slice(1)                                                       // ← 跳过 ## title 行
       .map(l => l.replace(/^>\s*/, '').replace(/^-\s*\[[ x]\]\s*/, '').trim())
       .filter(l => l.length > 0);
 
@@ -475,8 +602,14 @@ function parseScript(md) {
       const cleanText = text.replace(/\*\*/g, '');
       const words = countChars(cleanText);
       const duration = words / useSpeed;
+      const dashCount = (cleanText.match(/——/g) || []).length;
+      // 段间停顿：除最后一段外每段后 INTER_SEGMENT_PAUSE
+      // —— 停顿：每个 DASH_PAUSE
+      const isLastGlobal = (segIdx === totalLineCount - 1);
+      const segPause = (isLastGlobal ? 0 : INTER_SEGMENT_PAUSE) + dashCount * DASH_PAUSE;
       const tcStart = elapsedSec;
       const tcEnd = elapsedSec + duration;
+      const totalEnd = tcEnd + segPause;                              // 念完 + 停顿完的时点
 
       const hints = generateHints(cleanText);
       segs.push({
@@ -485,11 +618,14 @@ function parseScript(md) {
         text: cleanText,
         words,
         duration,
+        dashCount,
+        segPause,
         tcStart,
         tcEnd,
+        totalEnd,
         hints
       });
-      elapsedSec = tcEnd;
+      elapsedSec = totalEnd;
     }
   }
   return segs;
@@ -520,6 +656,43 @@ function generateHints(text) {
     hints.push('🗣  语气词，念出时稍顿，让节奏自然');
   }
   return hints;
+}
+
+/* === Speed Control === */
+function setTargetSpeed(newSpeed) {
+  targetSpeed = newSpeed;
+  document.getElementById('targetSpeed').textContent = newSpeed.toFixed(1);
+  document.querySelectorAll('.speed-btn').forEach(b => {
+    b.classList.toggle('active', parseFloat(b.dataset.speed) === newSpeed);
+  });
+  // 重算每段时长
+  if (segments.length > 0) {
+    recomputeTimings();
+    renderAll();
+  }
+}
+
+function recomputeTimings() {
+  // seg.segPause 在 parseScript 时已算好（段间 + 破折号，不随速度变化），
+  // 这里只重算 duration / tcStart / tcEnd / totalEnd
+  let elapsed = 0;
+  for (const seg of segments) {
+    const duration = seg.words / targetSpeed;
+    seg.duration = duration;
+    seg.tcStart = elapsed;
+    seg.tcEnd = elapsed + duration;
+    seg.totalEnd = seg.tcEnd + (seg.segPause || 0);
+    elapsed = seg.totalEnd;
+  }
+  // 总时长显示也要更新（含停顿，与 storyboard/Composition 对齐）
+  if (segments.length > 0) {
+    const totalDuration = elapsed;
+    const m = Math.floor(totalDuration / 60);
+    const s = Math.floor(totalDuration % 60);
+    const totalStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    const targetEl = document.querySelector('.timer-block .target');
+    if (targetEl) targetEl.textContent = '/ ' + totalStr;
+  }
 }
 
 /* === Scene Management === */
@@ -575,22 +748,25 @@ function selectScene(sceneId) {
 }
 
 async function loadSceneScript() {
-  // Try fetch first, then fall back to a default demo
   if (!currentScene) return;
 
-  // Build the segments from embedded metadata
-  // We need the actual copy.md content
-  // Since HTML can't directly read filesystem, we use a "load via file picker" fallback
+  // 优先用 scenes.json 嵌入的 scriptText（自动从 copy.md 解析）
+  if (currentScene.scriptText && currentScene.scriptText.trim().length > 0) {
+    finishLoadScript(currentScene.scriptText);
+    return;
+  }
 
-  // For now: show a message asking user to load the script
+  // 兜底：scenes.json 里没嵌入（说明该 copy.md 里没有 > 旁白段）
+  // 这种情况下让用户手动粘贴，避免工具完全无法用
   const content = document.getElementById('content');
   content.innerHTML = `
     <div class="empty-state">
-      <h2>请加载脚本内容</h2>
-      <p>场景 <code>${currentScene.id}</code> 已选择</p>
-      <p>请把 <code>resources/docs/copy/${currentScene.copyFile}</code> 的内容粘贴到下方：</p>
+      <h2>未找到旁白段</h2>
+      <p>场景 <code>${currentScene.id}</code> 在 <code>copy/${currentScene.copyFile}</code> 里没有以 <code>&gt;</code> 开头的旁白引用</p>
+      <p>请检查 copy.md 的 <code>## 钩子 / ## 主体 / ## 收尾</code> 段是否使用了 <code>&gt;</code> 引用语法</p>
+      <p style="margin-top: 12px; color: var(--text-2); font-size: 12px;">或把全文粘贴到下方手动加载：</p>
       <textarea id="scriptTextarea" placeholder="把 copy.md 内容粘贴到这里..." style="margin-top: 12px; min-height: 200px; width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: 'SF Mono', monospace; font-size: 13px;"></textarea>
-      <button id="loadScriptBtn" style="margin-top: 12px;">加载并解析</button>
+      <button id="loadScriptBtn" style="margin-top: 12px;">手动加载并解析</button>
     </div>
   `;
   document.getElementById('loadScriptBtn').addEventListener('click', () => {
@@ -608,6 +784,7 @@ function finishLoadScript(md) {
   currentSegIdx = 0;
   elapsedWhenPaused = 0;
   document.getElementById('timerDisplay').textContent = '00:00';
+  recomputeTimings();  // 同步总目标时长（含停顿）
   renderAll();
 }
 
@@ -623,12 +800,12 @@ function renderTeleprompter() {
   // First handle bold
   html = html.replace(/\*\*(.+?)\*\*/g, '<span class="highlight">$1</span>');
   // Then handle pause cue (insert in the middle of text)
-  // We'll do it as a line break + cue
+  // 每个 "——" = DASH_PAUSE 秒（与 timer 实际停顿对齐）
   const parts = html.split('——');
   if (parts.length > 1) {
     let result = parts[0];
     for (let i = 1; i < parts.length; i++) {
-      result += '<span class="pause-cue">⏸ 0.5s</span>' + parts[i];
+      result += `<span class="pause-cue">⏸ ${DASH_PAUSE}s</span>` + parts[i];
     }
     html = result;
   }
@@ -638,11 +815,11 @@ function renderTeleprompter() {
   const meta = `
     <div class="seg-meta">
       <span>⏱ <strong>${formatTime(seg.tcStart)}</strong> → <strong>${formatTime(seg.tcEnd)}</strong></span>
-      <span>📂 ${seg.sectionTitle}</span>
       <span>🔢 ${seg.words} 字</span>
       <span>🎯 目标 ${formatTime(seg.tcEnd - seg.tcStart)}</span>
+      ${seg.segPause > 0 ? `<span style="color: var(--secondary);">⏸ 段后停顿 +${seg.segPause.toFixed(1)}s</span>` : ''}
     </div>
-    <div>${html}</div>
+    <div class="current-text">${html}</div>
   `;
 
   let hintHtml = '';
@@ -654,7 +831,7 @@ function renderTeleprompter() {
   if (next) {
     nextHtml = `
       <div class="next-seg">
-        <div class="label">下一段</div>
+        <div class="label">下一段 · 停顿 ${seg.segPause.toFixed(1)}s 后</div>
         <div>${formatTime(next.tcStart)} - ${formatTime(next.tcEnd)} · ${next.text.slice(0, 60)}${next.text.length > 60 ? '...' : ''}</div>
       </div>
     `;
@@ -671,9 +848,13 @@ function renderProgress() {
     item.className = 'progress-item';
     if (idx < currentSegIdx) item.classList.add('done');
     if (idx === currentSegIdx) item.classList.add('active');
+    // CTA 段：含「你试了」「评论告诉我」「关注我」「下个体态问题见」
+    const isCTA = /^(你试了|评论告诉我|关注我|下个体态)/.test(seg.text);
+    if (isCTA) item.classList.add('cta-item');
     item.innerHTML = `
       <span class="timecode">${formatTime(seg.tcStart)}</span>
-      <span class="label">${seg.text.slice(0, 40)}${seg.text.length > 40 ? '...' : ''}</span>
+      <span class="label">${seg.text.slice(0, 36)}${seg.text.length > 36 ? '...' : ''}</span>
+      ${isCTA ? '<span class="cta-badge">🎯 CTA</span>' : ''}
       <span class="status">${idx < currentSegIdx ? '✓' : idx === currentSegIdx ? '▶' : '○'}</span>
     `;
     item.addEventListener('click', () => {
@@ -726,19 +907,19 @@ function startTimer() {
       const seg = segments[currentSegIdx];
       const segElapsed = elapsed - seg.tcStart;
 
-      // Real-time speed
-      if (segElapsed > 0.5 && seg.words > 0) {
+      // Real-time speed（仅在朗读阶段计算，停顿期间冻结不被拖低）
+      if (segElapsed > 0.5 && segElapsed <= seg.duration && seg.words > 0) {
         const currentSpeed = seg.words / segElapsed;
         const speedEl = document.getElementById('currentSpeed');
         speedEl.textContent = currentSpeed.toFixed(1);
         speedEl.className = 'metric-value';
-        if (currentSpeed > DEFAULT_TARGET_SPEED * 1.2) speedEl.classList.add('fast');
-        else if (currentSpeed < DEFAULT_TARGET_SPEED * 0.8) speedEl.classList.add('slow');
+        if (currentSpeed > targetSpeed * 1.2) speedEl.classList.add('fast');
+        else if (currentSpeed < targetSpeed * 0.8) speedEl.classList.add('slow');
         else speedEl.classList.add('good');
       }
 
-      // Auto-advance
-      if (elapsed >= seg.tcEnd - 0.001) {
+      // Auto-advance（含段间停顿 + 破折号停顿，totalEnd 后才进下一段）
+      if (elapsed >= seg.totalEnd - 0.001) {
         currentSegIdx++;
         renderAll();
       }
@@ -798,6 +979,13 @@ document.getElementById('startBtn').addEventListener('click', startTimer);
 document.getElementById('pauseBtn').addEventListener('click', pauseTimer);
 document.getElementById('resetBtn').addEventListener('click', resetTimer);
 document.getElementById('skipBtn').addEventListener('click', skipSegment);
+
+// 速度档位
+document.querySelectorAll('.speed-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setTargetSpeed(parseFloat(btn.dataset.speed));
+  });
+});
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {

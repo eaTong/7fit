@@ -5,6 +5,11 @@
 > 状态：✅ 生效
 > **视频类型**：开工前先确定属于 3 类中的哪一类（A 个人人设 / B 健身知识 / C 七练介绍），详见 `video-types.md`
 
+> ⏰ **2026-06-04 强制**：Composition `durationInFrames` = 全文时长 × fps，**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
+> 当前 winged_scapula_b3：durationInFrames = **1860** (62s × 30fps，含 2.1s 段间停顿)。改时长 → 7 个文件同步（见 timing-sync.md §3）。
+>
+> **2026-06-04 流程变更**：脚本阶段归 **Phase 2**（用户文案确认门通过后）。详见 [CLAUDE.md 视频制作总流程](../CLAUDE.md#视频制作总流程6-阶段--后期)。
+
 ---
 
 ## 1. 入口与场景命名
@@ -60,6 +65,24 @@
   <span className="text-white text-3xl">3 秒记录，一次搞定</span>
 </div>
 ```
+
+### 1.6 🆕 段间停顿 Sequence（2026-06-04 用户硬约束）
+
+> **核心**：每个段间停顿（copy.md 段落之间的 0.5-1s 静音）在脚本里必须落成 1 个独立的 `<Sequence>`，**`durationInFrames` = 段间秒数 × fps**。
+
+```tsx
+// ✅ winged_scapula_b3 主体段间停顿示例（默认 0.7s = 21 帧 @ 30fps）
+<Sequence from={90} durationInFrames={21}>
+  <SegmentPause from="自测 1" to="自测 2" />   {/* 段间停顿组件 */}
+</Sequence>
+
+// ❌ 错误：把段间停顿塞进主 Sequence 里
+<Sequence from={90} durationInFrames={150}>
+  <SelfTestTwo />    {/* 50% 时间是段间停顿，浪费 */}
+</Sequence>
+```
+
+> 段间停顿 Sequence 的 content：空镜 / 黑屏 + 章节标题 + 转入/转出动效（详见 [storyboard.md §4.5-4.6](storyboard.md)）。
 
 ---
 

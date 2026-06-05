@@ -46,9 +46,13 @@ remotion/src/scenes/<视频主题>/
 ├── storyboard.md
 ├── storyboard.json
 ├── assets.md           # ← 素材清单（人类可读）
+├── shoot-checklist.md  # ← 拍摄清单（外拆，详见 §2.4）
 └── components/
     └── ...
 ```
+
+> 🆕 **2026-06-04**：转场音效 sfx 资源按 `T1` / `T2` / `T3` 编号，路径见 §2 路径清单。
+> 来源：`mmx 生成` 或 `用户提供`；目标位置 `remotion/public/<主题>/audios/sfx/`。
 
 ### 1.4 ⚠️ 可代码实现的内容不进 assets.md（强约束）
 
@@ -88,38 +92,52 @@ remotion/src/scenes/<视频主题>/
 
 ## 2. 素材清单格式（assets.md）
 
+> ⚠️ **2026-06-04 升级**：从"按类型分组"重构为 **Option A——按 `#` 编号单表**。
+> 详见 §2.0 设计动机。
+
+### 2.0 设计动机
+
+之前的格式按"视频/图片/音频/代码组件"分 4 个表格，每个表格有自己的"路径清单"块。**3 个痛点**：
+
+| 痛点 | 体现 |
+|---|---|
+| 路径清单重复 3-5 次 | 改文件名要改多处 |
+| "来源"列与路径清单信息冗余 | 表格里写"用户自拍"，上面又写路径 |
+| 按"类型"分组，扫不到"行动项" | 用户实际想问"我现在要拍什么"，不是"视频有哪些子节" |
+
+**Option A 重构后**：
+- §0 **状态总览**（一眼看进度）—— 5 列：✅ / 📋 / ❌ / 🆕
+- §1 **全部资产**（单表，按 # 排序）—— 1 张表覆盖 video/image/audio/code
+- §2 **路径清单**（单份，#1-#N 全列）—— 不再每个类型分块
+- §3 **代码组件 TODO**（单独成节）
+- §4 **推荐执行顺序**
+- §5 **指向 shoot-checklist.md**（拍摄清单外拆）
+
 ### 2.1 必填字段（每个素材必须有）
 
-> 2026-06-04 升级：每个素材**必须**包含完整字段。文件名 / 目标位置是"机械信息"，
-> 抽到表格上方的"路径清单"里展示；表格内只保留"内容字段"（便于横向对比）。
-
-**表格内字段**
+**§1 表格内字段**
 
 | 字段 | 必填 | 说明 |
 |---|---|---|
-| **#** | ✅ | 编号（用于组件 import 时引用，整份文档唯一）|
-| **状态** | ✅ | `✅ 已生成` / `❌ 缺失` / `❌ 📋 待拍` / `⏸️ 进行中` |
-| **类型** | ✅ | `video` / `image` / `audio` / `bgm` / `voiceover` / `font` |
+| **#** | ✅ | 编号（用于组件 import 时引用，整份文档唯一）。代码组件用 `C1` / `C2` 前缀。转场音效用 `T1` / `T2` 前缀（2026-06-04 新增）|
+| **类型** | ✅ | `video` / `image` / `audio` / `bgm` / `voiceover` / `sfx` 🆕 / `code` |
+| **状态** | ✅ | 4 选 1：`✅ 就位` / `📋 待拍` / `❌ 缺失` / `🆕 待实现` |
 | **描述** | ✅ | 这个素材是什么（1-2 句中文，**画面/声音内容描述**）|
-| **来源** | ✅ | `resources/<目录>/<文件名>` 或 `mmx 生成` 或 `用户提供` |
-| **拍摄要求** | 仅视频 | 5 维度（机位/光线/时长/动作/其他），见 §2.2 |
-| **备注** | 可选 | 特殊说明（如"需裁剪"、"需转码"）|
+| **拍摄要求** | 仅 video | 5 维度（机位/光线/时长/动作/其他），见 §2.2 |
 
-**表格外字段（路径清单）**
+> **"来源"列已删除**——信息已包含在 §2 路径清单的"源路径"列，不重复。
 
-放在每个表格的**正上方**，按编号列出：
+**§2 路径清单字段**
 
-```
-### 文件路径清单
-- **#1**: `resources/videos/<scene>_001_hook.mov` → `remotion/public/<scene>/videos/001_hook.mov`
-- **#2**: `resources/videos/<scene>_002_wall_push.mov` → `remotion/public/<scene>/videos/002_wall_push.mov`
-- **#3**: `resources/images/<scene>_scapula_anatomy.png` → `remotion/public/<scene>/images/scapula_anatomy.png`
-```
+| 字段 | 必填 | 说明 |
+|---|---|---|
+| `#` | ✅ | 与 §1 对应 |
+| `状态` | ✅ | 同上 |
+| `源路径` | ✅ | `resources/<目录>/<文件名>`（mmx 生成/用户提供的原始位置）|
+| `目标位置` | ✅* | `remotion/public/<主题>/<子目录>/<文件名>` |
 
-> **关于"目标位置"**：
-> - 当前**没有**自动复制脚本，所以路径清单里**必须**同时给出 `源 → 目标`，人工或脚本对照复制
-> - 如果未来加入自动复制脚本（如 `scripts/copy-assets.sh`），目标位置可省略——因为程序会自动算
-> - 路径里的 `<scene>` 替换为实际视频主题（如 `winged_scapula_b3`）
+> *`目标位置` 在**当前没有自动复制脚本**时必填。如果未来加了 `scripts/copy-assets.sh` 之类的工具，
+> 路径清单里可以**只写源路径**——目标位置由脚本自动算出来。
 
 ### 2.2 视频素材的"拍摄要求"（必填）
 
@@ -136,9 +154,7 @@ remotion/src/scenes/<视频主题>/
 | **动作要求** | 慢/快、几遍、关键发力点 | "正常速度 1 遍 + 0.5x 慢动作 1 遍（关键发力点）" |
 | **其他** | 着装/避免遮挡/杂物等 | "穿贴身衣 / 露出肩胛骨 / 背景简洁" |
 
-### 2.3 完整模板
-
-> **新格式核心**：文件名 / 目标位置抽到表格上方的"路径清单"，表格内只剩"内容字段"。
+### 2.3 完整模板（Option A 单表）
 
 ```markdown
 # 素材清单：<视频主题>
@@ -146,165 +162,187 @@ remotion/src/scenes/<视频主题>/
 **视频主题**：<主题>
 **视频类型**：<A/B/C>
 **目标账号**：<main/sub>
+**BGM 类型**：<Cyber Pulse / Power Build / Quiet Think / Hop Pulse>
+**目标时长**：<秒>
 **生成日期**：<YYYY-MM-DD>
-**关联脚本**：resources/docs/copy/<主题>.md
-**关联分镜**：storyboard.md
+**关联脚本**：[copy.md](../../../docs/copy/<主题>.md)
+**关联分镜**：[storyboard.md](storyboard.md) （待生成）
 
 ---
 
-## 0. 状态总览（看一眼就知道整体进度）
+## 0. 状态总览
 
-| 类别 | 总数 | ✅ 已生成 | ❌ 缺失 / 📋 待拍 | 阻塞 |
+| 类别 | 总数 | ✅ 就位 | 📋 待拍 | ❌ 缺失 | 🆕 待实现 |
+|---|---|---|---|---|---|
+| 视频（用户自拍） | <N> | <X> | <Y> | 0 | - |
+| 图片（mmx 生成） | <N> | <X> | - | <Y> | - |
+| 音频（用户自录） | <N> | <X> | - | <Y> | - |
+| 音频（mmx BGM） | <N> | <X> | - | <Y> | - |
+| 🆕 转场音效（mmx sfx） | <N> | <X> | - | <Y> | - |
+| 代码组件 | <N> | <X> | - | - | <Y> |
+| **合计** | <sum> | <sum> | <sum> | <sum> | <sum> |
+
+> 📌 **总览解读**：✅ = 无需操作；📋 = 用户要拍/录；❌ = mmx 要生；🆕 = 开发要写。
+
+---
+
+## 1. 全部资产（单表，按 # 排序）
+
+> 数字 # 与"§2 路径清单"一一对应。
+
+| # | 类型 | 状态 | 描述 | 拍摄要求（仅视频）|
 |---|---|---|---|---|
-| 视频（用户自拍） | <N> | 0 | <N> | - |
-| 图片（mmx 生成） | <N> | 0 | <N> | - |
-| 音频（用户自录） | <N> | 0 | <N> | - |
-| 音频（mmx BGM） | <N> | 0 | <N> | - |
-| 🆕 代码组件（`code_component`） | <N> | 0 | <N> | - |
-| **合计** | <sum> | 0 | <sum> | - |
+| 1 | video | 📋 待拍 | 用户背对镜头，肩胛骨翼状 vs 正常对比演示 | **机位**：背对镜头 / 平齐肩部<br>**光线**：自然光左前方 45°<br>**时长**：≥ 10s<br>**动作**：自然站立 / 双手垂身侧 / 缓慢转 30°<br>**其他**：贴身运动衣 / 露出肩胛骨 |
+| 2 | video | 📋 待拍 | 镜子自测 1：背对镜子，自然站立 | **机位**：背对落地镜 / 朋友从侧前方拍<br>**光线**：均匀<br>**时长**：≥ 5s<br>**动作**：自然站立 / 肩完全放松 / 手垂下<br>**其他**：朋友站镜子侧前方 / 露出肩胛骨 |
+| 3 | image | ✅ 就位 | 翼状肩 vs 正常肩胛 解剖示意（钩子背景用）| - |
+| 4 | voiceover | ✅ 就位 | 旁白（**3.4 字/秒 × 196 字 ≈ 58s**，含 2.1s 段间停顿 = 全文 66s）| **M4A / AAC-LC / 单声道 / 44.1-48 kHz / 64-128kbps+** / 必用户自录 |
+| 5 | bgm | ✅ 就位 | BGM Power Build | 105 BPM / tech house / Dm / **≥ 65s** 可循环（**Phase 6 选型**）|
+| T1 | sfx 🆕 | ❌ 缺失 | 钩子 → 主体 转场音效（whoosh / 滑动声）| 0.3-0.5s / 与视频"动起来"节奏匹配 / Phase 5 mmx 生成 |
+| T2 | sfx 🆕 | ❌ 缺失 | 主体段内（自测 1→2 / 动作 1→2 / 2→3 / 3→4）转场音效 | 0.3-0.5s × 3 段 |
+| T3 | sfx 🆕 | ❌ 缺失 | 主体 → 收尾 转场音效（柔和一点，对应"沉淀"）| 0.3-0.5s |
+| C1 | code | 🆕 待实现 | `<ActionDataCard>` 壁虎推墙 · 12-15 × 3 | - |
+| C2 | code | 🆕 待实现 | `<ActionDataCard>` 俯卧撑+前伸 · 8-12 × 3 | - |
 
 ---
 
-## 1. 视频素材（用户自拍为主——共 <N> 段）
+## 2. 路径清单（单份）
 
-> ⚠️ **所有视频都依赖用户自拍**——是当前唯一阻塞
+| # | 状态 | 源路径 | 目标位置 |
+|---|---|---|---|
+| 1 | 📋 待拍 | `resources/videos/<scene>_001_hook_compare.mov` | `remotion/public/<scene>/videos/001_hook_compare.mov` |
+| 2 | 📋 待拍 | `resources/videos/<scene>_002_mirror_test.mov` | `remotion/public/<scene>/videos/002_mirror_test.mov` |
+| 3 | ✅ 就位 | `resources/images/<scene>_scapula_anatomy_01.png` | `remotion/public/<scene>/images/scapula_anatomy.png` |
+| 4 | ✅ 就位 | `resources/audios/<scene>.m4a` | `remotion/public/<scene>/audios/<scene>.m4a` |
+| 5 | ✅ 就位 | `resources/audios/bgm/power_build.mp3` | `remotion/public/<scene>/audios/bgm/power_build.mp3` |
 
-### 文件路径清单
-
-- **#1**: `resources/videos/<scene>_001_hook_compare.mov` → `remotion/public/<scene>/videos/001_hook_compare.mov`
-- **#2**: `resources/videos/<scene>_002_mirror_test.mov` → `remotion/public/<scene>/videos/002_mirror_test.mov`
-- **#3**: `resources/videos/<scene>_003_wall_push.mov` → `remotion/public/<scene>/videos/003_wall_push.mov`
-
-| # | 状态 | 类型 | 描述 | 来源 | 拍摄要求 |
-|---|---|---|---|---|---|
-| 1 | ❌ 📋 待拍 | video | 用户背对镜头，肩胛骨翼状 vs 正常对比演示 | 用户自拍 | **机位**：背对镜头 / 镜头平齐肩部<br>**光线**：自然光从左前方<br>**时长**：≥ 10s<br>**动作**：自然站立 / 双手垂在身侧 / 缓慢转身 30°<br>**其他**：穿贴身衣 / 露出肩胛骨 |
-| 2 | ❌ 📋 待拍 | video | 镜子自测 1：背对镜子，自然站立 | 用户自拍 | **机位**：背对落地镜 / 朋友侧前方拍<br>**光线**：均匀<br>**时长**：≥ 5s<br>**动作**：自然站立 / 肩完全放松 / 手垂下<br>**其他**：露出肩胛骨 |
-| 3 | ❌ 📋 待拍 | video | 推墙测试：面对墙双手前平举推墙 | 用户自拍 | **机位**：侧面 45°<br>**光线**：自然光侧方<br>**时长**：≥ 10s<br>**动作**：面对墙 / 双臂前平举 / 推 5s / 收回<br>**其他**：需 1 个朋友帮忙 |
+> 已就位项 (#3-#5) **已复制**到 public/；待拍项 (#1-#2) 等用户拍完再复制。
 
 ---
 
-## 2. 图片素材（mmx 生成或用户截图——共 <N> 张）
+## 3. 代码组件 TODO（`code_component`）
 
-> ⚠️ **本节只放"AI 优势 / 代码难做"的图片**：复杂概念图、解剖示意、抽象背景、UI 截图。
-> **数据卡 / 标题 / 列表 / CTA / Badge 等"可代码实现"内容不进本节**——见 §1.4，参考 §4 模板。
+> 对应 §1 表格 #C1-#C2。这不是外部素材，是**实现清单**。完成后翻 ✅。
 
-### 文件路径清单
+| # | 组件名 | 用途 | props | 引用位置（预估）|
+|---|---|---|---|---|
+| C1 | `<ActionDataCard>` | 动作 1 数据卡：壁虎推墙 · 12-15 × 3 | `{ name: "壁虎推墙", reps: "12-15", sets: "3" }` | Shot S05（动作 1 演示）|
+| C2 | `<ActionDataCard>` | 动作 2 数据卡：俯卧撑+前伸 · 8-12 × 3 | `{ name: "俯卧撑+前伸", reps: "8-12", sets: "3" }` | Shot S07（动作 2 演示）|
 
-- **#1**: `resources/images/<scene>_scapula_anatomy.png` → `remotion/public/<scene>/images/scapula_anatomy.png`
+**实现位置**：`remotion/src/components/<Name>.tsx`（跨视频复用）
 
-| # | 状态 | 类型 | 描述 | 来源 | 备注 |
-|---|---|---|---|---|---|
-| 1 | ❌ 缺失 | image | 翼状肩 vs 正常肩胛 解剖示意（用于钩子背景）| mmx 生成 | 1080×1920 竖屏 / 暗色背景 / 橙红色高亮 / 半透明 |
-
----
-
-## 3. 音频素材
-
-### 文件路径清单
-
-- **#1**: `resources/audios/<scene>.mp3` → `remotion/public/<scene>/audios/<scene>.mp3`
-- **#2**: `resources/audios/bgm/power_build.mp3` → `remotion/public/<scene>/audios/bgm/power_build.mp3`
-
-| # | 状态 | 类型 | 描述 | 来源 | 备注 |
-|---|---|---|---|---|---|
-| 1 | ❌ 缺失 | voiceover | 旁白（4.8 字/秒 × 244 字 ≈ 50 秒）| **用户自录**（不用 TTS）| MP3 / 128kbps+ / 单声道 / 44.1kHz / [copy.md §9 录音规范](copy.md#9-用户自录旁白规范2026-06-04-起-tts-退役) |
-| 2 | ❌ 缺失 | bgm | BGM（Power Build 类型）| mmx 生成 | 105 BPM / tech house / Dm / ≥ 50s 可循环 |
+**实现模板**：见 [script.md §10.3](script.md#103-实现示例actiondatacard-骨架)
 
 ---
 
-## 4. 代码组件（`code_component`——对应分镜 `content_type: code_component`）
-
-> 本节**不是**外部素材清单，是 Remotion 代码实现的 TODO 列表。
-> 任何"数据卡 / 数字高亮 / 标题 / 列表 / CTA / Badge"等可代码实现的内容（见 §1.4）**必须**在本节列出，
-> 完成后 §0 状态总览里"代码组件"那行翻成 ✅。
-
-| # | 状态 | 组件名 | 用途 | props | 引用位置 |
-|---|---|---|---|---|---|
-| C1 | ❌ 待实现 | `<ActionDataCard>` | 动作 1 数据卡：壁虎推墙 · 12-15 次 × 3 组 | `{ name: "壁虎推墙", reps: "12-15", sets: "3" }` | Shot S05（动作 1 演示）|
-| C2 | ❌ 待实现 | `<ActionDataCard>` | 动作 2 数据卡：俯卧撑+前伸 · 8-12 次 × 3 组 | `{ name: "俯卧撑+前伸", reps: "8-12", sets: "3" }` | Shot S07（动作 2 演示）|
-
-**实现位置**：`remotion/src/components/<Name>.tsx`（跨视频复用）或 `remotion/src/scenes/<主题>/components/<Name>.tsx`（视频专属）
-
-**实现模板**：见 [script.md §10.3](script.md#103-实现示例actiondatacard-骨架) 的 `<ActionDataCard>` 骨架
-
----
-
-## 5. 状态汇总
-
-- **已就位**：<N> 项
-- **待生成/获取**：<M> 项
-- **阻塞情况**：<如果某些分镜没素材就实现不了，列出来>
-
-### 5.1 推荐执行顺序
+## 4. 推荐执行顺序
 
 ```
-第 1 步（并行）：
-  - <按可并行任务列>
+第 1 步（mmx 端：把已就位素材搬到 public/）：
+  mkdir -p remotion/public/<scene>/{videos,images,audios/bgm}
+  cp resources/images/<scene>_* remotion/public/<scene>/images/
+  cp resources/audios/<scene>.m4a remotion/public/<scene>/audios/     # 🆕 旁白从 mp3 改 m4a（2026-06-05）
+  cp resources/audios/bgm/*.mp3 remotion/public/<scene>/audios/bgm/  # BGM 仍 mp3（mmx 标准输出）
 
-第 2 步：
-  - 全部就位 → 复制到 remotion/public/<scene>/
-  - 跑 checklist.md 自检
+第 2 步（用户：按 shoot-checklist.md 拍摄 N 段视频）：
+  拍完一段拷到 resources/videos/，然后 cp 到 public/
 
-第 3 步：
-  - 实现 Scene 组件
-  - 启动 Studio 预览
-  - 等用户说"开始渲染"
+第 3 步（开发：实现 X 个代码组件）：
+  见 script.md §10.X
+
+第 4 步（mmx：用刚录的 mp3 识别字幕 → subtitles.json）
+
+第 5 步（开发：按字幕写分镜 storyboard.md/.json）
+
+第 6 步（开发：实现 Scene 组件 + 集成 BGM + 转场）
+
+第 7 步（跑 checklist.md 自检 → 等用户说"开始渲染"）
 ```
 
 ---
 
-## 6. 拍摄清单（执行前自检）
+## 5. 拍摄清单
 
-### 6.1 通用要求（所有视频）
+> ⚠️ **已拆到独立文件**：[shoot-checklist.md](shoot-checklist.md) — 拍摄当天打开这个文件。
+> 本文件 §1 表格里"拍摄要求"列是技术规格（机位/光线/时长/动作/其他），shoot-checklist.md 是执行清单（环境/设备/通用要求 + 各段特别提醒）。
+```
 
-- [ ] 着装：穿贴身运动衣 / **必须露出肩胛骨**（不能宽松遮挡）
-- [ ] 背景：浅色墙（健身房一角 / 居家干净墙角） / 避免杂物
-- [ ] 设备：三脚架固定 / 或找朋友帮拍
-- [ ] 画质：1080p / 30fps / 4K 更好 / 横平竖直
-- [ ] 收音：iPhone 单独录旁白（不用视频自带 mic）
-- [ ] 试拍：拍前先 1 段测试，检查焦点、亮度、肩胛骨可见性
+### 2.4 拍摄清单外拆（shoot-checklist.md）
 
-### 6.2 各段特别要求
+> **为什么外拆**：拍摄清单是"拍摄当天执行"，assets.md 是"开工前规划"——两个工作流不同步，混在一个文档里反而互相干扰。
 
-- [ ] **#<N>（<名称>）**：<具体要求>
-- [ ] **#<N>（<名称>）**：<具体要求>
+**文件位置**：`remotion/src/scenes/<主题>/shoot-checklist.md`（与 assets.md 同级）
+
+**典型结构**：
+1. 通用要求（所有视频）—— 着装/背景/设备/画质/收音/试拍
+2. 各段特别提醒（按 # 编号）—— 简版"重点"，详细规格回看 assets.md §1
+3. 拍完归档流程 —— `cp` 命令
+4. 全部拍完自检 —— assets.md 状态总览更新
+5. 与其他 docs 对齐 —— 一张表
+
+**模板见 §2.5**。
+
+### 2.5 shoot-checklist.md 模板
+
+```markdown
+# 拍摄清单：<视频主题>
+
+> ⚠️ 拍摄当天打开这个文件。素材规格见 [assets.md §1](assets.md#1-全部资产单表按-排序) 「拍摄要求」列。
+> 总素材数：<N> 段视频。
 
 ---
 
-## 7. 与其他 docs 的对齐
+## 1. 通用要求（所有 <N> 段都遵守）
 
-| 时机 | 动作 | 文档 |
-|---|---|---|
-| 写完 copy 后 | 生成本 assets.md | [copy.md](../../../docs/copy/<scene>.md) → assets.md |
-| 用户准备拍视频 | 看本文件 §6 拍摄清单 | assets.md |
-| 用户拍完 | 复制到 `remotion/public/` | [assets.md 规则第 3 节](../../rules/assets.md) |
-| 跑自检 | 对齐本文件"已就位"列表 | [checklist.md](../../rules/checklist.md) |
-| 实现 Scene | 用本文件 §2/§3 路径清单 + §4 组件 props import | [script.md](../../rules/script.md) |
+- [ ] **着装**：穿贴身运动衣 / **必须露出肩胛骨**（不能宽松遮挡）
+- [ ] **背景**：浅色墙（健身房一角 / 居家干净墙角）/ 避免杂物
+- [ ] **设备**：三脚架固定 / 或找朋友帮拍
+- [ ] **画质**：1080p / 30fps / 4K 更好 / 横平竖直
+- [ ] **收音**：iPhone 单独录旁白（不用视频自带 mic）
+- [ ] **试拍**：拍前先 1 段测试
+
+---
+
+## 2. 各段特别提醒
+
+> 每条对应 assets.md §1 中的 #。**只列重点**，完整规格见 assets.md。
+
+- [ ] **#1（<名称>）**：<重点 1>
+- [ ] **#2（<名称>）**：<重点 2>
+
+---
+
+## 3. 拍完一段 → 立即归档
+
+\`\`\`
+# 1. 拷到 resources/videos/
+cp ~/Desktop/IMG_XXXX.MOV resources/videos/<scene>_00X_<name>.mov
+
+# 2. 复制到 public/
+cp resources/videos/<scene>_00X_<name>.mov remotion/public/<scene>/videos/00X_<name>.mov
+
+# 3. 跑 assets.md §0 状态总览检查
+\`\`\`
+
+> 文件名严格按 assets.md §2 路径清单——**三处一致**（resources/ 原始名 + public/ 目标名 + 代码里 `staticFile()` 路径）。
+
+---
+
+## 4. 全部拍完后的自检
+
+- [ ] <N> 段视频都在 `resources/videos/` 和 `remotion/public/<scene>/videos/`
+- [ ] assets.md §0 状态总览里"📋 待拍"列从 <N> → 0
+- [ ] 打开 1 段视频，确认：露出肩胛骨 ✓ / 焦点清晰 ✓ / 无杂物背景 ✓
 ```
 
-### 2.4 字段说明
-
-**表格内字段**
+### 2.6 字段说明（精简版，详见 §2.1）
 
 | 字段 | 必填 | 说明 |
 |---|---|---|
-| `#` | ✅ | 编号（整份文档唯一，与"路径清单"里的 # 对应）|
-| `状态` | ✅ | `✅ 已生成` / `❌ 缺失` / `❌ 📋 待拍` / `⏸️ 进行中` |
-| `类型` | ✅ | `video` / `image` / `audio` / `bgm` / `voiceover` / `font` |
-| `描述` | ✅ | 这个素材展示/播放的内容（1-2 句中文）|
-| `来源` | ✅ | `resources/<目录>/<文件名>` 或 `mmx 生成` 或 `用户提供` |
-| `拍摄要求` | 仅视频 | 5 维度（机位/光线/时长/动作/其他）|
-| `备注` | 可选 | 特殊说明（如"需裁剪"、"需转码"）|
-
-**表格外字段（路径清单）**
-
-| 字段 | 必填 | 说明 |
-|---|---|---|
-| `源路径` | ✅ | `resources/<目录>/<文件名>`（mmx 生成/用户提供的原始位置）|
-| `目标位置` | ✅* | `remotion/public/<主题>/<子目录>/<文件名>` |
-
-> *`目标位置` 在**当前没有自动复制脚本**时必填。如果未来加了 `scripts/copy-assets.sh` 之类的工具，
-> 路径清单里可以**只写源路径**——目标位置由脚本自动算出来。
+| `#` | ✅ | 编号（整份文档唯一）|
+| `类型` | ✅ | `video` / `image` / `audio` / `bgm` / `voiceover` / `code` |
+| `状态` | ✅ | 4 选 1：`✅ 就位` / `📋 待拍` / `❌ 缺失` / `🆕 待实现` |
+| `描述` | ✅ | 1-2 句中文 |
+| `拍摄要求` | 仅 video | 5 维度（机位/光线/时长/动作/其他）|
 
 ---
 
@@ -597,27 +635,38 @@ mmx 生成但还没给最终名时，临时命名规则：
 
 > **跨文件去重原则**：通用检查见 [checklist.md](remotion/rules/checklist.md)；本节只列**素材清单生成**的专属项。
 
-**生成脚本时**
+**生成脚本时（Option A 格式）**
 
 - [ ] 主体区域提到的所有视觉元素都列出来
-- [ ] 每个元素标"已有" / "缺失"
-- [ ] 缺失的写 mmx prompt（见第 4 节）
-- [ ] 输出 `remotion/src/scenes/<主题>/assets.md`（见第 2 节）
-- [ ] 自动复制已有素材到 `remotion/public/<主题>/`（见第 3 节）
+- [ ] 每个元素标 `✅ 就位` / `📋 待拍` / `❌ 缺失` / `🆕 待实现` 之一
+- [ ] 缺失的写 mmx prompt（见 §4 节）
+- [ ] 输出 `remotion/src/scenes/<主题>/assets.md`，按 §2.3 模板（Option A 单表）
+- [ ] **§0 状态总览** 5 列填齐（✅ / 📋 / ❌ / 🆕）
+- [ ] **§1 全部资产**单表，按 `#` 排序，覆盖 video/image/audio/code 4 类
+- [ ] **§2 路径清单**单份，不重复
+- [ ] 自动复制已有素材到 `remotion/public/<主题>/`（见 §3 节）
+- [ ] **§5 指向 shoot-checklist.md**（拍摄清单外拆）
 
 **生成/更新分镜时**
 
-- [ ] 每个分镜的 `content_source` 字段对应 assets.md 中的一行（见第 5.2 节）
+- [ ] 每个分镜的 `content_source` 字段对应 assets.md §1 中的一行
 - [ ] 已有的自动复制
 - [ ] 缺失的写 prompt
-- [ ] 更新 assets.md 的"已就位"和"缺失"两节
-- [ ] 阻塞情况列在"状态汇总"（见第 2.1 节）
+- [ ] 更新 assets.md §0 状态总览 + §1 状态列 + §2 路径清单
+- [ ] 阻塞情况列在 §0 总览
 
 **实现 Scene 组件前**
 
-- [ ] assets.md 中所有阻塞素材已就位
+- [ ] assets.md §0 里"📋 待拍"和"❌ 缺失"列都已为 0
 - [ ] `remotion/public/<主题>/` 目录已建好
-- [ ] 缺失的标"已生成"或"已上传"
+- [ ] 已就位项全部 cp 到 public/
+- [ ] §0 里"🆕 待实现" 代码组件也都实现了
+
+**拍摄前（用 shoot-checklist.md）**
+
+- [ ] 用户打开 shoot-checklist.md §1 通用要求
+- [ ] 用户按 §2 各段特别提醒拍
+- [ ] 每拍完一段，按 §3 命令归档 + 更新 assets.md §0
 
 **其他维度的自检**（不在本文件）：
 - 通用综合自检 → [checklist.md](remotion/rules/checklist.md) 第 2 节（master）

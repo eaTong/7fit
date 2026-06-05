@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T17:55:16.689Z",
+  "generatedAt": "2026-06-05T02:16:38.752Z",
   "totalScenes": 1,
   "scenes": [
     {
@@ -7,10 +7,11 @@
       "title": "文案稿：翼状肩胛自测 + 改善：4 个动作",
       "account": "主号（健身博主号）",
       "type": "B 类 — 健身知识",
-      "duration": 50,
+      "duration": 60,
       "bgm": "Power Build（105 BPM, tech house）",
       "channel": "抖音主号（B 类）",
-      "audioPath": "../../resources/audios/winged_scapula_b3.mp3",
+      "audioPath": "../../resources/audios/winged_scapula_b3.m4a",
+      "scriptText": "## 钩子（前 3 秒）\n夏天穿衣，后背鼓起来一块？\n\n## 主体（~50 秒，196 字，**中 3.4 字/秒**）\n你可能有翼状肩胛。\n先用两个动作自测一下。\n第一个：背对镜子站好，肩膀放松手垂下来。\n肩胛骨内侧明显突出，就是翼状。\n第二个：双手推墙，让朋友看背后。\n肩胛骨像长了翅膀翘起来，基本没跑了。\n别担心，今天教你 4 个动作改善一下。\n第一个，**壁虎推墙**。\n前臂贴墙往上滑，肩胛骨要往下沉。12 次 3 组。\n第二个，俯卧撑变体。\n肩胛骨先往前推再收回，激活**前锯肌**。8 次 3 组。\n第三个，**YTWL**。\nY T W L 四个字母各停 2 秒，感受肩胛骨向中间夹。\n第四个，弹力带后收。\n双手向两侧拉开，重点是肩胛骨夹紧。15 次 3 组。\n\n## 收尾（~7 秒）\n这 4 个动作，每天 10 分钟就够。\n去试试，评论区交作业。",
       "copyFile": "winged_scapula_b3.md"
     }
   ]

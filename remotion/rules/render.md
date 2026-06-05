@@ -6,6 +6,9 @@
 > 状态：✅ 生效
 > 上下游：上游 = `checklist.md`（必须全部 ✅）；下游 = 用户最终审核
 
+> ⏰ **2026-06-04 强制**：默认 1080×1920 竖屏 + fps 30 + durationInFrames = 全文 × 30，**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
+> 当前 winged_scapula_b3：durationInFrames = **1800**。改时长 → 7 个文件同步（见 timing-sync.md §3）。
+
 ---
 
 ## 1. ⚠️ 渲染触发硬规则（最重要）

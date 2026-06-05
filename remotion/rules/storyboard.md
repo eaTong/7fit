@@ -8,6 +8,9 @@
 > 配套产物：每次输出分镜**必须同时输出** `assets.md` 素材清单（详见 `assets.md`）
 > **视频类型**：开工前先确定属于 3 类中的哪一类（A 个人人设 / B 健身知识 / C 七练介绍），详见 `video-types.md`
 
+> ⏰ **2026-06-04 强制**：镜头时长基于字幕时长（视频镜可 1:N pack 多条字幕），**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
+> 全文时长 = 所有 shot duration 之和。改任何 shot duration → 7 个文件同步（见 timing-sync.md §3）。
+
 ---
 
 ## 1. 分镜工作流
@@ -178,6 +181,44 @@ remotion/src/scenes/<视频主题>/
 ### 4.4 强制要求
 
 每个分镜在 `description` 中必须写清楚**实际视觉内容是什么**（不是文字在说什么，而是画面在展示什么）。Reviewer 看到 `description` 就要能想象出画面。
+
+### 4.5 🆕 段间停顿 = shot 边界（2026-06-04 流程变更）
+
+> **核心**：每个段间停顿（copy.md 段落之间的 0.5-1s 静音）**在 storyboard 里必须落成 1 个独立的"段间 shot"**。
+> 这个段间 shot 的 content_type 必须是 **`transition`**（不是 video / image / animation）。
+
+| 段间 shot 的硬约束 | 规则 |
+|---|---|
+| `content_type` | `transition` |
+| `duration` | **0.5-1.0 秒**（与 copy.md 一致）|
+| `description` | 必填：「段间停顿：从 `<前段名>` 到 `<后段名>`」|
+| `subtitle_ids` | 空（**不放字幕**）|
+| 视觉 | 空镜 / 黑屏 / 浅色背景 + 章节标题 / 转场动效 |
+| 声音 | BGM 升回 -8 dB（解除 ducking）|
+
+```markdown
+# 示例：winged_scapula_b3
+| S01 | 0.0-3.0  | 3.0 | video  | 001_hook_compare.mov | 1 | 钩子对比 |
+| S02 | 3.0-3.7  | 0.7 | transition | — |   | 段间停顿：钩子 → 自测 1     ← 🆕
+| S03 | 3.7-8.7  | 5.0 | video  | 002_mirror_test.mov | 2 | 自测 1 演示 |
+| S04 | 8.7-9.4  | 0.7 | transition | — |   | 段间停顿：自测 1 → 自测 2   ← 🆕
+| S05 | 9.4-14.4 | 5.0 | video  | 003_wall_push.mov | 3,4 | 自测 2 演示 |
+| ...
+```
+
+### 4.6 🆕 每个 shot 边界必标注"转入 + 转出动效"（2026-06-04 用户硬约束）
+
+> **核心**：每个 shot 的开始和结束都必须有转入/转出动效——**不能硬切**。
+
+`description` 字段必须包含：
+
+```markdown
+| S03 | 3.7-8.7 | 5.0 | video | 002_mirror_test.mov | 2 | [转入：Crossfade 0.3s] 自测 1 演示 [转出：Slide 0.3s] |
+```
+
+> **支持的转场**（[animation.md §7](animation.md) 详述）：Crossfade / Slide / Push / 方向滑动 / Wipe。
+> **禁止**：Flip / 旋转 / 3D（与"力量感"调性冲突）。
+> **段间 transition shot** 自身也必须有转出 → 下一段的转入（首尾相接，无硬切）。
 
 ---
 

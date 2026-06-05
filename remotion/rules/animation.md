@@ -6,6 +6,9 @@
 > 状态：✅ 生效
 > 上下游：上游 = `storyboard.md`（确定每个分镜的"动什么"）；下游 = `script.md`（实现组件时引用本文件）
 
+> ⏰ **2026-06-04 强制**：每个 Sequence 的 `durationInFrames` = shot 时长 × fps，**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
+> 所有 Sequence 加 `premountFor={1 * fps}`。改任何时长 → 7 个文件同步（见 timing-sync.md §3）。
+
 ---
 
 ## 1. 动效工作流 + 触发条件
@@ -369,6 +372,58 @@ springTiming({ config: { damping: 200 }, durationInFrames: 25 });
 - **优先 fade 或 slide**，禁用 flip/旋转/3D
 - **缓动用 Standard**（`Easing.bezier(0.4, 0, 0.2, 1)`）
 - **转场中禁止出现大面积纯色块遮挡**（与 `script.md` 第 2 节联动）
+
+### 7.7 🆕 转入 + 转出动效（2026-06-04 用户硬约束）
+
+> **核心**：每个 shot 的开始和结束都必须有转入/转出动效——**不能硬切**。
+> 这是 [storyboard.md §4.6](storyboard.md) "每个 shot 边界必标注转入/转出动效" 的代码层实现。
+
+```tsx
+// ✅ 正确：每个 shot 有转入 + 转出
+<TransitionSeries>
+  <TransitionSeries.Transition durationInFrames={9} presentation={fade()} />  {/* 转入 */}
+  <TransitionSeries.Sequence durationInFrames={150}>
+    <ShotA />
+  </TransitionSeries.Sequence>
+  <TransitionSeries.Transition durationInFrames={9} presentation={slide({direction: 'from-right'})} />  {/* 转出 */}
+  <TransitionSeries.Sequence durationInFrames={120}>
+    <ShotB />
+  </TransitionSeries.Sequence>
+  <TransitionSeries.Transition durationInFrames={9} presentation={fade()} />  {/* ShotB 的转出 */}
+</TransitionSeries>
+
+// ❌ 错误：硬切（无转场 Transition）
+<Sequence from={0} durationInFrames={150}>
+  <ShotA />
+</Sequence>
+<Sequence from={150} durationInFrames={120}>     {/* ← 硬切 */}
+  <ShotB />
+</Sequence>
+```
+
+#### 7.7.1 段间停顿 shot 的转出/转入
+
+> [storyboard.md §4.5](storyboard.md) 的"段间停顿 shot"（`content_type: transition`）**自身也必须有转出/转入**。
+> 段间停顿的转场建议用 **fade**（最轻）——避免节奏被转场打断。
+
+```tsx
+{/* 段间停顿：钩子 → 主体 1（0.7s = 21 帧） */}
+<TransitionSeries>
+  <TransitionSeries.Transition durationInFrames={9} presentation={fade()} />     {/* 钩子的转出 */}
+  <TransitionSeries.Sequence durationInFrames={21}>
+    <SegmentPause from="钩子" to="主体 1" />                                     {/* 段间停顿 */}
+  </TransitionSeries.Sequence>
+  <TransitionSeries.Transition durationInFrames={9} presentation={fade()} />     {/* 段间停顿的转出 */}
+  <TransitionSeries.Sequence durationInFrames={150}>
+    <SelfTestOne />                                                               {/* 主体 1 转入开始 */}
+  </TransitionSeries.Sequence>
+</TransitionSeries>
+```
+
+#### 7.7.2 转场音效（Phase 5）
+
+> **2026-06-04 流程变更**：转场**音效**（不是动效）单独走 [Phase 5](../CLAUDE.md#视频制作总流程6-阶段--后期)，由 [assets.md](assets.md) 管 sfx 资源。
+> 代码层在 TransitionSeries 的同一时间窗叠加 `<Audio src={staticFile('sfx/whoosh.mp3')} />` 即可。
 
 ---
 

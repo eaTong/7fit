@@ -38,6 +38,7 @@ resources/audios/*
 # 例外：mmx 生成的旁白/BGM（小、可重现、与代码同步）必须进 git
 !resources/audios/winged_scapula_b3*.mp3
 !resources/audios/winged_scapula_b3*.wav
+!resources/audios/winged_scapula_b3*.m4a
 !resources/audios/bgm/power_build.mp3
 !resources/audios/bgm/cyber_pulse*.mp3
 !resources/audios/bgm/quiet_think*.mp3

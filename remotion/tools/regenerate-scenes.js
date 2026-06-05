@@ -55,10 +55,68 @@ function extractSceneMeta(content, filename) {
   const channelMatch = content.match(/\*\*投放渠道\*\*[：:]\s*(.+?)$/m);
   const channel = channelMatch ? channelMatch[1].trim() : '';
 
-  // 录音输出路径（推断）
-  const audioPath = `../../resources/audios/${id}.mp3`;
+  // 录音输出路径（推断）—— **2026-06-05 改**：从 mp3 改为 m4a（AAC 容器）
+  // iPhone 语音备忘录默认输出就是 m4a，省去 ffmpeg 转码步骤
+  const audioPath = `../../resources/audios/${id}.m4a`;
 
-  return { id, title, account, type, duration, bgm, channel, audioPath, copyFile: filename };
+  // 旁白脚本正文（只含 > 引用的段，钩子/主体/收尾）
+  const scriptText = extractScriptText(content);
+
+  return { id, title, account, type, duration, bgm, channel, audioPath, scriptText, copyFile: filename };
+}
+
+/**
+ * 从 copy.md 中提取旁白脚本
+ *
+ * 新格式（[copy.md 标准](../../remotion/rules/copy.md)）：
+ * - copy.md 只含 3 个 H2 段：钩子 / 主体 / 收尾
+ * - 每段 body 是 `>` 引用行（带 `>` 表示是朗读稿）
+ * - 所有非旁白内容（highlight / 字数 / 修改日志 / 自检 / 风险 / 录音指引）→ copy_notes.md
+ *
+ * 启发式（白名单 + 行过滤，仍保留防御性以兼容老格式）：
+ * 1. H2 标题必须命中白名单：钩子 / 主体 / 收尾 / 脚本 / 旁白 / 念稿
+ *    + 英文 Hook / Body / Closing / Script / Voiceover
+ * 2. 段内只保留 `>` 开头的行（去掉 bullet / 表格 / 分隔线）
+ */
+const VOICEOVER_TITLE_RE = /^(钩子|主体|收尾|脚本|旁白|念稿|Hook|Body|Closing|Script|Voiceover)/i;
+
+function extractScriptText(content) {
+  // 不再用 lookahead regex——Node.js 里 \Z 在 lookahead 中不工作，
+  // $ 太宽（匹配任意行尾）会吞掉 0 字 body。
+  // 改用「扫 H2 位置 + slice」两步走，可靠。
+
+  // 第 1 步：扫所有 H2 标题位置
+  const h2Regex = /^## (.+)$/gm;
+  const positions = [];
+  let m;
+  while ((m = h2Regex.exec(content)) !== null) {
+    positions.push({ title: m[1].trim(), start: m.index });
+  }
+  if (positions.length === 0) return '';
+
+  // 第 2 步：给每个 H2 算 end（下一个 H2 的 start，或文件末尾）
+  for (let i = 0; i < positions.length; i++) {
+    positions[i].end = i + 1 < positions.length
+      ? positions[i + 1].start
+      : content.length;
+  }
+
+  // 第 3 步：白名单过滤 + 提取 > 引用行
+  const out = [];
+  for (const pos of positions) {
+    if (!VOICEOVER_TITLE_RE.test(pos.title)) continue;
+
+    const body = content.slice(pos.start, pos.end);
+    // 第 1 行是 `## title`，跳过；剩下的行只要 > 开头的
+    const voiceoverLines = body.split('\n').slice(1)
+      .filter(l => /^\s*>/.test(l))
+      .map(l => l.replace(/^\s*>\s*/, '').trim())
+      .filter(l => l.length > 0);
+
+    if (voiceoverLines.length === 0) continue;
+    out.push(`## ${pos.title}\n${voiceoverLines.join('\n')}`);
+  }
+  return out.join('\n\n');
 }
 
 /**
@@ -75,9 +133,13 @@ function main() {
 
   const files = fs
     .readdirSync(COPY_DIR)
-    .filter(f => f.endsWith('.md') && !f.startsWith('.'));
+    .filter(f =>
+      f.endsWith('.md') &&
+      !f.startsWith('.') &&
+      !f.endsWith('.copy_notes.md')   // 排除人类作者备注文件（不影响工具）
+    );
 
-  console.log(`   找到 ${files.length} 个 copy.md\n`);
+  console.log(`   找到 ${files.length} 个 copy.md（已排除 *.copy_notes.md）\n`);
 
   if (files.length === 0) {
     console.warn('⚠️  没有 copy.md 文件。请先创建：resources/docs/copy/<scene>.md');

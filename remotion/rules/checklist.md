@@ -7,6 +7,9 @@
 > **第一步**：先确定视频类型（A/B/C，见 `video-types.md`）—— 不同类型的检查项略有差异
 > 上下游：是所有其他 rules 的**汇总检查**——任何一项 ❌ 都不能进入下一步
 
+> ⏰ **2026-06-04 强制**：检查「时间字段同步」必走 [timing-sync.md §3 同步清单](./timing-sync.md#3-时间同步清单修改后必须改的-7-个文件) 7 个文件。
+> 改任何时间字段（钩子/主体/收尾/中速/语速）→ 7 个文件必须全部同步。
+
 ---
 
 ## 0. 关于本清单的设计（去重原则）
@@ -62,11 +65,12 @@
 
 ### ✅ C. 音频（`bgm.md`）
 
-- [ ] **旁白音频**：`resources/audios/<主题>.mp3` 存在
+- [ ] **旁白音频**：`resources/audios/<主题>.m4a` 存在（**🆕 2026-06-05：从 mp3 改 m4a**——iPhone 语音备忘录默认格式）
+- [ ] **旁白格式校验**：M4A / AAC-LC / 单声道 / 44.1-48 kHz / 64-128 kbps+
 - [ ] **BGM 选型**：第 2.5 节速查表中选定了对应类型（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）
-- [ ] **BGM 文件**：`resources/audios/bgm/<类型>.mp3` 存在（mmx 生成 / 用户提供 / 第三方）
+- [ ] **BGM 文件**：`resources/audios/bgm/<类型>.mp3` 存在（mmx 生成 / 用户提供 / 第三方，**仍用 mp3 与旁白区分**）
 - [ ] BGM 时长 ≥ 视频总时长（可循环则 OK）
-- [ ] 旁白和 BGM 都在 Scene 组件中正确 import（`staticFile('audios/...')`）
+- [ ] 旁白（m4a）和 BGM（mp3）都在 Scene 组件中正确 import（`staticFile('audios/...')`）
 
 ### ✅ D. 素材（`assets.md`）
 
