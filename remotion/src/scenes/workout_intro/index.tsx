@@ -3,7 +3,9 @@ import { LayoutTransitionEngine } from "../LayoutTransitionEngine";
 import { ShotContent } from "../ShotContent";
 import type { ShotEntry } from "../layouts/types";
 
-// 示例 Shot 序列（从 storyboard.json 生成）
+// TODO: 素材路径占位符，替换为真实素材后再渲染
+// - videoSrc: videos/talking_head.mov → 替换为实际口播视频
+// - contentSrc: images/demo.jpg → 替换为实际图片素材
 const shotSequence: ShotEntry[] = [
   { shotId: "s1", layoutId: "fullscreen",              transitionType: "ease-out",   startFrame: 0,    endFrame: 90 },
   { shotId: "s2", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 90,   endFrame: 210 },
