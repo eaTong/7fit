@@ -39,4 +39,6 @@ export interface ShotEntry {
   transitionType: TransitionEasing;
   startFrame: number;
   endFrame: number;
+  /** 强制正圆渲染（borderRadius = squareSize/2），用于 circleTransition 场景 */
+  isCircle?: boolean;
 }

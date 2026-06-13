@@ -104,6 +104,7 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
         curLayout={curLayout}
         shotStartFrame={shotStartFrame}
         transitionType={currentShot.transitionType}
+        isCircle={currentShot.isCircle}
       />
 
       {/* Layer 3: 辅助素材层 */}
