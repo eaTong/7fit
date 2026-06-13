@@ -63,15 +63,19 @@
 
 ```
 remotion/src/
-├── scenes/<主题>/
+├── layout-state-machine/         # A 类口播布局状态机（跨主题共享）
+│   ├── index.ts                  # 统一 barrel 导出
 │   ├── layouts/
 │   │   ├── index.ts              # LayoutStateRegistry（统一导出）
 │   │   ├── registry.ts           # 注册中心 + 内置 5 种布局
-│   │   └── types.ts              # LayoutState 接口
-│   ├── AnimatedTalkingHead.tsx   # 口播动画元素
+│   │   └── types.ts              # LayoutState / ShotEntry / TransitionEasing
+│   ├── AnimatedTalkingHead.tsx   # 口播 morphing 元素
 │   ├── LayoutTransitionEngine.tsx # 过渡引擎
 │   ├── AuxiliaryContentManager.tsx # 辅助素材管理
-│   └── index.tsx                 # Scene 入口
+│   └── ShotContent.tsx           # 辅助内容渲染
+├── scenes/<主题>/
+│   └── index.tsx                 # Scene 入口（引用 layout-state-machine）
+└── components/                   # 共享组件（PictureInPicture / SplitLeftRight / ...）
 ```
 
 ---
@@ -83,7 +87,7 @@ remotion/src/
 ### 3.1 接口定义
 
 ```ts
-// src/scenes/<主题>/layouts/types.ts
+// src/layout-state-machine/layouts/types.ts
 
 export interface LayoutState {
   /** 唯一标识，如 "fullscreen" / "pip_bottom_right" */
@@ -405,8 +409,8 @@ export const AuxiliaryContentManager: React.FC<AuxiliaryContentManagerProps> = (
 // src/scenes/<主题>/index.tsx
 
 import { AbsoluteFill } from "remotion";
-import { LayoutTransitionEngine, ShotEntry } from "./LayoutTransitionEngine";
-import { ShotContent } from "./components/ShotContent";
+import { LayoutTransitionEngine, ShotContent } from "../layout-state-machine";
+import type { ShotEntry } from "../layout-state-machine/layouts";
 
 // 从 storyboard.json 生成的 shot 序列
 const shotSequence: ShotEntry[] = [
@@ -421,10 +425,11 @@ export const MyScene: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
       <LayoutTransitionEngine videoSrc="videos/talking_head.mov" shotSequence={shotSequence}>
-        {(prevLayout, curLayout, transitionType, currentShotId) => (
+        {(_, curLayout, __, currentShotId) => (
           <ShotContent
             currentShotId={currentShotId}
-            prevLayout={prevLayout}
+            contentType="image"
+            contentSrc="images/demo.jpg"
             curLayout={curLayout}
           />
         )}
@@ -434,6 +439,12 @@ export const MyScene: React.FC = () => {
 };
 ```
 
+> **Barrel 导出**：`layout-state-machine/index.ts` 暴露统一入口，Scene 文件只需：
+> ```ts
+> import { LayoutTransitionEngine, ShotContent } from "../layout-state-machine";
+> import type { ShotEntry } from "../layout-state-machine/layouts";
+> ```
+
 ---
 
 ## 9 · 新增布局扩展流程
@@ -441,6 +452,7 @@ export const MyScene: React.FC = () => {
 **步骤 1**：在 `layouts/registry.ts` 末尾注册新布局对象
 
 ```ts
+// src/layout-state-machine/layouts/registry.ts
 registerLayout({
   id: "triple_split_talking",
   left: 0, top: 0, width: 640, height: 864,
@@ -449,31 +461,45 @@ registerLayout({
 });
 ```
 
-**步骤 2**：在 `shotSequence` 中引用
+**步骤 2**：在 Scene 的 `shotSequence` 中引用
 
 ```ts
+// src/scenes/<主题>/index.tsx
 { shotId: "s5", layoutId: "triple_split_talking", transitionType: "push_left", startFrame: 540, endFrame: 720 }
 ```
 
-**零修改**：`AnimatedTalkingHead` / `LayoutTransitionEngine` 无需改动。
+**零修改**：`AnimatedTalkingHead` / `LayoutTransitionEngine` / `AuxiliaryContentManager` 无需改动。
 
 ---
 
-## 10 · 竖屏兼容（预留）
+## 10 · Barrel Export 统一入口
 
-竖屏 1080×1920 的 LayoutState 坐标系不同，不与横屏共用同一套 registry。
+`layout-state-machine/index.ts` 暴露所有公开 API，Scene 文件统一引用路径：
 
-扩展方式：
+```ts
+// ✅ 推荐：barrel export
+import { LayoutTransitionEngine, ShotContent } from "../layout-state-machine";
+import { getLayout, registerLayout } from "../layout-state-machine/layouts";
+import type { ShotEntry } from "../layout-state-machine/layouts";
 
-1. 新建 `layouts/portrait/` 目录，复制横屏结构
-2. 竖屏布局 id 加前缀，如 `portrait_fullscreen` / `portrait_pip_bottom_right`
-3. Scene 入口根据 `isPortrait` prop 选择横屏/竖屏 registry
+// ❌ 不推荐：深路径 import（虽然功能相同）
+import { LayoutTransitionEngine } from "../layout-state-machine/LayoutTransitionEngine";
+```
 
-> 当前 spec **仅覆盖横屏**，竖屏作为独立任务扩展。
+导出内容：
+
+| 导出 | 来源 |
+|---|---|
+| `LayoutTransitionEngine` | LayoutTransitionEngine.tsx |
+| `AnimatedTalkingHead` | AnimatedTalkingHead.tsx |
+| `ShotContent` | ShotContent.tsx |
+| `AuxiliaryContentManager` | AuxiliaryContentManager.tsx |
+| `registerLayout / getLayout / getAllLayouts` | layouts/registry.ts |
+| `LayoutState / ShotEntry / TransitionEasing` | layouts/types.ts |
 
 ---
 
-## 11 · 已验证的技术约束
+## 12 · 已验证的技术约束
 
 | 约束 | 来源 |
 |---|---|
@@ -483,10 +509,11 @@ registerLayout({
 | 动画曲线只用 remotion Easing，不使用 CSS transition | animation.md §1.2 |
 | BGM 放 Phase 6 最后 | CLAUDE.md §6 |
 | 视频 > 5s 约束由 storyboard.json 时长控制 | storyboard.md §2 |
+| `TransitionEasing` 类型与 `EASING_MAP` 键值必须完全匹配 | 实现验证 |
 
 ---
 
-## 12 · Spec 自检
+## 13 · Spec 自检
 
 - [x] **Placeholder 扫描**：无 TBD/TODO，所有布局 id / 帧数 / 坐标均为具体值
 - [x] **内部一致性**：registry.ts 注册 id 与 shotSequence 引用 id 完全对应

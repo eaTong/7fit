@@ -1,4 +1,3 @@
-import { AbsoluteFill } from "remotion";
 import { AuxiliaryContentManager } from "./AuxiliaryContentManager";
 import type { LayoutState } from "./layouts/types";
 

@@ -28,6 +28,8 @@ export type TransitionEasing =
   | "crisp"
   | "standard"
   | "slide-left"
+  | "slide-right"
+  | "push_left"
   | "zoom"
   | "fade";
 

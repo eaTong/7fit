@@ -2,7 +2,7 @@
 
 import { OffthreadVideo, useCurrentFrame, interpolate, Easing } from "remotion";
 import { staticFile } from "remotion";
-import { LayoutState } from "./layouts/types";
+import { LayoutState, TransitionEasing } from "./layouts/types";
 
 const TRANSITION_FRAMES = 30; // 30fps × 1s 过渡动画
 
@@ -13,6 +13,8 @@ const EASING_MAP: Record<string, (t: number) => number> = {
   "crisp":           Easing.bezier(0.16, 1, 0.3, 1),
   "standard":        Easing.bezier(0.4, 0, 0.2, 1),
   "slide-left":      Easing.out(Easing.cubic),
+  "slide-right":     Easing.out(Easing.cubic),
+  "push_left":       Easing.out(Easing.cubic),
   "zoom":            Easing.out(Easing.cubic),
   "fade":            Easing.out(Easing.cubic),
 };
