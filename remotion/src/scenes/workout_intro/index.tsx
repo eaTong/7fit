@@ -115,35 +115,21 @@ const CenteredCard: React.FC<{ title: string; lines: string[] }> = ({ title, lin
 const DualAuxContent: React.FC = () => (
   <>
     {/* 左：代码 */}
-    <div
-      style={{
-        position: "absolute",
-        left: 50, top: 50, width: 910, height: 864,
-        background: "rgba(10, 10, 20, 0.88)",
-        backdropFilter: "blur(8px)",
-        border: "1px solid rgba(0, 200, 255, 0.4)",
-        borderRadius: 16,
-        overflow: "hidden",
-        padding: "16px 20px",
-      }}
-    >
-      <CodeDisplay code={CODE_SAMPLE} language="typescript" fontSize={20} showLineNumbers maxHeight={800} />
-    </div>
+    <CodeDisplay
+      code={CODE_SAMPLE}
+      language="typescript"
+      fontSize={20}
+      showLineNumbers
+      maxHeight={800}
+      style={{ position: "absolute", left: 50, top: 50, width: 400, height: 864 }}
+    />
     {/* 右：GitLog */}
-    <div
-      style={{
-        position: "absolute",
-        left: 960, top: 50, width: 910, height: 864,
-        background: "rgba(8, 8, 20, 0.88)",
-        backdropFilter: "blur(8px)",
-        border: "1px solid rgba(255, 69, 0, 0.35)",
-        borderRadius: 16,
-        overflow: "hidden",
-        padding: "16px 20px",
-      }}
-    >
-      <GitLogDisplay entries={GITLOG_ENTRIES} fontSize={20} visibleCount={6} />
-    </div>
+    <GitLogDisplay
+      entries={GITLOG_ENTRIES}
+      fontSize={20}
+      visibleCount={6}
+      style={{ position: "absolute", left: 1470, top: 50, width: 400, height: 864 }}
+    />
   </>
 );
 

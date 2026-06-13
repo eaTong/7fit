@@ -22,8 +22,6 @@ interface GitLogDisplayProps {
   visibleCount?: number;   // 可见行数，默认 15
   scrollSpeed?: number;     // 每秒滚动行数，默认 1
   highlightColor?: string;  // 高亮色，默认 #FF4500
-  /** 去掉容器背景和边框（用于 ShotContent 嵌入）*/
-  plain?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -33,7 +31,6 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
   visibleCount = 15,
   scrollSpeed = 1,
   highlightColor = "#FF4500",
-  plain = false,
   style,
 }) => {
   const frame = useCurrentFrame();
@@ -55,43 +52,41 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
   return (
     <div
       style={{
-        background: plain ? "transparent" : "rgba(8, 8, 20, 0.88)",
-        backdropFilter: plain ? "none" : "blur(8px)",
-        border: plain ? "none" : `1px solid rgba(255, 69, 0, 0.35)`,
-        boxShadow: plain ? "none" : `0 0 16px rgba(255, 69, 0, 0.12), 0 4px 24px rgba(0,0,0,0.6)`,
+        background: "rgba(8, 8, 20, 0.88)",
+        backdropFilter: "blur(8px)",
+        border: `1px solid rgba(255, 69, 0, 0.35)`,
+        boxShadow: `0 0 16px rgba(255, 69, 0, 0.12), 0 4px 24px rgba(0,0,0,0.6)`,
         borderRadius: 12,
         overflow: "hidden",
         fontFamily: '"JetBrains Mono", "Fira Code", "SF Mono", monospace',
         ...style,
       }}
     >
-      {!plain && (
-        <div
+      <div
+        style={{
+          background: "rgba(255, 69, 0, 0.08)",
+          borderBottom: "1px solid rgba(255, 69, 0, 0.2)",
+          padding: `${fontSize * 0.4}px ${fontSize}px`,
+          display: "flex",
+          alignItems: "center",
+          gap: fontSize * 0.5,
+        }}
+      >
+        <div style={{ display: "flex", gap: 6 }}>
+          <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(255,69,0,0.7)" }} />
+          <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(255,165,0,0.7)" }} />
+          <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(0,200,100,0.7)" }} />
+        </div>
+        <span
           style={{
-            background: "rgba(255, 69, 0, 0.08)",
-            borderBottom: "1px solid rgba(255, 69, 0, 0.2)",
-            padding: `${fontSize * 0.4}px ${fontSize}px`,
-            display: "flex",
-            alignItems: "center",
-            gap: fontSize * 0.5,
+            fontSize: fontSize * 0.7,
+            color: "rgba(255, 69, 0, 0.6)",
+            letterSpacing: "0.05em",
           }}
         >
-          <div style={{ display: "flex", gap: 6 }}>
-            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(255,69,0,0.7)" }} />
-            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(255,165,0,0.7)" }} />
-            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(0,200,100,0.7)" }} />
-          </div>
-          <span
-            style={{
-              fontSize: fontSize * 0.7,
-              color: "rgba(255, 69, 0, 0.6)",
-              letterSpacing: "0.05em",
-            }}
-          >
-            git log
-          </span>
-        </div>
-      )}
+          git log
+        </span>
+      </div>
 
       {/* Log 列表 */}
       <div style={{ overflow: "hidden" }}>

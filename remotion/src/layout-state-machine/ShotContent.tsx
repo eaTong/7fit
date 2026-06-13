@@ -51,7 +51,6 @@ export const ShotContent: React.FC<ShotContentProps> = ({
         fontSize={28}
         showLineNumbers
         maxHeight={typeof auxStyle.height === "number" ? auxStyle.height * 0.9 : 400}
-        plain
         style={{ position: "absolute", ...auxStyle }}
       />
     );
@@ -63,7 +62,6 @@ export const ShotContent: React.FC<ShotContentProps> = ({
         entries={gitlogEntries ?? []}
         fontSize={28}
         visibleCount={gitlogVisibleCount ?? 5}
-        plain
         style={{ position: "absolute", ...auxStyle }}
       />
     );

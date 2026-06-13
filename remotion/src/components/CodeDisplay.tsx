@@ -126,10 +126,10 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
   return (
     <div
       style={{
-        background: plain ? "transparent" : "rgba(10, 10, 20, 0.88)",
-        backdropFilter: plain ? "none" : "blur(8px)",
-        border: plain ? "none" : "1px solid rgba(0, 200, 255, 0.4)",
-        boxShadow: plain ? "none" : "0 0 20px rgba(0, 200, 255, 0.15), 0 4px 24px rgba(0,0,0,0.6)",
+        background: "rgba(10, 10, 20, 0.88)",
+        backdropFilter: "blur(8px)",
+        border: "1px solid rgba(0, 200, 255, 0.4)",
+        boxShadow: "0 0 20px rgba(0, 200, 255, 0.15), 0 4px 24px rgba(0,0,0,0.6)",
         borderRadius: 12,
         overflow: "hidden",
         fontFamily: '"JetBrains Mono", "Fira Code", "SF Mono", monospace',
@@ -137,17 +137,16 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
       }}
     >
       {/* 语言标签栏 */}
-      {!plain && (
-        <div
-          style={{
-            background: "rgba(0, 200, 255, 0.08)",
-            borderBottom: "1px solid rgba(0, 200, 255, 0.2)",
-            padding: `8px ${fontSize}px`,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
+      <div
+        style={{
+          background: "rgba(0, 200, 255, 0.08)",
+          borderBottom: "1px solid rgba(0, 200, 255, 0.2)",
+          padding: `8px ${fontSize}px`,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
         <div style={{ display: "flex", gap: 6 }}>
           <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(255,69,0,0.7)" }} />
           <div style={{ width: 12, height: 12, borderRadius: "50%", background: "rgba(255,165,0,0.7)" }} />
@@ -165,7 +164,6 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
           {language}
         </span>
       </div>
-      )}
 
       {/* 代码区 */}
       <div

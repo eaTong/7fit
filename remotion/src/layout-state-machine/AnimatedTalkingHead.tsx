@@ -98,8 +98,6 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
     : Math.max(rawRadius, MIN_RADIUS);
 
   // 边缘羽化：用多层 box-shadow 模拟内外羽化
-  // 内圈：紧贴边缘的柔和 glow（0-8px 模糊）
-  // 外圈：向外扩散的柔和光晕（8-40px 模糊），模拟镜头虚化感
   const innerGlow = `0 0 ${isCircle ? 4 : 2}px ${edgeGlowColor}`;
   const outerGlow = `0 0 ${isCircle ? 20 : 8}px ${edgeGlowColor.replace("0.5", "0.2")}`;
   const softGlow  = `0 0 ${isCircle ? 60 : 20}px ${edgeGlowColor.replace("0.5", "0.08")}`;
@@ -125,7 +123,16 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
       <MediaFallback
         src={videoSrc}
         type="video"
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        style={{
+          width: "calc(100% + 100px)",
+          height: "calc(100% + 100px)",
+          position: "absolute",
+          left: -50,
+          top: -50,
+          objectFit: "cover",
+          maskImage: "linear-gradient(to right, transparent 0px, transparent 50px, black 50px, black calc(100% - 50px), transparent calc(100% - 50px), transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0px, transparent 50px, black 50px, black calc(100% - 50px), transparent calc(100% - 50px), transparent 100%)",
+        }}
       />
     </div>
   );

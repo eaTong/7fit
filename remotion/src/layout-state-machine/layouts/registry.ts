@@ -120,12 +120,12 @@ registerLayout({
 // 口播居中，左右两侧辅助内容
 registerLayout({
   id: "center_dual_aux",
-  left: 720, top: 192, width: 480, height: 480,
-  borderRadius: 240, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  left: 528, top: 108, width: 864, height: 864,
+  borderRadius: 10, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 15,
   auxiliarySlots: [
-    { id: "left", slot: "left", left: 50, top: 50, width: 910, height: 864 },
-    { id: "right", slot: "right", left: 960, top: 50, width: 910, height: 864 },
+    { id: "left", slot: "left", left: 50, top: 50, width: 400, height: 864 },
+    { id: "right", slot: "right", left: 1470, top: 50, width: 400, height: 864 },
   ],
 });
 
