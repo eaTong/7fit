@@ -85,7 +85,7 @@ export const ShotContent: React.FC<ShotContentProps> = ({
 function getAuxiliaryStyle(layoutId: string): React.CSSProperties {
   switch (layoutId) {
     case "left_text_right_talking":
-      return { left: 0, top: 0, width: 1340, height: 864 };
+      return { left: 50, top: 50, width: 1340, height: 864 };
     case "left_text_right_talking_50pct":
       return { left: 0, top: 0, width: 910, height: 864 };
     case "pip_bottom_right":
