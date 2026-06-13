@@ -213,4 +213,4 @@
 
 ---
 
-*文件路径*：`resources/docs/copy/a2_one_person_50_videos.md`
+*文件路径*：`docs/copy/a2_one_person_50_videos.md`

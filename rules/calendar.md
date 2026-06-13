@@ -3,7 +3,7 @@
 > 每周排期 + 实际发布记录
 > 状态：🔄 每周更新
 > 更新日期：2026-06-04（创建）
-> 关联：[[strategy.md]] / [[backlog.md]] / [accounts.md](accounts.md) / [rhythm.md](../production/rhythm.md)
+> 关联：[[strategy.md]] / [[backlog.md]] / [accounts.md](accounts.md) / [rhythm.md](rhythm.md)
 >
 > **日历哲学**：**月度排期 + 周复盘 + 数据回收**——发布日是冰山一角，**月度规划**和**7d 复盘**才是复利积累。3 要素：**每月初定排期**（不临时凑数）+ **每次发后立记**（不攒数据）+ **月底调比例**（基于数据）。
 
@@ -126,7 +126,7 @@
    ↓
 3. 7d 后回填 7d 数据 + 复盘
    ↓
-4. 复盘结论写进 OPC 文档（[publish.md §9.4](../delivery/publish.md#94-反哺-opc-文档)）
+4. 复盘结论写进 OPC 文档（[publish.md §9.4](publish.md#94-反哺-opc-文档)）
    ↓
 5. 改 backlog 状态（published）
 ```
@@ -174,13 +174,13 @@
 
 ```
 1. 月底最后一天：填月度复盘表（不攒数据）
-2. 跑 §4.2 数据基准对比（详 [publish.md §9.3](../delivery/publish.md#93-数据基准达标线--优秀线--爆款线)）
-3. 决策 M+1 比例（[strategy.md §3](../planning/strategy.md#3-三类视频占比m1-试水期)）
+2. 跑 §4.2 数据基准对比（详 [publish.md §9.3](publish.md#93-数据基准达标线--优秀线--爆款线)）
+3. 决策 M+1 比例（[strategy.md §3](strategy.md#3-三类视频占比m1-试水期)）
 4. 备份 calendar.md 历史数据
 5. 启动 M+1 排期
 ```
 
-### 4.2 数据基准（参考 [publish.md §9.3](../delivery/publish.md#93-数据基准达标线--优秀线--爆款线)）
+### 4.2 数据基准（参考 [publish.md §9.3](publish.md#93-数据基准达标线--优秀线--爆款线)）
 
 | 指标 | 达标 | 优秀 | 爆款 |
 |---|---|---|---|

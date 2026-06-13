@@ -24,7 +24,7 @@
 
 2. **BGM 工具与文档不一致**：
    - `tools/gen-bgm.js` v2（2026-06-10）已实现 per-topic 命名 + section cue prompt
-   - `rules/production/bgm.md` v2（2026-06-09）仍写"共享预设文件名"（`cyber_pulse.mp3 / power_build.mp3` 等）
+   - `rules/bgm.md` v2（2026-06-09）仍写"共享预设文件名"（`cyber_pulse.mp3 / power_build.mp3` 等）
    - `tools/mmx.md` §1.1 / §4.3 / §6.3 路径约定也是 `<类型>.mp3`
    - **存在同名 `power_build.mp3` 共享文件**（4.8MB），新规则过渡期可能产生混淆
 
@@ -52,7 +52,7 @@
 | 1 | `hyperframe/index.html` | 修改 | 根画布硬约束 1080×1920；移除 `01_test` 引用 |
 | 2 | `hyperframe/compositions/01_test.html` | 移动 | → `compositions/_legacy/01_test.html`（横屏测试产物归档） |
 | 3 | `hyperframe/compositions/gym_machine_judge_b13.html` | Fix | line 88 BGM src 改 `<topic>.mp3` 路径 |
-| 4 | `rules/production/bgm.md` | 重写 v2 → v3 | 6 处改写 + 1 节新增 + 反模式 + 评分卡 |
+| 4 | `rules/bgm.md` | 重写 v2 → v3 | 6 处改写 + 1 节新增 + 反模式 + 评分卡 |
 | 5 | `tools/mmx.md` | 小改 3 处 | §1.1 / §4.3 / §6.3 路径约定同步 |
 
 **配套生成**（gen-bgm.js 副作用，不算独立文件）：
@@ -388,8 +388,8 @@ grep -E 'bgm.*src' hyperframe/compositions/gym_machine_judge_b13.html
 # 应: src="../../resources/audios/bgm/gym_machine_judge_b13.mp3"
 
 # 4. 文档一致
-grep -E 'power_build\.mp3|cyber_pulse\.mp3' rules/production/bgm.md  # 应 0 命中
-grep -E '<topic>\.mp3' rules/production/bgm.md                       # 应 ≥ 3 命中
+grep -E 'power_build\.mp3|cyber_pulse\.mp3' rules/bgm.md  # 应 0 命中
+grep -E '<topic>\.mp3' rules/bgm.md                       # 应 ≥ 3 命中
 grep -E 'power_build\.mp3|<topic>\.mp3' tools/mmx.md                  # 后者命中
 ```
 

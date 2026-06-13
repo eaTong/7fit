@@ -3,7 +3,7 @@
 > **创建日期**：2026-06-10
 > **状态**：📝 writing（写作中）
 > **类型**：A 类（个人人设/OPC）—— **副号**
-> **主档**：[backlog.md §4.1](../../rules/planning/backlog.md)
+> **主档**：[backlog.md §4.1](../../rules/backlog.md)
 > **本卡目的**：把用户一句话选题"vibe coding 做小程序 + vibe coding 自动剪辑视频"拆成可执行的视频脚本
 
 ---
@@ -249,7 +249,7 @@ vibe coding 不是替代你，是放大你。
 > **创建日期**：2026-06-10
 > **Phase**：1 / 6（文案 → 字幕 → 分镜 → 素材 → 实现 → 渲染）
 > **范式**：v2 锁版（中速 3.4 字/秒，主体 50s = 167 字）
-> **配套规则**：[rules/production/copy.md](../../rules/production/copy.md)
+> **配套规则**：[rules/copy.md](../../rules/copy.md)
 
 ---
 

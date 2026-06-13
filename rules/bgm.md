@@ -2,7 +2,7 @@
 
 > **Phase 6 产物**（**放最后**）：视频总时长确定后 → 按总时长设计 BGM。
 >
-> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（BGM 时长 ≥ 全文 + 3s fade out）+ [script.md §0 音视频分离](script.md#1--速查remotion--hyperframes-api-映射)（`<video muted playsinline>` + 分离 `<audio>`）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（BGM 时长 ≥ 全文 + 3s fade out）+ [script.md §0 音视频分离](script.md#1--速查remotion--hyperframes-api-映射)（`<video muted playsinline>` + 分离 `<audio>`）
 >
 > **BGM 哲学**：**BGM 是"情绪地基"**——不抢人声，烘托气氛。3 要素：**音量克制**（-8 ~ -12 dB）+ **风格匹配**（视频类型 → BGM 类型）+ **节奏匹配**（BPM 与动作同步）。
 
@@ -34,7 +34,7 @@ BGM 长度 ≥ 视频总时长 + 3s（fade out 余量）
 
 ## 2 · 4 类 BGM 选型（按情绪）
 
-> **⚠️ BGM 类型的 A/B/C/D 不要与视频类型 A/B/C 混用**——详 [video-types.md](../planning/video-types.md) 速查。
+> **⚠️ BGM 类型的 A/B/C/D 不要与视频类型 A/B/C 混用**——详 [video-types.md](video-types.md) 速查。
 
 | 类型 | 风格 | BPM | 调性 | 适用场景 |
 |---|---|---|---|---|
@@ -52,7 +52,7 @@ BGM 长度 ≥ 视频总时长 + 3s（fade out 余量）
 | **C · 七练介绍** | **A · Cyber Pulse**（synthwave, 100 BPM）| 科技感 + 产品演示 |
 | 混合类型 | 时长占比最大的类型 | 例：A 60% + B 40% → A 的 BGM |
 
-> 视频类型判定见 [video-types.md §默认搭配](../planning/video-types.md#默认搭配视频类型--bgm-类型)。
+> 视频类型判定见 [video-types.md §默认搭配](video-types.md#默认搭配视频类型--bgm-类型)。
 
 ### 2.2 4 类 BGM 详解
 

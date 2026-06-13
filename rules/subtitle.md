@@ -4,7 +4,7 @@
 >
 > **生成工具**：[`tools/gen-subtitles.js`](../../tools/gen-subtitles.js)（一次性脚本，3 大能力：解析 copy / 计算时长 / 自动标 highlight）
 >
-> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（每条字幕时长 = 字数 / 中速 + 破折号停顿）+ [copy.md §15 下游接口](../planning/copy.md#15-下游接口说明)（重点词→highlight 强制）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（每条字幕时长 = 字数 / 中速 + 破折号停顿）+ [copy.md §15 下游接口](copy.md#15-下游接口说明)（重点词→highlight 强制）
 >
 > **字幕哲学**：**字幕是"无声讲解员"**——让用户关掉声音也能看懂 80% 的内容。3 要素：**清晰**（≥ 28px）+ **重点**（highlight 强制）+ **节奏**（时长 = 字数 / 3.4）。
 
@@ -23,7 +23,7 @@ copy.md 文案定稿（v6+）
   ├─ 自动检测 highlight（PROJECT_HIGHLIGHTS 候选 + 去重叠）
   └─ 字段校验：每条 ≤ 4s + ≤ 24 字 + ≤ 2 highlights
   ↓
-hyperframe/src/scenes/<主题>/subtitles.json
+remotion/src/scenes/<主题>/subtitles.json
   ↓
 【可选】录旁白 → resources/audios/<主题>.m4a（仅用于视频合成，**不影响字幕 timing**）
   ↓
@@ -82,7 +82,7 @@ scene.js 加载 + GSAP 弹跳入场
 }
 ```
 
-> **说明**：原 sub_002 "练了 3 个月，肩胛还是凸出来"（12 字 / 6s = 2.0 字/秒）违反 [timing-sync.md §6](../planning/timing-sync.md#6--单条字幕时长上限单源真相--从-subtitlemd-61-迁来) 的"单条 ≤ 4s + 24 字 + 中速 3.4 字/秒"。已拆为 sub_002（5 字 / 1.47s）+ sub_003（7 字 / 2.06s）两条独立字幕。
+> **说明**：原 sub_002 "练了 3 个月，肩胛还是凸出来"（12 字 / 6s = 2.0 字/秒）违反 [timing-sync.md §6](timing-sync.md#6--单条字幕时长上限单源真相--从-subtitlemd-61-迁来) 的"单条 ≤ 4s + 24 字 + 中速 3.4 字/秒"。已拆为 sub_002（5 字 / 1.47s）+ sub_003（7 字 / 2.06s）两条独立字幕。
 
 ### 2.2 字段说明
 
@@ -179,7 +179,7 @@ scene.js 加载 + GSAP 弹跳入场
 - ❌ 1 条字幕 3 个 highlight → 眼花
 - ❌ 全篇 50% highlight → 处处是重点 = 没重点
 
-### 4.2 highlight 强制清单（来自 [copy.md §15](../planning/copy.md#15-下游接口说明) 下游接口）
+### 4.2 highlight 强制清单（来自 [copy.md §15](copy.md#15-下游接口说明) 下游接口）
 
 | 字段来源 | 高亮位置 |
 |---|---|
@@ -243,7 +243,7 @@ gsap.to(subtitleEl, {
 
 ## 6 · 时长校验公式
 
-> **本节是 subtitle 视角的"如何用"，单条硬上限在 [timing-sync.md §6](../planning/timing-sync.md#6--单条字幕时长上限单源真相--从-subtitlemd-61-迁来)（单源真相）。
+> **本节是 subtitle 视角的"如何用"，单条硬上限在 [timing-sync.md §6](timing-sync.md#6--单条字幕时长上限单源真相--从-subtitlemd-61-迁来)（单源真相）。
 
 ### 6.1 公式校验
 
@@ -268,7 +268,7 @@ gsap.to(subtitleEl, {
 - **不带句末标点**（字幕显示"练了 3 个月"而不是"练了 3 个月。"）
 - **允许的语气词**：嗯 / 诶 / 哎 / 哈
 - **禁用**：感叹号叠加（"！！"）、emoji、乱码
-- **禁用**：违禁词（参考 [copy.md §12 违禁词清单](../planning/copy.md#12-违禁词清单13-类高优处理)）
+- **禁用**：违禁词（参考 [copy.md §12 违禁词清单](copy.md#12-违禁词清单13-类高优处理)）
 
 ### 7.1 标点使用细则
 
@@ -439,7 +439,7 @@ gsap.to(subtitleEl, {
 ### 11.2 评审 SOP
 
 ```
-1. 跑自动校验（[timing-sync.md §6.1](../planning/timing-sync.md)）
+1. 跑自动校验（[timing-sync.md §6.1](timing-sync.md)）
    - 单条 > 24 字 → 标红
    - 单条 > 4s → 标红
    ↓
@@ -464,7 +464,7 @@ gsap.to(subtitleEl, {
 - ❌ 字号 < 28px（移动端不可读）
 - ❌ 全部 highlight（高亮无意义）
 - ❌ 用 CSS transition / animation 做入场（hyperframes 按帧渲染时不按帧推进）
-- ❌ 不校验时长直接用 mmx 输出（节奏可能与 [timing-sync.md](../planning/timing-sync.md) 锚点不符）
+- ❌ 不校验时长直接用 mmx 输出（节奏可能与 [timing-sync.md](timing-sync.md) 锚点不符）
 - ❌ 录完旁白才发现节奏不对，回头改文案但不改字幕时间
 - ❌ **1 条字幕 3 个 highlight segment**（眼花）
 - ❌ **长句不拆直接用**（"36 字"违反 ≤ 24 字铁律）
@@ -472,7 +472,7 @@ gsap.to(subtitleEl, {
 - ❌ **钩子用底部位置**（不抢眼，3s 看不完）
 - ❌ **不写 segments 数组，全 highlight=false**（等于没高亮）
 - ❌ **跳过 5 维评分卡直接给用户**
-- ❌ **违禁词进字幕**（[copy.md §12](../planning/copy.md#12-违禁词清单13-类高优处理)）
+- ❌ **违禁词进字幕**（[copy.md §12](copy.md#12-违禁词清单13-类高优处理)）
 
 ---
 

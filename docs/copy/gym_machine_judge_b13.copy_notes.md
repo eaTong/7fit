@@ -5,7 +5,7 @@
 
 ---
 
-## 字幕 highlight 候选（供 [subtitle.md](../../../rules/production/subtitle.md) 用）
+## 字幕 highlight 候选（供 [subtitle.md](../../rules/subtitle.md) 用）
 
 | 词 | 原因 |
 |---|---|
@@ -28,7 +28,7 @@
 - 全文 **226 字 / 182 speech 字**（钩子 12 / 段 1 96 / 段 2 47 / 段 3 50 / 收尾 21 = 226）—— 含 **12 破折号**
 - **预计朗读时长**：~62.3s（钩子 3.4s + 主体 50.8s + 段间 2.8s + 收尾 5.3s）—— **中速 3.4 字/秒**
 - **中速（默认）= 3.4 字/秒**（主体 154 speech 字 / 50.8s ≈ 3.0；破折号 11 句内 × 0.5s 额外停顿 = 主体偏离 50s 锚点 +0.8s）
-- 4 档速度 → 详见 [timing-sync.md](../../../rules/planning/timing-sync.md)
+- 4 档速度 → 详见 [timing-sync.md](../../rules/timing-sync.md)
 - 破折号"——"：**12 个**（钩子 1 + 段 1 11）
 - "哎" 语气词：**0 个**
 - 段间停顿：**0.7 秒 × 4 = 2.8 秒**（钩子→段 1 / 段 1→段 2 / 段 2→段 3 / 段 3→收尾）
@@ -37,14 +37,14 @@
 > 
 > **v5 决策**（2026-06-09，用户手动改稿）：① 段 1 加"一分钟教会你"开头，去掉"4 步法——"和"4 类接触点"两句话；② 段 2 加"开始实战"开头；③ 案例 2 改回**腿弯举**（v2/v3 风格，与案例 1 推胸形成"上肢推 + 下肢弯"对比）。**全文 60s**（v4 62s → v5 60s，-2s 因为段 1 少 2 句）。
 
-### 异常表（[timing-sync.md §7](../../../rules/planning/timing-sync.md)）
+### 异常表（[timing-sync.md §7](../../rules/timing-sync.md)）
 
 | 异常 | 现象 | 修法 |
 |---|---|---|
 | ❌ 全文 < 60s | 不存在 | — |
 | ❌ 全文 > 90s | 不存在（实际 60s）| — |
 | ❌ BGM < 全文 | BGM = power_build.mp3 149.7s（≥ 全文 + 3s = 63s ✓）| — |
-| ❌ 字幕单条 > 4s | 待 mmx 转写后校验 | 拆条（[subtitle.md §8](../../../rules/production/subtitle.md)）|
+| ❌ 字幕单条 > 4s | 待 mmx 转写后校验 | 拆条（[subtitle.md §8](../../rules/subtitle.md)）|
 | ❌ 字幕单条 > 24 字 | 同上 | 同上 |
 | ❌ VIDEO_DURATION 与字幕不同步 | 待 scene.js 写时锚定 | 改 `tl.duration(60)` |
 
@@ -138,7 +138,7 @@
 > **核心改动逻辑**：
 > 1. **破折号作为内部停顿标记**——v3 用"、"分隔"这里、这里、这里"只表示列举，没有停顿感；v4 改"——"创造 0.5s 视觉切换停顿，**让观众在每个"这里"前都看到 1 个不同器械**（video 切换点更明确）。
 > 2. **案例 1 改回推胸**——v2 改腿弯举是为了演示"下肢体是小腿"差异化，但 v3 实战中发现腿弯举动作模式（膝屈）和"握住把手"措辞冲突，**推胸的"握住把手，往前推"对小白更直观**。
-> 3. **破折号停顿规范**——已在 [rules/planning/copy.md §5.3](../../../rules/planning/copy.md) 和 [timing-sync.md](../../../rules/planning/timing-sync.md) 同步更新。
+> 3. **破折号停顿规范**——已在 [rules/copy.md §5.3](../../rules/copy.md) 和 [timing-sync.md](../../rules/timing-sync.md) 同步更新。
 
 ---
 
@@ -182,7 +182,7 @@
 
 ### v1（2026-06-09）— 初版
 
-首次写作。基于 [2026-06-09 调研输出](../../rules/planning/backlog.md#b13-进健身房不会用器械-4-步法--2-个案例)。
+首次写作。基于 [2026-06-09 调研输出](../../rules/backlog.md#b13-进健身房不会用器械-4-步法--2-个案例)。
 
 | 决策点 | 选择 | 原因 |
 |---|---|---|
@@ -191,11 +191,11 @@
 | **案例选择** | 推胸 + 腿举 | 覆盖"上肢推 + 下肢推"；都是健身房标配机 |
 | **BGM** | Power Build（B 类默认）| 不在 v1 改，标准 BGM |
 | **CTA** | 互动型（评论"最尴尬的器械"）| B 类默认；高互动数据 |
-| **安全提示** | 收尾不念，单独做警示字幕 overlay | 收尾 7s 装不下；按 [subtitle.md §9.5](../../../rules/production/subtitle.md) 警示字幕样式 |
+| **安全提示** | 收尾不念，单独做警示字幕 overlay | 收尾 7s 装不下；按 [subtitle.md §9.5](../../rules/subtitle.md) 警示字幕样式 |
 
 ---
 
-## 自检（参考 [copy.md §8](../../../rules/planning/copy.md)）
+## 自检（参考 [copy.md §8](../../rules/copy.md)）
 
 ### 文案质量
 
@@ -207,7 +207,7 @@
 - [x] 没有"我们/本产品/极致/颠覆"等广告腔
 - [x] 提到的事实能在公开资料找到（4 步法是公开力量训练原则）
 - [x] 软 CTA（评论互动）而非硬推
-- [x] 文案稿保存到 `resources/docs/copy/gym_machine_judge_b13.md`
+- [x] 文案稿保存到 `docs/copy/gym_machine_judge_b13.md`
 
 ### 5 维评分卡
 
@@ -226,13 +226,13 @@
 - ⚠️ 视频**不是医疗诊断**——这个 disclaimer 放在视频末警示字幕 overlay
 - ⚠️ 训练时**如果关节疼痛**——这个提示放在动作演示中间
 - ⚠️ "4 步法"是通用框架，**不是绝对正确**——给老手留吐槽空间
-- ⚠️ 段 1 视觉演示工作量大（4 部位 × 3 器械 = 12 个切镜 + 调节 5 个切镜 + 试重 2 个切镜 = **19 个切镜**）—— 拍摄前必走 [shoot-checklist.md](../../../rules/production/shoot-checklist.md)
+- ⚠️ 段 1 视觉演示工作量大（4 部位 × 3 器械 = 12 个切镜 + 调节 5 个切镜 + 试重 2 个切镜 = **19 个切镜**）—— 拍摄前必走 [shoot-checklist.md](../../rules/shoot-checklist.md)
 
 ---
 
 ## 拍摄可行性
 
-> B 类必走 [shoot-checklist.md](../../../rules/production/shoot-checklist.md)（每个 scene 目录自带）
+> B 类必走 [shoot-checklist.md](../../rules/shoot-checklist.md)（每个 scene 目录自带）
 
 - **环境**：需要一家能拍视频的健身房（最好 24h 或人少时段）
 - **器械**：坐姿推胸 + 坐姿腿弯举，2 件都要确保健身房有（**v5 案例 2 改回腿弯举，v6 拆接触点动作**）
@@ -250,21 +250,21 @@
     - 试重 2 切镜（从轻开始 + 调到 12 次）
   - 段 2（推胸）：正面 + 侧面 2 机位
   - 段 3（腿弯举，**v5 改回 + v6 拆接触点动作**）：侧面 + 背面 2 机位（动作"把腿绷直"在 v6 拆为独立句，与"小腿抵住挡板"分开，拍摄时每句 1 镜头）
-- **不需要**额外 mmx 生成（用户自拍是 B 类硬约束，[assets.md §5.1](../../../rules/production/assets.md)）
+- **不需要**额外 mmx 生成（用户自拍是 B 类硬约束，[assets.md §5.1](../../rules/assets.md)）
 
 ---
 
 ## 下一步
 
-按 [rhythm.md](../../../rhythm.md) 流程，本步 copy 完成后下一步：
+按 [rhythm.md](../../../rules/rhythm.md) 流程，本步 copy 完成后下一步：
 
 1. **录制旁白**（见下方"录音指引"）
-   - 输出：`resources/audios/gym_machine_judge_b13.m4a`（**iPhone 语音备忘录默认格式**）
-2. mmx 字幕识别 → `hyperframe/src/scenes/gym_machine_judge_b13/subtitles.json`
-3. 写分镜表 → `hyperframe/src/scenes/gym_machine_judge_b13/storyboard.md`
-4. 写素材清单 → `hyperframe/src/scenes/gym_machine_judge_b13/assets.md`
-5. 跑 [checklist.md](../../../rules/delivery/checklist.md) 自检
-6. 实现 Scene 组件（hyperframes 0.6.72 官方结构）
+   - 输出：`../../../resources/audios/gym_machine_judge_b13.m4a`（**iPhone 语音备忘录默认格式**）
+2. mmx 字幕识别 → `../../../remotion/src/scenes/gym_machine_judge_b13/subtitles.json`
+3. 写分镜表 → `../../../remotion/src/scenes/gym_machine_judge_b13/storyboard.md`
+4. 写素材清单 → `../../../remotion/src/scenes/gym_machine_judge_b13/assets.md`
+5. 跑 [checklist.md](../../rules/checklist.md) 自检
+6. 实现 Scene 组件（Remotion 官方结构）
 7. 启动 Studio 预览 → 等用户说"开始渲染"
 
 ---
@@ -277,7 +277,7 @@
 
 | 项 | 要求 |
 |---|---|
-| **路径** | `resources/audios/gym_machine_judge_b13.m4a` |
+| **路径** | `../../../resources/audios/gym_machine_judge_b13.m4a` |
 | 格式 | **M4A / AAC-LC**（iPhone 语音备忘录默认）|
 | 采样率 | 44.1 kHz 或 48 kHz |
 | 比特率 | **64 kbps+**（建议 128 kbps+）|

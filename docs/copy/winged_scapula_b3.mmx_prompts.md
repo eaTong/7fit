@@ -3,7 +3,7 @@
 > **2026-06-05** — Phase 4 素材生成清单
 >
 > ⚠️ **我没有 mmx API 工具**——下面 7 个 prompt 给你（或 mmx 工具）跑。
-> 命名严格按 [assets.md §1-2](hyperframe/src/scenes/winged_scapula_b3/assets.md) 表格的路径，下载后 cp 到 `resources/` + `public/` 对应位置。
+> 命名严格按 [assets.md §1-2](../../../remotion/src/scenes/winged_scapula_b3/assets.md) 表格的路径，下载后 cp 到 `resources/` + `public/` 对应位置。
 
 ---
 
@@ -15,7 +15,7 @@
 - 字体：现代无衬线（Inter / 思源黑体）
 - 尺寸：1080×1920 竖屏（9:16），mp4 格式
 - 帧率：30 fps
-- 风格：健身教学 + 力量感 + 科技感（参考 [script.md §7](../../../rules/production/script.md)）
+- 风格：健身教学 + 力量感 + 科技感（参考 [script.md §7](../../rules/script.md)）
 - 无文字水印 / 无品牌 logo
 - 5-12s 循环 / 可拼接
 ```
@@ -24,7 +24,7 @@
 
 ## 1. 视频 #5 — 钩子对比（mmx）
 
-**目标文件**：`resources/videos/winged_scapula_b3_001_hook_compare.mov`
+**目标文件**：`../../../resources/videos/winged_scapula_b3_001_hook_compare.mov`
 **目标位置**：`hyperframe/public/winged_scapula_b3/videos/001_hook_compare.mov`
 **shot_id**：S02（5.33s）
 **覆盖字幕**：「你可能有翼状肩胛。先用两个动作自测一下。」
@@ -56,7 +56,7 @@
 
 ## 2. 视频 #6 — 自测 1：镜子（mmx）
 
-**目标文件**：`resources/videos/winged_scapula_b3_002_mirror_test.mov`
+**目标文件**：`../../../resources/videos/winged_scapula_b3_002_mirror_test.mov`
 **目标位置**：`hyperframe/public/winged_scapula_b3/videos/002_mirror_test.mov`
 **shot_id**：S03（8.82s）
 **覆盖字幕**：「第一个：背对镜子站好，肩膀放松手垂下来。肩胛骨内侧明显突出，就是翼状。」
@@ -87,7 +87,7 @@
 
 ## 3. 视频 #7 — 自测 2：推墙（mmx）
 
-**目标文件**：`resources/videos/winged_scapula_b3_003_wall_push.mov`
+**目标文件**：`../../../resources/videos/winged_scapula_b3_003_wall_push.mov`
 **目标位置**：`hyperframe/public/winged_scapula_b3/videos/003_wall_push.mov`
 **shot_id**：S04（8.53s）
 **覆盖字幕**：「第二个：双手推墙，让朋友看背后。肩胛骨像长了翅膀翘起来，基本没跑了。」
@@ -119,7 +119,7 @@
 
 ## 4. 过渡图 #9 — "4 个动作改善" 章节卡（mmx）
 
-**目标文件**：`resources/images/winged_scapula_b3_transition_4actions.png`
+**目标文件**：`../../../resources/images/winged_scapula_b3_transition_4actions.png`
 **目标位置**：`hyperframe/public/winged_scapula_b3/images/transition_4actions.png`
 **shot_id**：S05（4.41s）
 **覆盖字幕**：「别担心，今天教你 4 个动作改善一下。」
@@ -153,7 +153,7 @@
 
 ## 5. sfx T1 — whoosh（钩子→主体）
 
-**目标文件**：`resources/audios/sfx/winged_scapula_b3_T1_whoosh.mp3`
+**目标文件**：`../../../resources/audios/sfx/winged_scapula_b3_T1_whoosh.mp3`
 **目标位置**：`hyperframe/public/winged_scapula_b3/audios/sfx/T1_whoosh.mp3`
 **shot_id**：TR01（0.7s）
 
@@ -176,7 +176,7 @@
 
 ## 6. sfx T2 — sweep（段间停顿用，3 处）
 
-**目标文件**：`resources/audios/sfx/winged_scapula_b3_T2_sweep.mp3`
+**目标文件**：`../../../resources/audios/sfx/winged_scapula_b3_T2_sweep.mp3`
 **目标位置**：`hyperframe/public/winged_scapula_b3/audios/sfx/T2_sweep.mp3`
 **shot_id**：TR02 / TR03 / TR05 / TR06 / TR07 / TR08（6 处各 0.7s）
 
@@ -199,7 +199,7 @@
 
 ## 7. sfx T3 — pop（收尾过渡用，2 处）
 
-**目标文件**：`resources/audios/sfx/winged_scapula_b3_T3_pop.mp3`
+**目标文件**：`../../../resources/audios/sfx/winged_scapula_b3_T3_pop.mp3`
 **目标位置**：`hyperframe/public/winged_scapula_b3/audios/sfx/T3_pop.mp3`
 **shot_id**：TR09 / TR10（2 处各 0.7s）
 
@@ -242,13 +242,13 @@ cp winged_scapula_b3_T3_pop.mp3 audios/sfx/
 
 # 5. 复制到 public/（Scene 直接用）
 cd ..
-cp resources/videos/winged_scapula_b3_001_hook_compare.mov hyperframe/public/winged_scapula_b3/videos/
-cp resources/videos/winged_scapula_b3_002_mirror_test.mov hyperframe/public/winged_scapula_b3/videos/
-cp resources/videos/winged_scapula_b3_003_wall_push.mov hyperframe/public/winged_scapula_b3/videos/
-cp resources/images/winged_scapula_b3_transition_4actions.png hyperframe/public/winged_scapula_b3/images/transition_4actions.png
-cp resources/audios/sfx/winged_scapula_b3_T1_whoosh.mp3 hyperframe/public/winged_scapula_b3/audios/sfx/
-cp resources/audios/sfx/winged_scapula_b3_T2_sweep.mp3 hyperframe/public/winged_scapula_b3/audios/sfx/
-cp resources/audios/sfx/winged_scapula_b3_T3_pop.mp3 hyperframe/public/winged_scapula_b3/audios/sfx/
+cp ../../../resources/videos/winged_scapula_b3_001_hook_compare.mov hyperframe/public/winged_scapula_b3/videos/
+cp ../../../resources/videos/winged_scapula_b3_002_mirror_test.mov hyperframe/public/winged_scapula_b3/videos/
+cp ../../../resources/videos/winged_scapula_b3_003_wall_push.mov hyperframe/public/winged_scapula_b3/videos/
+cp ../../../resources/images/winged_scapula_b3_transition_4actions.png hyperframe/public/winged_scapula_b3/images/transition_4actions.png
+cp ../../../resources/audios/sfx/winged_scapula_b3_T1_whoosh.mp3 hyperframe/public/winged_scapula_b3/audios/sfx/
+cp ../../../resources/audios/sfx/winged_scapula_b3_T2_sweep.mp3 hyperframe/public/winged_scapula_b3/audios/sfx/
+cp ../../../resources/audios/sfx/winged_scapula_b3_T3_pop.mp3 hyperframe/public/winged_scapula_b3/audios/sfx/
 ```
 
-> 复制完后，所有 7 个缺失素材就位 → 跑 [checklist.md](../../../rules/delivery/checklist.md) 自检 → 准备渲染。
+> 复制完后，所有 7 个缺失素材就位 → 跑 [checklist.md](../../rules/checklist.md) 自检 → 准备渲染。

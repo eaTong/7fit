@@ -17,7 +17,7 @@
 |---|---|---|---|
 | 1 | [video-types.md](video-types.md) | 3 类视频（A 个人人设 / B 健身知识 / C 七练介绍）判定 + BGM 配对 | 用户说"做 X 视频"后**第一件事** |
 | 2 | [docs-sync.md](docs-sync.md) | 增量同步 `fit_lc` + `7fit_opc` 到 `docs/` + SUMMARY.md | 写文案稿前强制 |
-| 3 | [copy.md](copy.md) | 文案稿撰写规范（口语化、3 秒钩子、违禁词自检、5 维评分卡）| 写 `resources/docs/copy/<主题>.md` 时 |
+| 3 | [copy.md](copy.md) | 文案稿撰写规范（口语化、3 秒钩子、违禁词自检、5 维评分卡）| 写 `docs/copy/<主题>.md` 时 |
 | 4 | [timing-sync.md](timing-sync.md) | ⏰ 统一语速控制（主体 50s 锚点 / 中速 3.4 字/秒 / 4 档速度） | **改任何时间字段必走** |
 | 5 | [strategy.md](strategy.md) | 项目级发布策略（双账号矩阵、节奏、禁区）| 立项前 / 调整策略时 |
 | 6 | [backlog.md](backlog.md) | 选题池（按 A/B/C 类型分组 + 状态流转）| 每周一选题会议 |
@@ -91,7 +91,7 @@
 6. **渲染触发**：`npm run dev` 预览；`npm run render` 必须用户显式指令
 7. **每个视频一个独立 scene 目录**——含 index.tsx + storyboard + subtitles + components/
 8. **mmx 是默认 AI 工具**——所有图片 / BGM / 字幕识别需求默认调 mmx CLI
-9. **事实可追溯**——提到的功能/价格/数字都必须在 `resources/docs/` 找到原文
+9. **事实可追溯**——提到的功能/价格/数字都必须在 `docs/` 找到原文
 10. **用户确认门**——文案必须用户说"文案 OK"才能进 Phase 2
 
 ---

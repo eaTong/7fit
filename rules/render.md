@@ -2,7 +2,7 @@
 
 > **Phase 5 核心产物**：视频自检通过后 → 用户显式指令 → `npm run render`。
 >
-> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（`tl.duration()` 对齐）+ [checklist.md](checklist.md)（渲染前必跑 50+ 项）+ [script.md](script.md)（Scene 实现）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（`tl.duration()` 对齐）+ [checklist.md](checklist.md)（渲染前必跑 50+ 项）+ [script.md](script.md)（Scene 实现）
 >
 > **渲染哲学**：**默认只预览，渲染要授权**。Hyperframes 按帧确定性渲染，需要**用户显式说"开始渲染"**才能 `npm run render`。模糊措辞（"OK"/"不错"）**不**视为授权。3 要素：**用户授权** + **自检 50+ 项** + **渲染后看一遍**。
 

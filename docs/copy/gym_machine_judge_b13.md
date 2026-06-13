@@ -86,7 +86,7 @@
 - 全文 **226 字 / 182 speech 字**（钩子 12 / 段 1 96 / 段 2 47 / 段 3 50 / 收尾 21）—— 含 **12 破折号**
 - **预计朗读时长**：~62.3s（钩子 3.4s + 主体 50.8s + 段间 2.8s + 收尾 5.3s）—— **中速 3.4 字/秒**
 - **中速（默认）= 3.4 字/秒**（主体 154 speech 字 / 50.8s ≈ 3.0；破折号 11 句内 × 0.5s 额外停顿 = 主体偏离 50s 锚点 +0.8s）
-- 4 档速度 → 详见 [timing-sync.md](../../../rules/planning/timing-sync.md)
+- 4 档速度 → 详见 [timing-sync.md](../../rules/timing-sync.md)
 - 破折号"——"：**12 个**（钩子 1 + 段 1 11）
 - "哎" 语气词：**0 个**
 - 段间停顿：**0.7 秒 × 4 = 2.8 秒**（钩子→段 1 / 段 1→段 2 / 段 2→段 3 / 段 3→收尾）
@@ -169,7 +169,7 @@
 > **核心改动逻辑**：
 > 1. **破折号作为内部停顿标记**——v3 用"、"分隔"这里、这里、这里"只表示列举，没有停顿感；v4 改"——"创造 0.5s 视觉切换停顿，**让观众在每个"这里"前都看到 1 个不同器械**（video 切换点更明确）。
 > 2. **案例 1 改回推胸**——v2 改腿弯举是为了演示"下肢体是小腿"差异化，但 v3 实战中发现腿弯举动作模式（膝屈）和"握住把手"措辞冲突，**推胸的"握住把手，往前推"对小白更直观**。
-> 3. **破折号停顿规范**——已在 [rules/planning/copy.md §5.3](../../../rules/planning/copy.md) 和 [timing-sync.md](../../../rules/planning/timing-sync.md) 同步更新。
+> 3. **破折号停顿规范**——已在 [rules/copy.md §5.3](../../rules/copy.md) 和 [timing-sync.md](../../rules/timing-sync.md) 同步更新。
 
 ---
 
@@ -219,7 +219,7 @@
 
 ### v1（2026-06-09）— 初版
 
-首次写作。基于 [2026-06-09 调研输出](../../rules/planning/backlog.md#b13-进健身房不会用器械-4-步法--2-个案例)。
+首次写作。基于 [2026-06-09 调研输出](../../rules/backlog.md#b13-进健身房不会用器械-4-步法--2-个案例)。
 
 | 决策点 | 选择 | 原因 |
 |---|---|---|
@@ -228,11 +228,11 @@
 | **案例选择** | 推胸 + 腿举 | 覆盖"上肢推 + 下肢推"；都是健身房标配机 |
 | **BGM** | Power Build（B 类默认）| 不在 v1 改，标准 BGM |
 | **CTA** | 互动型（评论"最尴尬的器械"）| B 类默认；高互动数据 |
-| **安全提示** | 收尾不念，单独做警示字幕 overlay | 收尾 7s 装不下；按 [subtitle.md §9.5](../../../rules/production/subtitle.md) 警示字幕样式 |
+| **安全提示** | 收尾不念，单独做警示字幕 overlay | 收尾 7s 装不下；按 [subtitle.md §9.5](../../rules/subtitle.md) 警示字幕样式 |
 
 ---
 
-## 违禁词自检（[copy.md §3.5](../../../rules/planning/copy.md)）
+## 违禁词自检（[copy.md §3.5](../../rules/copy.md)）
 
 ### 13 类违禁词预检
 
@@ -269,7 +269,7 @@
 
 ---
 
-## 5 维评分卡（[copy.md §10.2](../../../rules/planning/copy.md)）
+## 5 维评分卡（[copy.md §10.2](../../rules/copy.md)）
 
 > **总分 ≥ 15/25 才能进用户审阅**
 
@@ -300,12 +300,12 @@
 
 ### 平台数据 / 痛点 / 差异化
 
-- 详见 [backlog.md §B13](../../rules/planning/backlog.md) 备注
+- 详见 [backlog.md §B13](../../rules/backlog.md) 备注
 - 4 大维度调研：见本调研会话记录（2026-06-09）
 
 ### 北极星 + 钩子句引用
 
-- 北极星：「用产品思维去健身，用健身改造产品。」→ 来自 [opc/north-star.md](../../../docs/opc/north-star.md)
+- 北极星：「用产品思维去健身，用健身改造产品。」→ 来自 [opc/north-star.md](../../opc/north-star.md)
 - 钩子句：「让健身更简单。」→ 同上
 - 本视频无 PRD 引用（通用方法论不绑产品）
 
@@ -313,13 +313,13 @@
 
 ## 下一步
 
-按 [rhythm.md](../../rhythm.md) 流程，本步 copy 完成后下一步：
+按 [rhythm.md](../../rules/rhythm.md) 流程，本步 copy 完成后下一步：
 
 1. **录制旁白**（见 [copy_notes.md §录音指引](./gym_machine_judge_b13.copy_notes.md)）
-   - 输出：`resources/audios/gym_machine_judge_b13.m4a`（iPhone 语音备忘录默认格式）
-2. mmx 字幕识别 → `hyperframe/src/scenes/gym_machine_judge_b13/subtitles.json`
-3. 写分镜表 → `hyperframe/src/scenes/gym_machine_judge_b13/storyboard.md`
-4. 写素材清单 → `hyperframe/src/scenes/gym_machine_judge_b13/assets.md`
-5. 跑 [checklist.md](../../../rules/delivery/checklist.md) 自检
-6. 实现 Scene 组件（hyperframes 0.6.72 官方结构 `compositions/gym_machine_judge_b13.html`）
+   - 输出：`../../../resources/audios/gym_machine_judge_b13.m4a`（iPhone 语音备忘录默认格式）
+2. mmx 字幕识别 → `../../../remotion/src/scenes/gym_machine_judge_b13/subtitles.json`
+3. 写分镜表 → `../../../remotion/src/scenes/gym_machine_judge_b13/storyboard.md`
+4. 写素材清单 → `../../../remotion/src/scenes/gym_machine_judge_b13/assets.md`
+5. 跑 [checklist.md](../../rules/checklist.md) 自检
+6. 实现 Scene 组件（Remotion 官方结构 `compositions/gym_machine_judge_b13.html`）
 7. 启动 Studio 预览 → 等用户说"开始渲染"

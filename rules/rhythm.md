@@ -13,10 +13,10 @@
 
 > 本文是"日历视角"SOP，含单条 5 步流程 + 每周排期 + 数据复盘节奏。详情分流：
 > - **单条 5 步流程**：见本文 §1
-> - **每周排期**：见 [strategy.md §4](../planning/strategy.md#4-每周排期m1-试水) + [calendar.md](../delivery/calendar.md)
-> - **自检项**：见 [checklist.md](../delivery/checklist.md)
-> - **战略 / 比例**：见 [strategy.md](../planning/strategy.md)
-> - **选题池**：见 [backlog.md](../planning/backlog.md)
+> - **每周排期**：见 [strategy.md §4](strategy.md#4-每周排期m1-试水) + [calendar.md](calendar.md)
+> - **自检项**：见 [checklist.md](checklist.md)
+> - **战略 / 比例**：见 [strategy.md](strategy.md)
+> - **选题池**：见 [backlog.md](backlog.md)
 > - **mmx 用法**：见 [tools/mmx.md](../../tools/mmx.md)
 
 ---
@@ -43,7 +43,7 @@
 | 阶段 | 时长 | 工具/规则 |
 |---|---|---|
 | 选题 | 5 min | [[backlog.md]] 选定 |
-| 写 copy | 30-60 min | [copy.md](../planning/copy.md) + [[accounts.md]] |
+| 写 copy | 30-60 min | [copy.md](copy.md) + [[accounts.md]] |
 | 文档同步 | 10 min | docs/SUMMARY.md |
 | 旁白 TTS | 5 min | mmx 文本转音频 |
 | BGM 选型 | 5 min | [[strategy.md]] 类型映射 |
@@ -119,7 +119,7 @@
 
 ### 3.1 copy 完成
 
-- [ ] 通过 [copy.md §12 违禁词自检](../planning/copy.md#12-违禁词清单13-类高优处理)（13 类，0 命中）
+- [ ] 通过 [copy.md §12 违禁词自检](copy.md#12-违禁词清单13-类高优处理)（13 类，0 命中）
 - [ ] 钩子在前 3 秒、≤ 25 字、第 1 字不寒暄
 - [ ] 全文口语化，5 种钩子类型之一
 - [ ] 事实可追溯（提到的事实都在 [[strategy.md]] / PRD 里能找到）
@@ -130,12 +130,12 @@
 
 ### 3.2 素材完成
 
-- [ ] **assets.md 包含每个素材的"拍摄要求"**（视频素材必填 5 维度：机位/光线/时长/动作/其他）—— 见 [assets.md §1](../production/assets.md#1-5-维拍摄规格必填项)
-- [ ] 通过 [assets.md](../production/assets.md) 自动复制已有素材到 `hyperframe/public/<主题>/`
+- [ ] **assets.md 包含每个素材的"拍摄要求"**（视频素材必填 5 维度：机位/光线/时长/动作/其他）—— 见 [assets.md §1](assets.md#1-5-维拍摄规格必填项)
+- [ ] 通过 [assets.md](assets.md) 自动复制已有素材到 `hyperframe/public/<主题>/`
 - [ ] 缺失素材 0 项（或明确标注"等待生成"）
-- [ ] 训练动作视频 ≥ 5s（[storyboard.md §2](../production/storyboard.md#2-时长硬约束)）
+- [ ] 训练动作视频 ≥ 5s（[storyboard.md §2](storyboard.md#2-时长硬约束)）
 - [ ] 文件名一致（resources/、assets.md、组件 staticFile 三处）
-- [ ] **拍摄前**：[shoot-checklist.md §2 7 项检查](../production/shoot-checklist.md#2-拍摄前-7-项检查) 全部 ✅
+- [ ] **拍摄前**：[shoot-checklist.md §2 7 项检查](shoot-checklist.md#2-拍摄前-7-项检查) 全部 ✅
 
 **门控**：素材缺失 → 阻塞，不能进入实现
 
@@ -159,14 +159,14 @@
 
 **门控**：实现 ❌ → 不渲染，先修
 
-### 3.5 自检完成（[checklist.md](../delivery/checklist.md)）
+### 3.5 自检完成（[checklist.md](checklist.md)）
 
-- [ ] 6 大块 30+ 项全部 ✅（详 [checklist.md §6.3 渲染前 50+ 项](../delivery/checklist.md#6--场景化自检3-场景--必跑项)）
+- [ ] 6 大块 30+ 项全部 ✅（详 [checklist.md §6.3 渲染前 50+ 项](checklist.md#6--场景化自检3-场景--必跑项)）
 - [ ] 没有 ❌ 项
 
 **门控**：❌ → 不渲染，先修
 
-### 3.6 渲染触发（[render.md](../delivery/render.md)）
+### 3.6 渲染触发（[render.md](render.md)）
 
 - [ ] **用户说"开始渲染"**（默认只预览）
 - [ ] 模糊措辞不算授权
@@ -176,7 +176,7 @@
 ### 3.7 发布门控
 
 - [ ] 输出文件存在 + 时长合规
-- [ ] 标题/封面/标签/简介已就位（[publish.md §1](../delivery/publish.md#1-发布前准备)）
+- [ ] 标题/封面/标签/简介已就位（[publish.md §1](publish.md#1-发布前准备)）
 - [ ] 矩阵通知（主号/副号）
 
 **门控**：未完成 → 不发布
@@ -263,10 +263,10 @@ cd hyperframe && npm run lint
 
 | 用途 | 模板 |
 |---|---|
-| 写文案 | [copy.md §11 模板](../planning/copy.md#11-文案稿结构模板) |
-| 素材清单 | [assets.md §6 模板](../production/assets.md#6-assetsmd-模板) |
-| 分镜表 | [storyboard.md §8 模板](../production/storyboard.md#8--storyboardmd-模板) |
-| 自检 | [checklist.md §2 主清单](../delivery/checklist.md#2--6-大块-30-项主清单) |
+| 写文案 | [copy.md §11 模板](copy.md#11-文案稿结构模板) |
+| 素材清单 | [assets.md §6 模板](assets.md#6-assetsmd-模板) |
+| 分镜表 | [storyboard.md §8 模板](storyboard.md#8--storyboardmd-模板) |
+| 自检 | [checklist.md §2 主清单](checklist.md#2--6-大块-30-项主清单) |
 | 月度排期 | [[calendar.md]] |
 
 ### 5.3 mmx 用法速查
@@ -278,7 +278,7 @@ cd hyperframe && npm run lint
 | 旁白 TTS（默认不用）| `mmx speech synthesize` | `resources/audios/<主题>.mp3` | [tools/mmx.md §1](../../tools/mmx.md#1--4-大能力速查) |
 | BGM 生成 | `mmx music generate` | `resources/audios/bgm/<类型>.mp3` | [tools/mmx.md §4](../../tools/mmx.md#4--音乐生成mmx-music-generate) |
 | 图片生成 | `mmx image generate` | `resources/images/<主题>/` 或 `docs/diagrams/` | [tools/mmx.md §3](../../tools/mmx.md#3--图片生成mmx-image-generate) |
-| 字幕生成（**从 copy.md 直接生成**）| `node tools/gen-subtitles.js <主题>` | `hyperframe/src/scenes/<主题>/subtitles.json` | [tools/gen-subtitles.js](../../tools/gen-subtitles.js) + [rules/production/subtitle.md](../../rules/production/subtitle.md) |
+| 字幕生成（**从 copy.md 直接生成**）| `node tools/gen-subtitles.js <主题>` | `remotion/src/scenes/<主题>/subtitles.json` | [tools/gen-subtitles.js](../../tools/gen-subtitles.js) + [rules/subtitle.md](../../rules/subtitle.md) |
 | 图片理解 | `mmx vision describe` | stdout | [tools/mmx.md §1](../../tools/mmx.md#1--4-大能力速查) |
 
 ### 5.4 速查决策
@@ -298,18 +298,18 @@ cd hyperframe && npm run lint
 ### 6.1 视频在 Studio 预览有 bug
 
 1. 看控制台错误
-2. 对照 [animation.md §13 调试图鉴](../production/animation.md#13--调试图鉴5-大症状--排查顺序)
-3. 修复后回到 [checklist.md §2 主清单](../delivery/checklist.md#2--6-大块-30-项主清单) 重跑
+2. 对照 [animation.md §13 调试图鉴](animation.md#13--调试图鉴5-大症状--排查顺序)
+3. 修复后回到 [checklist.md §2 主清单](checklist.md#2--6-大块-30-项主清单) 重跑
 
 ### 6.2 渲染失败
 
 1. 跑 `npx hyperframes still <id> --frame=<错帧>` 定位
-2. 对照 [render.md §11 失败 case 库](../delivery/render.md#11-渲染失败-case-库)
+2. 对照 [render.md §11 失败 case 库](render.md#11-渲染失败-case-库)
 3. 修复 → 重跑 checklist → 重渲染
 
 ### 6.3 发布后数据异常（0 播放 / 被限流）
 
-1. 检查内容是否触发抖音公约（参考 [copy.md §12 违禁词](../planning/copy.md#12-违禁词清单13-类高优处理)）
+1. 检查内容是否触发抖音公约（参考 [copy.md §12 违禁词](copy.md#12-违禁词清单13-类高优处理)）
 2. 检查是否被算法误判"营销号"（太多 C 类连续发布）
 3. 暂停 1 周发 C 类，回归纯 B 类内容
 4. 申诉（如果认为是误判）
@@ -333,7 +333,7 @@ cd hyperframe && npm run lint
 1. 识别应急类型（4 类）
 2. 跑对应应急流程
 3. 修复后回到对应门控
-4. 跑 [checklist.md §6.3 渲染前 50+ 项](../delivery/checklist.md#6--场景化自检3-场景--必跑项)
+4. 跑 [checklist.md §6.3 渲染前 50+ 项](checklist.md#6--场景化自检3-场景--必跑项)
 5. 重跑后续步骤
 ```
 

@@ -121,5 +121,5 @@
 4. **写分镜表** → `storyboard.md`
 5. **写素材清单** → `assets.md`
 6. **跑自检** → `checklist.md`
-7. **实现 Scene** → hyperframes composition
+7. **实现 Scene** → Remotion composition
 8. **预览** → 等用户说"开始渲染"

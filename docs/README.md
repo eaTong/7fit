@@ -2,7 +2,7 @@
 
 > **本目录是从外部 2 个仓库增量同步过来的产品/品牌文档**，供 AI Agent 撰写视频脚本时查询。
 >
-> **写入人**：Claude Code（按 [docs-sync.md](../rules/planning/docs-sync.md) 规则）
+> **写入人**：Claude Code（按 [docs-sync.md](../rules/docs-sync.md) 规则）
 > **同步源**：`/Users/eatong/eaTong_projects/fit_lc` + `/Users/eatong/eaTong_projects/7fit_opc`
 
 ---
@@ -19,7 +19,7 @@
 
 ## 同步工作流
 
-> 完整规范见 [../rules/planning/docs-sync.md](../rules/planning/docs-sync.md)。
+> 完整规范见 [../rules/docs-sync.md](../rules/docs-sync.md)。
 
 ```
 1. 扫描 fit_lc/docs/ 找出与视频主题相关的新增/修改

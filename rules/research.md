@@ -2,9 +2,9 @@
 
 > **Phase 0-1 核心产物**：每个视频开工前，**必须**先写 `research.md` 调研主题，**避免**没调研直接开干导致"数据失真 / 选题撞车 / 钩子不准"。
 >
-> **存放位置**：`hyperframe/src/scenes/<主题>/research.md` —— 与 scene 同步入库（见 [checklist.md §A.7](../delivery/checklist.md#a--文档与文案7-项--2026-06-09-增-a7-researchmd)）。
+> **存放位置**：`remotion/src/scenes/<主题>/research.md` —— 与 scene 同步入库（见 [checklist.md §A.7](checklist.md#a--文档与文案7-项--2026-06-09-增-a7-researchmd)）。
 >
-> **触发时机**：用户在 [video-types.md §判定流程](../planning/video-types.md#判定流程必须问用户) 确认视频类型后，**写 copy 之前**。
+> **触发时机**：用户在 [video-types.md §判定流程](video-types.md#判定流程必须问用户) 确认视频类型后，**写 copy 之前**。
 >
 > **调研哲学**：**钩子来自用户原话，不来自 PM 想象**——4 维调研（平台数据/用户痛点/竞品差异化/事实清单）的核心是"听到用户怎么说"，不是"自己觉得应该怎么说"。3 要素：**事实可追溯**（每条数据有来源）+ **差异化角度**（避开同质化）+ **素材就位**（写文案就知道能不能拍）。
 
@@ -51,7 +51,7 @@
 
 ### 2.4 数据点 / 事实可追溯清单
 
-> 这是 **与 [docs-sync.md](../planning/docs-sync.md) 配合**的核心：所有写进文案的事实都要可追溯。
+> 这是 **与 [docs-sync.md](docs-sync.md) 配合**的核心：所有写进文案的事实都要可追溯。
 
 - [ ] 主题相关的"数字 / 步骤 / 案例"：每个列出 [来源: <URL 或 docs/ 路径>]
 - [ ] 主题相关的"安全提示 / 禁忌"：每个列出 [来源: <docs/fit_lc/prd.md §安全>]
@@ -114,7 +114,7 @@
 ## 5. 素材就位检查
 
 - [ ] 用户自拍：靠墙天使 5s+ 多角度（已有 / 待拍 / 等生成）
-- [ ] mmx 生成：翼状肩示意图（需 prompt 见 [assets.md §4.1](../production/assets.md#41-data_viz数据图)）
+- [ ] mmx 生成：翼状肩示意图（需 prompt 见 [assets.md §4.1](assets.md#41-data_viz数据图)）
 - [ ] 数据图：3 步自测流程图（需 prompt）
 
 ## 6. 决策
@@ -222,11 +222,11 @@ mmx vision describe --input <video.mp4>
    ↓
 3. 主体从 §2.4 事实清单 + §5 素材就位 推导
    ↓
-4. CTA 从 [copy.md §6 CTA 模式库](../planning/copy.md#6-cta-模式库) 选
+4. CTA 从 [copy.md §6 CTA 模式库](copy.md#6-cta-模式库) 选
    ↓
-5. 写 copy.md（详 [copy.md §11 模板](../planning/copy.md#11-文案稿结构模板)）
+5. 写 copy.md（详 [copy.md §11 模板](copy.md#11-文案稿结构模板)）
    ↓
-6. 自检（[copy.md §10 5 维评分卡](../planning/copy.md#10-改稿-sop--5-维评分卡--ab-钩子测试)）
+6. 自检（[copy.md §10 5 维评分卡](copy.md#10-改稿-sop--5-维评分卡--ab-钩子测试)）
 ```
 
 ### 7.1 调研结论 → 钩子 1:1 映射

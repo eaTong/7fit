@@ -6,7 +6,7 @@
 **BGM 类型**：Power Build（105 BPM, tech house）
 **目标时长**：~74 秒（含 9 段段间停顿 = 实际 m4a 68.07s + sfx）
 **生成日期**：2026-06-05（v8 更新：方案 C 混合 + 9 段间 + 3 sfx）
-**关联脚本**：[copy.md](../../../docs/copy/winged_scapula_b3.md)（v7 18 段 / 中速 3.4 / 66s 预期）
+**关联脚本**：[copy.md](../../../../docs/copy/winged_scapula_b3.md)（v7 18 段 / 中速 3.4 / 66s 预期）
 **关联分镜**：[storyboard.md](storyboard.md) + [storyboard.json](storyboard.json)（20 个 shot：10 主 + 10 段间 transition）
 **关联字幕**：[subtitles.json](subtitles.json)（draft 18 段，待 mmx 校准）
 **关联拍摄清单**：[shoot-checklist.md](shoot-checklist.md)
@@ -123,7 +123,7 @@
 
 第 5 步（开发：实现 Scene 组件 + 集成 BGM + 转场 + sfx）
 
-第 6 步（跑 [checklist.md](../../rules/checklist.md) 自检 → 等用户说"开始渲染"）
+第 6 步（跑 [checklist.md](../../../../rules/checklist.md) 自检 → 等用户说"开始渲染"）
 ```
 
 ---

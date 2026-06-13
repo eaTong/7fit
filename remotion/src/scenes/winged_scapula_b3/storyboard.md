@@ -4,14 +4,14 @@
 **视频类型**：B 类 — 健身知识
 **目标账号**：主号（健身博主号）
 **BGM**：Power Build（105 BPM, tech house）
-**关联文案**：[copy.md](../../../docs/copy/winged_scapula_b3.md)（v7 18 段 / 中速 3.4 字/秒 / 66s 预期）
+**关联文案**：[copy.md](../../../../docs/copy/winged_scapula_b3.md)（v7 18 段 / 中速 3.4 字/秒 / 66s 预期）
 **关联字幕**：[subtitles.json](subtitles.json)（draft 18 段 / 73s 预算 / 待 mmx 校准）
 **关联素材**：[assets.md](assets.md)
 **关联分镜数据**：[storyboard.json](storyboard.json)
 **生成日期**：2026-06-05
 
 > ⚠️ **2026-06-05 流程变更**：每个 shot 边界必标注"转入/转出动效"，每个段间停顿必落成 `transition` shot。
-> 详见 [storyboard.md §4.5-4.6](../../rules/storyboard.md#45--段间停顿--shot-边界2026-06-04-流程变更)
+> 详见 [storyboard.md §4.5-4.6](../../../../rules/storyboard.md#45--段间停顿--shot-边界2026-06-04-流程变更)
 
 ---
 
@@ -86,7 +86,7 @@
 
 ## 3. 视频类镜头时长校验
 
-按 [storyboard.md §3.1](../../rules/storyboard.md) "视频类镜头时长必须 > 5 秒"——检查：
+按 [storyboard.md §3.1](../../../../rules/storyboard.md) "视频类镜头时长必须 > 5 秒"——检查：
 
 | shot_id | 时长 | 视频素材 | 校验 |
 |---|---|---|---|
@@ -116,7 +116,7 @@
 
 ## 4. 必填字段校验
 
-按 [storyboard.md §2](../../rules/storyboard.md) 校验：
+按 [storyboard.md §2](../../../../rules/storyboard.md) 校验：
 
 - ✅ shot_id（唯一）= 1-20
 - ✅ start / end / duration（连续，时间线闭合）

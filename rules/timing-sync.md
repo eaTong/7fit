@@ -84,14 +84,14 @@ VIDEO_DURATION（= 全文，tl.duration() 锚点）
 
 > 改一个时间字段，**必须**同步修改以下 10 个文件中的相关位置：
 
-1. `resources/docs/copy/<主题>.md` — 主体/钩子/收尾/预计时长
-2. `resources/docs/copy/<主题>.copy_notes.md` — 字数核对
+1. `docs/copy/<主题>.md` — 主体/钩子/收尾/预计时长
+2. `docs/copy/<主题>.copy_notes.md` — 字数核对
 3. `tools/recording-teleprompter.html` — `DEFAULT_TARGET_SPEED` + 3 档按钮
 4. `resources/audios/bgm/*.mp3` — 时长 ≥ 全文 + 3s
-5. `hyperframe/src/scenes/<主题>/storyboard.md` — 镜头时长
-6. `hyperframe/src/scenes/<主题>/subtitles.json` — 每条 `end - start`
-7. `hyperframe/src/scenes/<主题>/scene.js` — `tl.duration()` = VIDEO_DURATION
-8. `hyperframe/src/scenes/<主题>/assets.md` — §0 目标时长
+5. `remotion/src/scenes/<主题>/storyboard.md` — 镜头时长
+6. `remotion/src/scenes/<主题>/subtitles.json` — 每条 `end - start`
+7. `remotion/src/scenes/<主题>/scene.js` — `tl.duration()` = VIDEO_DURATION
+8. `remotion/src/scenes/<主题>/assets.md` — §0 目标时长
 9. **`CLAUDE.md`（仓库根）** — 统一语速控制小节
 10. **`./timing-sync.md`（本文件）** — §0 默认值表
 
@@ -104,7 +104,7 @@ VIDEO_DURATION（= 全文，tl.duration() 锚点）
    ↓
 3. 依次改 10 个文件
    ↓
-4. 重跑 [checklist.md §7 跨文件影响图](../delivery/checklist.md#7-跨文件影响图)
+4. 重跑 [checklist.md §7 跨文件影响图](checklist.md#7-跨文件影响图)
    ↓
 5. 用户复阅
 ```
@@ -159,7 +159,7 @@ VIDEO_DURATION（= 全文，tl.duration() 锚点）
 | **主体 → 收尾** | 1.0s（沉淀）| fade out + zoom out |
 | **收尾 → CTA** | 0.3s | 文字淡入 |
 
-> 详见 [script.md §5.2 pause_breath 4 种实现](../production/script.md#52-pause_breath-4-种实现)。
+> 详见 [script.md §5.2 pause_breath 4 种实现](script.md#52-pause_breath-4-种实现)。
 
 ### 4.2 破折号停顿规范（v4 新增，2026-06-09）
 
@@ -189,7 +189,7 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 - 破折号 0.5s = 视觉切换停顿（足够 video 切镜 + 看清器械）
 - **停顿时间 ≥ 视频切镜的最小时间**（< 0.5s 视频切换显得仓促）
 
-**与 [copy.md §5.3.1](../../planning/copy.md#531-破折号-2-种模式v4-新增) 同步**——两种模式（强调 vs 内部停顿）配合使用。
+**与 [copy.md §5.3.1](../copy.md#531-破折号-2-种模式v4-新增) 同步**——两种模式（强调 vs 内部停顿）配合使用。
 
 ---
 
@@ -245,7 +245,7 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 - **单条 ≤ 4 秒**（用户阅读时间，超出走神）
 - **单条 ≤ 24 字**（视觉密度）
 
-> **超出**：必须拆成多条。详 [subtitle.md §8 拆条与合并策略](../production/subtitle.md#8-拆条与合并策略)。
+> **超出**：必须拆成多条。详 [subtitle.md §8 拆条与合并策略](subtitle.md#8-拆条与合并策略)。
 
 ### 6.2 公式校验
 
@@ -265,11 +265,11 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 | 异常 | 现象 | 修法 |
 |---|---|---|
 | **全文 < 60s** | 视频太短 | 加段数 / 延长收尾 / 加 pause_breath |
-| **全文 > 90s** | 视频太长 | 拆条发布（[publish.md §1](../delivery/publish.md#1-发布前准备)）/ 减段数 |
-| **BGM < 全文** | 末段静音 | 重选 BGM（[bgm.md §1.1](../production/bgm.md#11-bgm-长度公式)）|
-| **字幕单条 > 4s** | 视觉过密 | 拆条（[subtitle.md §8](../production/subtitle.md#8-拆条与合并策略)）|
+| **全文 > 90s** | 视频太长 | 拆条发布（[publish.md §1](publish.md#1-发布前准备)）/ 减段数 |
+| **BGM < 全文** | 末段静音 | 重选 BGM（[bgm.md §1.1](bgm.md#11-bgm-长度公式)）|
+| **字幕单条 > 4s** | 视觉过密 | 拆条（[subtitle.md §8](subtitle.md#8-拆条与合并策略)）|
 | **字幕单条 > 24 字** | 视觉过密 | 拆条 |
-| **VIDEO_DURATION 与字幕不同步** | 末段错位 | 改 `tl.duration()`（[render.md §6](../delivery/render.md#6-timeline-duration-硬约束)）|
+| **VIDEO_DURATION 与字幕不同步** | 末段错位 | 改 `tl.duration()`（[render.md §6](render.md#6-timeline-duration-硬约束)）|
 
 ### 7.2 异常处理 SOP
 
@@ -280,7 +280,7 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
    ↓
 3. 跑 §3 同步清单（10 文件）
    ↓
-4. 重跑 [checklist.md §6.3 渲染前 50+ 项](../delivery/checklist.md#6--场景化自检3-场景--必跑项)
+4. 重跑 [checklist.md §6.3 渲染前 50+ 项](checklist.md#6--场景化自检3-场景--必跑项)
    ↓
 5. 重新渲染
 ```
@@ -329,7 +329,7 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 - ❌ **改 VIDEO_DURATION 不同步 6 处**（详 §8）
 - ❌ **不跑异常处理表**（详 §7.1）
 - ❌ **段间停顿不在 0.5-1s 范围**
-- ❌ **跨文件影响图不重跑**（违反 [checklist.md §7](../delivery/checklist.md#7-跨文件影响图)）
+- ❌ **跨文件影响图不重跑**（违反 [checklist.md §7](checklist.md#7-跨文件影响图)）
 - ❌ **跳过 5 维评分卡直接渲染**
 
 ---

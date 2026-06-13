@@ -4,7 +4,7 @@
 >
 > **6 大块 50+ 项检查**（A 文档/B 字幕/C 音频/D 素材/E 分镜/F 实现准备；含 G/H/I 扩展块共 55 项），输出 ✅ Ready to implement / render 或 ❌ Blocked + 修复建议。
 >
-> **checklist 哲学**：**Checklist 是"质量门"**——不是打勾走流程，是**真正打开文件看一遍**。3 个铁律：(1) 任一 🔴 阻塞项 = 不能进下一步；(2) 修复后**重跑**全清单（不能凭印象"应该 OK 了"）；(3) 跨文件同步走 [timing-sync.md 同步清单](../planning/timing-sync.md)。
+> **checklist 哲学**：**Checklist 是"质量门"**——不是打勾走流程，是**真正打开文件看一遍**。3 个铁律：(1) 任一 🔴 阻塞项 = 不能进下一步；(2) 修复后**重跑**全清单（不能凭印象"应该 OK 了"）；(3) 跨文件同步走 [timing-sync.md 同步清单](timing-sync.md)。
 
 ---
 
@@ -47,24 +47,24 @@
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| A.1 | `docs/SUMMARY.md` 存在 | 文件存在 + 包含本次视频主题 | [docs-sync.md](../planning/docs-sync.md) |
-| A.2 | `resources/docs/copy/<主题>.md` 存在 | 文件存在 + 字数核对完成 | [copy.md](../planning/copy.md) |
-| A.3 | 违禁词自检 | 13 类违禁词全部 ✅ | [copy.md §12](../planning/copy.md#12-违禁词清单13-类高优处理) |
-| A.4 | 钩子 3 秒 | 5 种类型选其一，禁用寒暄式 | [copy.md §4](../planning/copy.md#4-5-种钩子详解--案例集) |
-| A.5 | 口语化 | 第一/二人称 + 短句 ≤ 20 字 | [copy.md §3.1](../planning/copy.md#31-口语化) |
-| A.6 | 事实可追溯 | 每个事实有 `[来源: <文件> §<章节>]` | [docs-sync.md §优先级引用](../planning/docs-sync.md#优先级引用-写脚本时直接读) |
-| A.7 | `research.md` 调研 | 已写 + 平台数据 / 痛点 / 差异化 / 事实清单 4 维度齐全 | [research.md](../production/research.md) |
+| A.1 | `docs/SUMMARY.md` 存在 | 文件存在 + 包含本次视频主题 | [docs-sync.md](docs-sync.md) |
+| A.2 | `docs/copy/<主题>.md` 存在 | 文件存在 + 字数核对完成 | [copy.md](copy.md) |
+| A.3 | 违禁词自检 | 13 类违禁词全部 ✅ | [copy.md §12](copy.md#12-违禁词清单13-类高优处理) |
+| A.4 | 钩子 3 秒 | 5 种类型选其一，禁用寒暄式 | [copy.md §4](copy.md#4-5-种钩子详解--案例集) |
+| A.5 | 口语化 | 第一/二人称 + 短句 ≤ 20 字 | [copy.md §3.1](copy.md#31-口语化) |
+| A.6 | 事实可追溯 | 每个事实有 `[来源: <文件> §<章节>]` | [docs-sync.md §优先级引用](docs-sync.md#优先级引用-写脚本时直接读) |
+| A.7 | `research.md` 调研 | 已写 + 平台数据 / 痛点 / 差异化 / 事实清单 4 维度齐全 | [research.md](research.md) |
 
 ### B · 字幕（8 项）
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| B.1 | `subtitles.json` 格式正确 | JSON.parse 不报错 + 字段完整 | [subtitle.md §2](../production/subtitle.md#2-json-格式) |
+| B.1 | `subtitles.json` 格式正确 | JSON.parse 不报错 + 字段完整 | [subtitle.md §2](subtitle.md#2-json-格式) |
 | B.2 | 字段完整 | `id` / `start` / `end` / `text` / `segments[]` 全部存在 | 同上 |
-| B.3 | highlight 标记 | 数字/动作/品牌句/CTA 已打 `highlight: true` | [subtitle.md §4](../production/subtitle.md#4--重点-segment-标记规则) |
+| B.3 | highlight 标记 | 数字/动作/品牌句/CTA 已打 `highlight: true` | [subtitle.md §4](subtitle.md#4--重点-segment-标记规则) |
 | B.4 | 时间线连续 | `sub[i].start = sub[i-1].end`（±0.05s 误差）| 重新跑 mmx 转写 |
-| B.5 | 时长匹配 | 全文时长 > 60s（[timing-sync.md](../planning/timing-sync.md) 锚点）| 调整段数 / 收尾 |
-| B.6 | 单条 ≤ 24 字 | 每条 `text` 字符数 ≤ 24 | [subtitle.md §8 拆条与合并策略](../production/subtitle.md#8-拆条与合并策略) |
+| B.5 | 时长匹配 | 全文时长 > 60s（[timing-sync.md](timing-sync.md) 锚点）| 调整段数 / 收尾 |
+| B.6 | 单条 ≤ 24 字 | 每条 `text` 字符数 ≤ 24 | [subtitle.md §8 拆条与合并策略](subtitle.md#8-拆条与合并策略) |
 | B.7 | 单条 ≤ 4s | 每条 `end - start` ≤ 4 | 同上 |
 | B.8 | 不带句末标点 | `text` 不含 `。！？，；：` 等 | 手动清理 |
 
@@ -73,49 +73,49 @@
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
 | C.1 | 旁白存在 | `resources/audios/<主题>.m4a` 存在 | 用户自录 |
-| C.2 | BGM 选型 | 4 类之一（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）| [bgm.md §2](../production/bgm.md#2--4-类-bgm-选型按情绪) |
-| C.3 | BGM 文件 | `resources/audios/bgm/<类型>.mp3` 存在 | [bgm.md §8](../production/bgm.md#8--来源优先级) |
-| C.4 | 时长匹配 | BGM 时长 ≥ 全文时长 + 3s | [bgm.md §1.1](../production/bgm.md#11-bgm-长度公式) |
-| C.5 | 组件中正确 import | scene.js 用 `<audio>` + GSAP volume tween | [bgm.md §7](../production/bgm.md#7--集成-audio-标签--gsap-volume-tween) |
+| C.2 | BGM 选型 | 4 类之一（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）| [bgm.md §2](bgm.md#2--4-类-bgm-选型按情绪) |
+| C.3 | BGM 文件 | `resources/audios/bgm/<类型>.mp3` 存在 | [bgm.md §8](bgm.md#8--来源优先级) |
+| C.4 | 时长匹配 | BGM 时长 ≥ 全文时长 + 3s | [bgm.md §1.1](bgm.md#11-bgm-长度公式) |
+| C.5 | 组件中正确 import | scene.js 用 `<audio>` + GSAP volume tween | [bgm.md §7](bgm.md#7--集成-audio-标签--gsap-volume-tween) |
 
 ### D · 素材（9 项 · v3 2026-06-10 增 D.8/D.9 A 类）
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| D.1 | 缺失 0 项 | `assets.md §缺失` 中 P0 项全部完成 | [assets.md §6](../production/assets.md#6--assetsmd-模板) |
-| D.2 | 完全匹配（5 维）| 文件类型 + 内容语义 + 时长 + 可访问 + 可播放，5 维全对 | [assets.md §10](../production/assets.md#10-素材清单完整性自检-sop) |
-| D.3 | 自动复制 | `public/<主题>/` 下有完整副本 | [assets.md §2](../production/assets.md#2-自动复制流程) |
+| D.1 | 缺失 0 项 | `assets.md §缺失` 中 P0 项全部完成 | [assets.md §6](assets.md#6--assetsmd-模板) |
+| D.2 | 完全匹配（5 维）| 文件类型 + 内容语义 + 时长 + 可访问 + 可播放，5 维全对 | [assets.md §10](assets.md#10-素材清单完整性自检-sop) |
+| D.3 | 自动复制 | `public/<主题>/` 下有完整副本 | [assets.md §2](assets.md#2-自动复制流程) |
 | D.4 | 文件名拼写一致 | `assets.md` 命名 = `storyboard.json content_source` | 手动核对 |
-| D.5 | 训练动作 = 用户自拍 | 训练视频不是 mmx 生成 | [assets.md §5.1](../production/assets.md#51-用户自拍-vs-mmx-生成-决策表) |
-| D.6 | 不含可代码实现内容 | assets.md 不含数字图表 / 简单色块 | [assets.md §1.3](../production/assets.md#13-不进-assetsmd) |
-| D.7 | 混合类型分节 | A→B / B→C 等分"主体 + 辅助"两节 | [video-types.md §混合类型](../planning/video-types.md#混合类型进阶) |
-| **D.8** | **A 类主口播视频 P0**（v3 2026-06-10）| **A 类必须有 001_talking_head.mp4，≥ 60s，不剪断** | [assets.md §8.1.1](../production/assets.md#811-关键技术约束a-类-v3) |
-| **D.9** | **A 类圆头像用同源视频**（v3 2026-06-10）| 圆头像 = 主口播视频实时抽帧（**不用第二张图**）| [video-types.md §3.2.2](../planning/video-types.md#322-圆头像硬约束) |
+| D.5 | 训练动作 = 用户自拍 | 训练视频不是 mmx 生成 | [assets.md §5.1](assets.md#51-用户自拍-vs-mmx-生成-决策表) |
+| D.6 | 不含可代码实现内容 | assets.md 不含数字图表 / 简单色块 | [assets.md §1.3](assets.md#13-不进-assetsmd) |
+| D.7 | 混合类型分节 | A→B / B→C 等分"主体 + 辅助"两节 | [video-types.md §混合类型](video-types.md#混合类型进阶) |
+| **D.8** | **A 类主口播视频 P0**（v3 2026-06-10）| **A 类必须有 001_talking_head.mp4，≥ 60s，不剪断** | [assets.md §8.1.1](assets.md#811-关键技术约束a-类-v3) |
+| **D.9** | **A 类圆头像用同源视频**（v3 2026-06-10）| 圆头像 = 主口播视频实时抽帧（**不用第二张图**）| [video-types.md §3.2.2](video-types.md#322-圆头像硬约束) |
 
 ### E · 分镜（10 项 · v3 2026-06-10 增 E.9/E.10 A 类）
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| E.1 | `storyboard.md` + `storyboard.json` 存在 | 两份文件都在 | [storyboard.md §8](../production/storyboard.md#8--storyboardmd-模板) |
-| E.2 | 字段完整 | 11 个字段全部存在 | [storyboard.md §1](../production/storyboard.md#1-字段定义) |
-| E.3 | 三者时长一致 | 字幕总时长 = 音频时长 = 分镜总时长（±0.3s）| [timing-sync.md §6.1](../planning/timing-sync.md#61-单条时长上限) |
-| E.4 | 不允许纯色文字镜头 | 每个 shot 有实内容（视频/图片/动画/数据/复合）| [storyboard.md §3](../production/storyboard.md#3-严禁清单) |
+| E.1 | `storyboard.md` + `storyboard.json` 存在 | 两份文件都在 | [storyboard.md §8](storyboard.md#8--storyboardmd-模板) |
+| E.2 | 字段完整 | 11 个字段全部存在 | [storyboard.md §1](storyboard.md#1-字段定义) |
+| E.3 | 三者时长一致 | 字幕总时长 = 音频时长 = 分镜总时长（±0.3s）| [timing-sync.md §6.1](timing-sync.md#61-单条时长上限) |
+| E.4 | 不允许纯色文字镜头 | 每个 shot 有实内容（视频/图片/动画/数据/复合）| [storyboard.md §3](storyboard.md#3-严禁清单) |
 | E.5 | 不允许纯字幕展示镜头 | 字幕必有背景素材 | 同上 |
-| E.6 | 视频类镜头 > 5s | 视频 shot `end - start` > 5 | [storyboard.md §2](../production/storyboard.md#2-时长硬约束) |
-| E.7 | pause_breath 0.5-1s | 段间停顿时长在范围内 | [timing-sync.md §段间停顿](../planning/timing-sync.md#段间停顿规范-05-1s用户硬约束) |
-| E.8 | description 写"展示什么" | 不是"讲什么" | [storyboard.md §5](../production/storyboard.md#5-description-写法) |
-| **E.9** | **A 类 layout_state 完整**（v3 2026-06-10）| A 类每个 shot 都填 `layout_state` 字段（`talking_head` 或 `visual_support`）| [storyboard.md §1](../production/storyboard.md#1--字段定义) |
-| **E.10** | **A 类双态切换 ≥ 0.3s**（v3 2026-06-10）| 圆头像与全屏人脸的切换 ≥ 0.3s（推荐 0.5s `power2.inOut`）| [animation.md §12](../production/animation.md#12--a-类双态切换动效2026-06-10-新增) |
+| E.6 | 视频类镜头 > 5s | 视频 shot `end - start` > 5 | [storyboard.md §2](storyboard.md#2-时长硬约束) |
+| E.7 | pause_breath 0.5-1s | 段间停顿时长在范围内 | [timing-sync.md §段间停顿](timing-sync.md#段间停顿规范-05-1s用户硬约束) |
+| E.8 | description 写"展示什么" | 不是"讲什么" | [storyboard.md §5](storyboard.md#5-description-写法) |
+| **E.9** | **A 类 layout_state 完整**（v3 2026-06-10）| A 类每个 shot 都填 `layout_state` 字段（`talking_head` 或 `visual_support`）| [storyboard.md §1](storyboard.md#1--字段定义) |
+| **E.10** | **A 类双态切换 ≥ 0.3s**（v3 2026-06-10）| 圆头像与全屏人脸的切换 ≥ 0.3s（推荐 0.5s `power2.inOut`）| [animation.md §12](animation.md#12--a-类双态切换动效2026-06-10-新增) |
 
 ### F · 实现准备（8 项）
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
 | F.1 | 主题目录命名 | snake_case（如 `winged_scapula_b3`）| [index.md §命名约定](../README.md#命名约定速查) |
-| F.2 | 入口文件 | `scene.html` + `scene.js` 存在 | [script.md §2](../production/script.md#2--入口与目录结构) |
+| F.2 | 入口文件 | `scene.html` + `scene.js` 存在 | [script.md §2](script.md#2--入口与目录结构) |
 | F.3 | 入口注册 | `root.html` `data-scene` + `index.js` switch 已加 | 同上 |
-| F.4 | 依赖包安装 | `npm install` 完成（gsap / hyperframes）| [script.md §1](../production/script.md#1--速查remotion--hyperframes-api-映射) |
-| F.5 | timeline 锁初始帧 | `tl.progress(0).render(0)` 已加 | [animation.md §9](../production/animation.md#9--timeline-构造硬规则) |
+| F.4 | 依赖包安装 | `npm install` 完成（gsap / hyperframes）| [script.md §1](script.md#1--速查remotion--hyperframes-api-映射) |
+| F.5 | timeline 锁初始帧 | `tl.progress(0).render(0)` 已加 | [animation.md §9](animation.md#9--timeline-构造硬规则) |
 | F.6 | `out/` 不入库 | `git status` 应为空 | [index.md §版本控制](../README.md#版本控制速查) |
 | F.7 | source of truth 入库 | `subtitles.json` / `storyboard.json` / `assets.md` 已 `git add` | 同上 |
 | F.8 | 输出文件名含版本号 | `out/<主题>_<日期>_v<N>.mp4` | 同上 |
@@ -124,30 +124,30 @@
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| G.1 | BGM 类型与视频类型匹配 | A→C / B→B / C→A | [bgm.md §2.1](../production/bgm.md#21-默认搭配视频类型--bgm-类型) |
-| G.2 | BGM 长度 ≥ 视频时长 + 3s | 文件属性可看 | [bgm.md §1.1](../production/bgm.md#11-bgm-长度公式) |
-| G.3 | BPM 在 75-115 范围 | 小调优先 | [bgm.md §4](../production/bgm.md#4-bpm-规范) |
-| G.4 | Ducking 已加 | 每段旁白前 0.3s 降音量 | [bgm.md §12](../production/bgm.md#12-ducking-自动化) |
-| G.5 | 音视频分离 | `<video muted playsinline>` + 独立 `<audio>` | [script.md §1](../production/script.md#1--速查remotion--hyperframes-api-映射) |
+| G.1 | BGM 类型与视频类型匹配 | A→C / B→B / C→A | [bgm.md §2.1](bgm.md#21-默认搭配视频类型--bgm-类型) |
+| G.2 | BGM 长度 ≥ 视频时长 + 3s | 文件属性可看 | [bgm.md §1.1](bgm.md#11-bgm-长度公式) |
+| G.3 | BPM 在 75-115 范围 | 小调优先 | [bgm.md §4](bgm.md#4-bpm-规范) |
+| G.4 | Ducking 已加 | 每段旁白前 0.3s 降音量 | [bgm.md §12](bgm.md#12-ducking-自动化) |
+| G.5 | 音视频分离 | `<video muted playsinline>` + 独立 `<audio>` | [script.md §1](script.md#1--速查remotion--hyperframes-api-映射) |
 
 ### H · 性能与转场（5 项 · 2026-06-09 增）
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| H.1 | 转场 ≥ 0.3s | 5 类转场之一，时长合规 | [animation.md §4](../production/animation.md#4--转场动画gsap-addlabel-重叠) |
-| H.2 | 同时动画元素 ≤ 8 个 | 移动端 GPU 瓶颈 | [animation.md §12](../production/animation.md#12--动效性能约束) |
-| H.3 | 全用 transform/opacity | 不用 width/height/top/left 动画 | [animation.md §12](../production/animation.md#12--动效性能约束) |
-| H.4 | 安全区合规 | 标题/CTA ≥ 120px top, ≥ 64px left/right | [script.md §3](../production/script.md#3--安全区硬约束防遮挡) |
-| H.5 | 元素背景半透明 | `rgba(255,69,0,0.10)` 等 | [script.md §4.5](../production/script.md#45-元素背景强调色--透明度) |
+| H.1 | 转场 ≥ 0.3s | 5 类转场之一，时长合规 | [animation.md §4](animation.md#4--转场动画gsap-addlabel-重叠) |
+| H.2 | 同时动画元素 ≤ 8 个 | 移动端 GPU 瓶颈 | [animation.md §12](animation.md#12--动效性能约束) |
+| H.3 | 全用 transform/opacity | 不用 width/height/top/left 动画 | [animation.md §12](animation.md#12--动效性能约束) |
+| H.4 | 安全区合规 | 标题/CTA ≥ 120px top, ≥ 64px left/right | [script.md §3](script.md#3--安全区硬约束防遮挡) |
+| H.5 | 元素背景半透明 | `rgba(255,69,0,0.10)` 等 | [script.md §4.5](script.md#45-元素背景强调色--透明度) |
 
 ### I · 平台适配（4 项 · 2026-06-09 增）
 
 | # | 检查项 | 通过条件 | 修复指引 |
 |---|---|---|---|
-| I.1 | 画布 1080×1920 竖屏 | 默认竖屏（横屏需用户明确）| [render.md §3.1](../delivery/render.md#31-默认画布) |
-| I.2 | 标题 ≤ 30 字 | 含 1-2 个搜索词 | [publish.md §1](../delivery/publish.md#1-发布前准备) |
-| I.3 | 标签 5-10 个 | 3 类组合（大词+细分+长尾）| [publish.md §6](../delivery/publish.md#6-标签策略) |
-| I.4 | 简介 80-150 字 + CTA | 钩子 + 价值点 + CTA | [publish.md §7](../delivery/publish.md#7-简介模板) |
+| I.1 | 画布 1080×1920 竖屏 | 默认竖屏（横屏需用户明确）| [render.md §3.1](render.md#31-默认画布) |
+| I.2 | 标题 ≤ 30 字 | 含 1-2 个搜索词 | [publish.md §1](publish.md#1-发布前准备) |
+| I.3 | 标签 5-10 个 | 3 类组合（大词+细分+长尾）| [publish.md §6](publish.md#6-标签策略) |
+| I.4 | 简介 80-150 字 + CTA | 钩子 + 价值点 + CTA | [publish.md §7](publish.md#7-简介模板) |
 
 ---
 
@@ -206,8 +206,8 @@
 1. **🔴 阻塞项**：必须修复才能进下一步
 2. **🟡 警告项**：可继续但需记录原因
 3. **修复后重跑**：不能跳项、不能凭印象
-4. **跨文件同步**：参考 [timing-sync.md §同步清单](../planning/timing-sync.md#改任何时间字段的同步清单必走否则下游会错)
-5. **自拍素材前必走** [shoot-checklist.md §2 7 项检查](../production/shoot-checklist.md#2--拍摄前-7-项检查)
+4. **跨文件同步**：参考 [timing-sync.md §同步清单](timing-sync.md#改任何时间字段的同步清单必走否则下游会错)
+5. **自拍素材前必走** [shoot-checklist.md §2 7 项检查](shoot-checklist.md#2--拍摄前-7-项检查)
 
 ### 4.1 修复优先级
 
@@ -274,13 +274,13 @@
 
 | 改动 | 受影响项 | 同步清单 |
 |---|---|---|
-| **改文案稿** | A.2, A.3, A.4, A.5, A.6 / B.3 / E.3 / I.2 | [copy.md §15 下游接口](../planning/copy.md#15-下游接口说明) |
-| **改时长** | B.4, B.5, B.6, B.7 / C.4 / E.3 / G.2 | [timing-sync.md 同步清单](../planning/timing-sync.md#改任何时间字段的同步清单必走否则下游会错) |
-| **改分镜** | E.1-E.8 / D.4 / H.1 | [storyboard.md §13 评审 SOP](../production/storyboard.md#13-5-维评分卡--评审-sop) |
-| **改 BGM** | C.2, C.3, C.4 / G.1-G.5 | [bgm.md §13 验收清单](../production/bgm.md#13-bgm-验收清单) |
-| **改素材** | D.1-D.7 | [assets.md §10 完整性自检 SOP](../production/assets.md#10-素材清单完整性自检-sop) |
-| **改 scene.js** | F.5, F.7 / H.1, H.2, H.3, H.4 | [script.md §12 5 维评分](../production/script.md#12-5-维评分卡--评审-sop) |
-| **改视频版本** | F.8 | [render.md §3.3 输出文件命名](../delivery/render.md#33-输出文件命名) |
+| **改文案稿** | A.2, A.3, A.4, A.5, A.6 / B.3 / E.3 / I.2 | [copy.md §15 下游接口](copy.md#15-下游接口说明) |
+| **改时长** | B.4, B.5, B.6, B.7 / C.4 / E.3 / G.2 | [timing-sync.md 同步清单](timing-sync.md#改任何时间字段的同步清单必走否则下游会错) |
+| **改分镜** | E.1-E.8 / D.4 / H.1 | [storyboard.md §13 评审 SOP](storyboard.md#13-5-维评分卡--评审-sop) |
+| **改 BGM** | C.2, C.3, C.4 / G.1-G.5 | [bgm.md §13 验收清单](bgm.md#13-bgm-验收清单) |
+| **改素材** | D.1-D.7 | [assets.md §10 完整性自检 SOP](assets.md#10-素材清单完整性自检-sop) |
+| **改 scene.js** | F.5, F.7 / H.1, H.2, H.3, H.4 | [script.md §12 5 维评分](script.md#12-5-维评分卡--评审-sop) |
+| **改视频版本** | F.8 | [render.md §3.3 输出文件命名](render.md#33-输出文件命名) |
 
 ---
 

@@ -4,7 +4,7 @@
 > 选题来源：backlog.md §2.1 体态问题专题
 > 钩子方向：痛点共鸣
 > 调研日期：2026-06-04
-> ⚠️ 涉及健康/体态内容，必须遵守 [copy.md 第 4.3 节](../../rules/copy.md) 医疗暗示规则 + 视频末尾安全提示
+> ⚠️ 涉及健康/体态内容，必须遵守 [copy.md 第 4.3 节](../../../../rules/copy.md) 医疗暗示规则 + 视频末尾安全提示
 
 ---
 
@@ -272,9 +272,9 @@
 
 ## 11. 下一步建议
 
-按 [rhythm.md](../../../../resources/docs/rhythm.md) 流程，本步**调研完成**后，下一步：
+按 [rhythm.md](../../../../../../rules/rhythm.md) 流程，本步**调研完成**后，下一步：
 
-1. **写 copy**（参考 [copy.md](../../rules/copy.md)）—— 输出到 `resources/docs/copy/winged_scapula_b3.md`
+1. **写 copy**（参考 [copy.md](../../../../rules/copy.md)）—— 输出到 `resources/docs/copy/winged_scapula_b3.md`
    - 钩子、前 3 秒、违禁词自检
 2. **TTS 旁白**（可选：用户自录 或 mmx 生成）—— 输出到 `resources/audios/winged_scapula_b3.mp3`
 3. **mmx 字幕识别** → `subtitles.json`

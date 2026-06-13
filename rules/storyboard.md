@@ -2,7 +2,7 @@
 
 > **Phase 4 核心产物**：按字幕设计分镜，**含场景转入转出动效**，输出 `storyboard.md`（人类可读）+ `storyboard.json`（结构化）。
 >
-> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（镜头时长）+ [subtitle.md](subtitle.md)（字幕对齐）+ [script.md §7 组件模板库](script.md#7-组件模板库7-类常用组件)（每个 shot 拆组件）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（镜头时长）+ [subtitle.md](subtitle.md)（字幕对齐）+ [script.md §7 组件模板库](script.md#7-组件模板库7-类常用组件)（每个 shot 拆组件）
 >
 > **分镜哲学**：**1 镜 = 1 个观众感知单元**。每镜必须有**主体（视频/图片/动效）+ 字幕 + 转场标注**。严禁"纯字幕镜"或"纯色块镜"（详 §3 严禁清单）。
 
@@ -41,7 +41,7 @@
 | **data_viz** | = 字幕时长 | 数据可视化完整呈现 |
 | **broll** | 1-5s（按功能）| 见 §10 B-roll 镜头 |
 
-> **时长来源**：必须从 [timing-sync.md](../planning/timing-sync.md) 推导，不可手填。
+> **时长来源**：必须从 [timing-sync.md](timing-sync.md) 推导，不可手填。
 
 ---
 
@@ -106,7 +106,7 @@
 | 收尾段 | `fade` | 1s | `power2.inOut` | 1s 沉淀 |
 
 #### 4.2.1 A 类双态切换转场（专属）
-> 详见 [animation.md §12 A 类双态切换动效](../production/animation.md#12--a-类双态切换动效2026-06-10-新增)。
+> 详见 [animation.md §12 A 类双态切换动效](animation.md#12--a-类双态切换动效2026-06-10-新增)。
 
 ```js
 // 全屏态 → 左右分栏态（0.5s, power2.inOut）
@@ -153,7 +153,7 @@ gsap.fromTo('.action-highlight',
 | **双态切换**（A 类专属）| 0.5s | `power2.inOut` | A 类双态切换 |
 | **收尾沉淀**（fade）| 1s | `power2.inOut` | 收尾段 |
 
-> **铁律**：转场时长 ≥ 0.3s，否则观众反应不过来（详 [animation.md §4.2 转场时长约束](../production/animation.md#42-转场时长约束)）。
+> **铁律**：转场时长 ≥ 0.3s，否则观众反应不过来（详 [animation.md §4.2 转场时长约束](animation.md#42-转场时长约束)）。
 
 ---
 

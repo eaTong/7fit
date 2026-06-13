@@ -9,7 +9,7 @@
 > **配套规范**：
 > - 写作规则：[copy.md](copy.md)
 > - 反 AI 味：[anti-ai-tells.md](anti-ai-tells.md)
-> - 范例库：[resources/docs/copy-examples/](../../resources/docs/copy-examples/README.md)
+> - 范例库：[docs/copy-examples/](../../docs/copy-examples/README.md)
 
 ---
 

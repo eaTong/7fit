@@ -77,7 +77,7 @@
 | `CLAUDE.md` | 219 | 命名约定示例表 | `<3 位数字>_<snake>.mov/png/mp3` 例子里有 `power_build.mp3` |
 | `codebuddy.md` | 351 | 同上（重复）| 同上 |
 | `rules/README.md` | 135 | 同上（重复）| 同上 |
-| `rules/production/assets.md` | 57, 84, 86, 99, 217, 288, 308, 326, 366 | 9 处引用 | cp 命令 + 命名表 + BGM 类型表 + 资产表 + 目录结构 + mmx 模板 |
+| `rules/assets.md` | 57, 84, 86, 99, 217, 288, 308, 326, 366 | 9 处引用 | cp 命令 + 命名表 + BGM 类型表 + 资产表 + 目录结构 + mmx 模板 |
 | `hyperframe/src/scenes/gym_machine_judge_b13/assets.md` | 16, 54, 98 | 3 处 | BGM-001 行（task 表）+ cp 命令 |
 | `resources/docs/copy/gym_machine_judge_b13.copy_notes.md` | 46 | 1 处 | BGM 长度验证行 |
 

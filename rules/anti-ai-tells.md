@@ -9,7 +9,7 @@
 > **配套规范**：
 > - 写作规则：[copy.md](copy.md)
 > - 声学描述：[voice-anchor.md](voice-anchor.md)
-> - 范例库：[resources/docs/copy-examples/](../../resources/docs/copy-examples/README.md)
+> - 范例库：[docs/copy-examples/](../../docs/copy-examples/README.md)
 
 ---
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
 ```bash
 # 改稿后跑自检
-python tools/anti_ai_tells_check.py resources/docs/copy/<主题>.md
+python tools/anti_ai_tells_check.py docs/copy/<主题>.md
 echo "Exit code: $?"  # 0 = 干净, 1 = 有 high 命中必须改
 ```
 
@@ -222,7 +222,7 @@ echo "Exit code: $?"  # 0 = 干净, 1 = 有 high 命中必须改
 
 **所以本清单必须与以下 3 个文件配套使用**：
 - [voice-anchor.md](voice-anchor.md) —— 告诉 LLM "听起来像什么"
-- [resources/docs/copy-examples/](../../resources/docs/copy-examples/README.md) —— 给 LLM 看 3 篇范文
+- [docs/copy-examples/](../../docs/copy-examples/README.md) —— 给 LLM 看 3 篇范文
 - [copy.md §11 模板](copy.md#11-文案稿结构模板) —— 强制具体性三件套
 
 ---

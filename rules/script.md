@@ -2,7 +2,7 @@
 
 > **Phase 2 入口**：文案确认后，按本规范实现 Scene 组件 → 写 components/ → 写 scene.js 编排。
 >
-> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（时间字段锚点）+ [copy.md §15 下游接口](../planning/copy.md#15-下游接口说明)（文案稿字段→下游流向）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（时间字段锚点）+ [copy.md §15 下游接口](copy.md#15-下游接口说明)（文案稿字段→下游流向）
 >
 > **7fit 动效哲学**：**快进 + 留白 + 强调**——3 类基本节奏（详 §4.1）。所有动效都围绕"3 秒抓人 + 1 秒消化"展开。
 
@@ -32,14 +32,14 @@
 
 | 文件 | 位置 | 作用 |
 |---|---|---|
-| **root.html** | `hyperframe/src/root.html` | 视频 Composition 注册入口（HTML 挂载），`<main id="stage" data-scene="<主题>">` |
-| **index.js** | `hyperframe/src/index.js` | 入口脚本，按 `data-scene` switch 初始化场景 |
-| **index.css** | `hyperframe/src/index.css` | Tailwind/全局样式 + 7fit 色板 CSS 变量 |
+| **root.html** | `remotion/src/root.html` | 视频 Composition 注册入口（HTML 挂载），`<main id="stage" data-scene="<主题>">` |
+| **index.js** | `remotion/src/index.js` | 入口脚本，按 `data-scene` switch 初始化场景 |
+| **index.css** | `remotion/src/index.css` | Tailwind/全局样式 + 7fit 色板 CSS 变量 |
 
 ### 2.2 每个视频一个独立 scene 目录
 
 ```
-hyperframe/src/scenes/<主题>/
+remotion/src/scenes/<主题>/
 ├── scene.html         # 场景结构
 ├── scene.js           # GSAP timeline + 动效
 ├── subtitles.json     # 自动生成的字幕
@@ -96,7 +96,7 @@ hyperframe/src/scenes/<主题>/
 
 ### 4.3 段间停顿（2026-06-06）
 
-见 [timing-sync.md §段间停顿](../planning/timing-sync.md#段间停顿规范-05-1s用户硬约束)。禁止切换其他素材 / 纯字幕 / 装饰卡片。
+见 [timing-sync.md §段间停顿](timing-sync.md#段间停顿规范-05-1s用户硬约束)。禁止切换其他素材 / 纯字幕 / 装饰卡片。
 
 ### 4.4 配色（7fit 色板）
 
@@ -370,7 +370,7 @@ document.querySelector('.talking-head').classList.remove('talking-head--split')
 
 > **关键技术**：**不要 pause 视频**。双态切换 = 只改 CSS 位置/大小，**视频不停止播放**。这样视频里"嘴在动"的进度 = 主旁白进度 = 字幕进度，**三同步**。
 >
-> 详见 [video-types.md §3.2 A 类双态布局 + §3.2.6 四条布局硬约束](../planning/video-types.md#32-a-类双态布局新锁版--2026-06-10)
+> 详见 [video-types.md §3.2 A 类双态布局 + §3.2.6 四条布局硬约束](video-types.md#32-a-类双态布局新锁版--2026-06-10)
 
 ### 7.9 A 类辅助素材组件（visual support，2026-06-10 新增）
 
@@ -411,7 +411,7 @@ gsap.from('.visual-support__frame', {
 })
 ```
 
-> **飘浮规则**详 [video-types.md §3.2.3](../planning/video-types.md#323-辅助素材的飘浮规则)
+> **飘浮规则**详 [video-types.md §3.2.3](video-types.md#323-辅助素材的飘浮规则)
 
 ---
 
@@ -709,7 +709,7 @@ tl.eventCallback('onComplete', () => bgm.pause())
 
 ### 14.1 A 类专属反模式（v4 · 2026-06-12 新增）
 
-> 与 [video-types.md §12.1](../planning/video-types.md#121-a-类专属反模式v3-新增--2026-06-10) 同步。
+> 与 [video-types.md §12.1](video-types.md#121-a-类专属反模式v3-新增--2026-06-10) 同步。
 
 - ❌ A 类视频没有真人口播视频
 - ❌ 辅助素材态时人脸完全消失（视频必须在左侧可见）

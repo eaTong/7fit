@@ -2,7 +2,7 @@
 
 > **Phase 2 实现关键**：scene.js 用 GSAP timeline 编排动效。
 >
-> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（时长锚点）+ [script.md](script.md)（安全区 + 配色）+ [storyboard.md](storyboard.md)（每镜动效标注）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（时长锚点）+ [script.md](script.md)（安全区 + 配色）+ [storyboard.md](storyboard.md)（每镜动效标注）
 >
 > **动效哲学**：**GSAP 唯一可靠**。Hyperframes 引擎按帧确定性渲染，CSS 动画/Tailwind 类/RAF 全部失效——这是动效选型的**第一铁律**。
 
@@ -153,7 +153,7 @@ tl.from('.shot-2', { x: 100, opacity: 0, duration: 0.4 }, 'shot2-in')
 
 ## 5 · 段间停顿动效（pause_breath）
 
-> 详见 [timing-sync.md §段间停顿](../planning/timing-sync.md#段间停顿规范-05-1s用户硬约束)。**4 种必选其一**：
+> 详见 [timing-sync.md §段间停顿](timing-sync.md#段间停顿规范-05-1s用户硬约束)。**4 种必选其一**：
 
 | 模式 | GSAP 实现 |
 |---|---|
@@ -998,7 +998,7 @@ gsap.to('.talking-head', {
 - ❌ **Split 态宽度 > 576px**（违反 <30% 约束）
 - ❌ **Split 态保留羽化描边/box-shadow**（视频列应无装饰）
 
-> 完整 A 类布局规则：[video-types.md §3.2 A 类双态布局 + §3.2.6 四条布局硬约束](../planning/video-types.md#32-a-类双态布局新锁版--2026-06-10)
+> 完整 A 类布局规则：[video-types.md §3.2 A 类双态布局 + §3.2.6 四条布局硬约束](video-types.md#32-a-类双态布局新锁版--2026-06-10)
 > A 类口播态组件 HTML/CSS 模板：[script.md §7.8 A 类口播态组件](script.md#78-a-类口播态组件talking-head2026-06-10-新增)
 > storyboard 字段 `layout_state`：[storyboard.md §1 字段定义](storyboard.md#1--字段定义)
 
@@ -1161,7 +1161,7 @@ tl.eventCallback('onComplete', () => bgm.pause())
 
 ### 16.1 A 类双态切换专属反模式（v3 · 2026-06-10 新增）
 
-> 与 [video-types.md §12.1](../planning/video-types.md#121-a-类专属反模式v3-新增--2026-06-10) 同步。完整规则见 [§12 A 类双态切换动效](#12--a-类双态切换动效2026-06-10-新增)。
+> 与 [video-types.md §12.1](video-types.md#121-a-类专属反模式v3-新增--2026-06-10) 同步。完整规则见 [§12 A 类双态切换动效](#12--a-类双态切换动效2026-06-10-新增)。
 
 - ❌ 切换时调 `videoEl.pause()`（圆头像里"嘴不动"了）
 - ❌ 用 CSS `transition` 做双态切换（hyperframes 引擎卡帧）

@@ -1,6 +1,6 @@
 # 文案规范（copy.md）
 
-> **Phase 1 核心产物**：文案稿保存到 `resources/docs/copy/<主题>.md`，由用户确认后（**用户确认门**）才能进入 Phase 2。
+> **Phase 1 核心产物**：文案稿保存到 `docs/copy/<主题>.md`，由用户确认后（**用户确认门**）才能进入 Phase 2。
 >
 > 7fit 文案人格：PM 健身创作者 · 小红书涨粉向 · 敢用第一人称吐槽 · 像朋友聊健身。
 
@@ -241,7 +241,7 @@
 - 破折号 0.5s = 视觉切换停顿（足够视频切镜 + 看清器械）
 - **停顿时间 = 视频切镜的最小时间**（低于 0.5s 视频切换会显得仓促）
 
-**计算公式**（[timing-sync.md §6.1 同步位置](../../planning/timing-sync.md)）：
+**计算公式**（[timing-sync.md §6.1 同步位置](../timing-sync.md)）：
 ```js
 // 句子 duration = speech 字数 / 速度 + 破折号数 × 0.5
 sentenceDuration = speechChars / speed + dashCount * 0.5
@@ -541,13 +541,13 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 > <一句话总结这次改稿的经验>
 ```
 
-**示例**：参考 [winged_scapula_b3.copy_notes.md §修改日志](../../resources/docs/copy/winged_scapula_b3.copy_notes.md#修改日志)。
+**示例**：参考 [winged_scapula_b3.copy_notes.md §修改日志](../../docs/copy/winged_scapula_b3.copy_notes.md#修改日志)。
 
 ---
 
 ## 11. 文案稿结构模板
 
-> 保存到 `resources/docs/copy/<主题>.md`。
+> 保存到 `docs/copy/<主题>.md`。
 >
 > **v3 升级（2026-06-12）**：加 **"具体性三件套"**（每段必填），与 [anti-ai-tells.md](anti-ai-tells.md) + [voice-anchor.md](voice-anchor.md) 配套使用。
 
@@ -664,7 +664,7 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 | 加微信 / 扫码 | "评论区 / 主页 / 7fit 小程序" |
 | 燃脂 / 排毒 | "练到 / 唤醒 / 激活" |
 
-完整清单 + 自检脚本：[`checklist.md §5.1`](../delivery/checklist.md#51-违禁词自检-13-类)
+完整清单 + 自检脚本：[`checklist.md §5.1`](checklist.md#51-违禁词自检-13-类)
 
 ---
 

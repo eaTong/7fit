@@ -62,7 +62,7 @@ cp resources/videos/winged_scapula_b3_00X_<name>.mov remotion/public/winged_scap
 
 | 时机 | 动作 | 文档 |
 |---|---|---|
-| 写完 copy 后 | assets.md 自动生成 | [copy.md](../../../docs/copy/winged_scapula_b3.md) |
+| 写完 copy 后 | assets.md 自动生成 | [copy.md](../../../../docs/copy/winged_scapula_b3.md) |
 | 用户准备拍视频 | 看本文件 §1 通用要求 + §2 各段特别提醒 | shoot-checklist.md（本文件）|
 | 用户拍完 | 复制到 public/ | [assets.md](assets.md) §2 路径清单 |
-| 跑自检 | 对齐 assets.md "已就位"列表 | [checklist.md](../../rules/checklist.md) |
+| 跑自检 | 对齐 assets.md "已就位"列表 | [checklist.md](../../../../rules/checklist.md) |

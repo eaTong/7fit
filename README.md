@@ -12,7 +12,7 @@
 | [eaTong_projects/fit_lc](https://github.com/eatong/fit_lc) | 产品代码、后端、PRD、功能细节 |
 | [eaTong_projects/7fit_opc](https://github.com/eatong/7fit_opc) | 北极星、利基定位、Headline、转化漏斗、OPC 方法论 |
 
-> 这两个仓库的文档会**增量同步**到 `resources/docs/`，再据此撰写视频脚本——详见 [remotion/rules/docs-sync.md](remotion/rules/docs-sync.md)。
+> 这两个仓库的文档会**增量同步**到 `resources/docs/`，再据此撰写视频脚本——详见 [rules/docs-sync.md](rules/docs-sync.md)。
 
 ---
 
@@ -70,7 +70,7 @@ npx remotion still <CompositionId> --frame=90
 npx remotion render <CompositionId> out/<name>.mp4
 ```
 
-> **⚠️ 渲染触发硬规则**（详见 [remotion/rules/render.md](remotion/rules/render.md)）：
+> **⚠️ 渲染触发硬规则**（详见 [rules/render.md](rules/render.md)）：
 >
 > - **默认只启动预览**，**不**直接渲染
 > - 必须用户说"开始渲染"/"渲染吧"/"render"/"导出"才执行 `npx remotion render`
@@ -91,7 +91,7 @@ npx remotion render <CompositionId> out/<name>.mp4
 
 > 混合类型（A→B / B→C / A→C）也可以，主体类型 = 时长占比最大的，切换时用 ≥0.3s 转场。
 >
-> 完整规范：[remotion/rules/video-types.md](remotion/rules/video-types.md)
+> 完整规范：[rules/video-types.md](rules/video-types.md)
 
 ---
 
@@ -108,7 +108,7 @@ npx remotion render <CompositionId> out/<name>.mp4
 | 文字次色 | `#888888` | 辅助说明 |
 | 边框色 | `#333333` | — |
 
-⚠️ **元素背景必须用半透明彩色**（`bg-[#FF4500]/10` / `bg-[#DC143C]/20` 等），**禁止用纯色暗灰/纯白做元素背景**——详见 [remotion/rules/script.md §5.1](remotion/rules/script.md)。
+⚠️ **元素背景必须用半透明彩色**（`bg-[#FF4500]/10` / `bg-[#DC143C]/20` 等），**禁止用纯色暗灰/纯白做元素背景**——详见 [rules/script.md §5.1](rules/script.md)。
 
 **设计风格**：元素必须有**科技感 + 力量感**（粗描边、几何、霓虹、数据冲击、硬朗圆角）。
 
@@ -120,18 +120,18 @@ npx remotion render <CompositionId> out/<name>.mp4
 
 | # | 阶段 | 规范文件 | 关键约束 |
 |---|---|---|---|
-| 1 | **视频类型** | [video-types.md](remotion/rules/video-types.md) | A 口播 / B 知识 / C 介绍；开工第一步 |
-| 2 | **文档同步** | [docs-sync.md](remotion/rules/docs-sync.md) | 外部 2 个仓库增量同步到 `resources/docs/` |
-| 3 | 文案 | [copy.md](remotion/rules/copy.md) | 口语化 + 3 秒钩子 + 13 类违禁词 |
-| 4 | 脚本 | [script.md](remotion/rules/script.md) | 入口/场景命名 + 安全区 + 配色 + 科技/力量感 + 转场 |
-| 5 | 字幕 | [subtitle.md](remotion/rules/subtitle.md) | mmx 转写 + 纯白/28px + 弹跳动效 |
-| 6 | 分镜 | [storyboard.md](remotion/rules/storyboard.md) | 视频 > 5s / 图片 = 字幕 / 每镜必有实内容 |
-| 7 | 动效 | [animation.md](remotion/rules/animation.md) | interpolate + spring + 4 条贝塞尔曲线；**禁用 CSS 动画** |
-| 8 | BGM | [bgm.md](remotion/rules/bgm.md) | 4 类情绪（Cyber/Power/Quiet/Hop Pulse）+ BPM 75-115 + ducking |
-| 9 | 素材清单 | [assets.md](remotion/rules/assets.md) | 列出每个分镜需要的素材 + 自动从 resources/ 复制到 public/ |
-| 10 | 自检 | [checklist.md](remotion/rules/checklist.md) | 6 大块 30+ 项检查 → Ready/Blocked 决策 |
-| 11 | 渲染 | [render.md](remotion/rules/render.md) | **默认只预览不渲染** + 竖屏 1080×1920 + 防卡帧 7 类 |
-| 12 | **发布与复盘** | [publish.md](remotion/rules/publish.md) | 账号/平台矩阵 + 标题/封面/标签/时间 + 24h+7d 数据复盘 |
+| 1 | **视频类型** | [video-types.md](rules/video-types.md) | A 口播 / B 知识 / C 介绍；开工第一步 |
+| 2 | **文档同步** | [docs-sync.md](rules/docs-sync.md) | 外部 2 个仓库增量同步到 `resources/docs/` |
+| 3 | 文案 | [copy.md](rules/copy.md) | 口语化 + 3 秒钩子 + 13 类违禁词 |
+| 4 | 脚本 | [script.md](rules/script.md) | 入口/场景命名 + 安全区 + 配色 + 科技/力量感 + 转场 |
+| 5 | 字幕 | [subtitle.md](rules/subtitle.md) | mmx 转写 + 纯白/28px + 弹跳动效 |
+| 6 | 分镜 | [storyboard.md](rules/storyboard.md) | 视频 > 5s / 图片 = 字幕 / 每镜必有实内容 |
+| 7 | 动效 | [animation.md](rules/animation.md) | interpolate + spring + 4 条贝塞尔曲线；**禁用 CSS 动画** |
+| 8 | BGM | [bgm.md](rules/bgm.md) | 4 类情绪（Cyber/Power/Quiet/Hop Pulse）+ BPM 75-115 + ducking |
+| 9 | 素材清单 | [assets.md](rules/assets.md) | 列出每个分镜需要的素材 + 自动从 resources/ 复制到 public/ |
+| 10 | 自检 | [checklist.md](rules/checklist.md) | 6 大块 30+ 项检查 → Ready/Blocked 决策 |
+| 11 | 渲染 | [render.md](rules/render.md) | **默认只预览不渲染** + 竖屏 1080×1920 + 防卡帧 7 类 |
+| 12 | **发布与复盘** | [publish.md](rules/publish.md) | 账号/平台矩阵 + 标题/封面/标签/时间 + 24h+7d 数据复盘 |
 
 ---
 
@@ -217,8 +217,8 @@ export const RemotionRoot: React.FC = () => {
 
 ## 🎙️ 音频约定
 
-- **旁白**：用户**自录**（**不用 TTS**）—— 详见 [copy.md §9](remotion/rules/copy.md)
-- **BGM**：使用 **mmx**（minimax）能力生成；4 类选型（Cyber/Power/Quiet/Hop Pulse）见 [bgm.md](remotion/rules/bgm.md)
+- **旁白**：用户**自录**（**不用 TTS**）—— 详见 [copy.md §9](rules/copy.md)
+- **BGM**：使用 **mmx**（minimax）能力生成；4 类选型（Cyber/Power/Quiet/Hop Pulse）见 [bgm.md](rules/bgm.md)
 - **Ducking 必做**：旁白期间 BGM 降到 -12 dB，旁白结束升回 -8 dB
 - **存放位置**：`resources/audios/<主题>.mp3`（旁白）/ `resources/audios/bgm/<类型>.mp3`（BGM）
 
@@ -233,7 +233,7 @@ export const RemotionRoot: React.FC = () => {
 - 入场用 spring 弹跳（0.25-0.4s），重点 segment 叠加二次跳动
 - 单条字幕 ≤ 24 字、≤ 4s，不带句末标点
 
-完整规范：[remotion/rules/subtitle.md](remotion/rules/subtitle.md)
+完整规范：[rules/subtitle.md](rules/subtitle.md)
 
 ---
 
@@ -253,7 +253,7 @@ export const RemotionRoot: React.FC = () => {
 | 4.10 | 未成年人/擦边/暴力 | 任何擦边 | ✅ 零容忍 |
 | 4.11 | 行业专项（健身） | 燃脂/排毒/治疗颈椎 | ✅ **七练重点** |
 
-完整清单 + 替换策略 + 自检脚本：[remotion/rules/copy.md §4](remotion/rules/copy.md)。
+完整清单 + 替换策略 + 自检脚本：[rules/copy.md §4](rules/copy.md)。
 
 ---
 
@@ -279,7 +279,7 @@ export const RemotionRoot: React.FC = () => {
 
 - ✅ **12 份 rules 文件**全部就位（视频类型 → 发布与复盘全流程）
 - ✅ **第 1 个视频 B3 翼状肩胛** 已发布（[`resources/audios/winged_scapula_b3.mp3`](resources/audios/winged_scapula_b3.mp3)）
-- ✅ `remotion/rules/` 覆盖内容创作 → 拍摄 → 剪辑 → 成片 → 发布 → 复盘 全流程
+- ✅ `rules/` 覆盖内容创作 → 拍摄 → 剪辑 → 成片 → 发布 → 复盘 全流程
 
 ---
 
@@ -287,7 +287,7 @@ export const RemotionRoot: React.FC = () => {
 
 - **素材先于脚本**：写脚本前先看 `resources/images/` 和 `resources/videos/` 里有什么
 - **同步先于创作**：写脚本前先完成 `resources/docs/` 同步
-- **规则先于执行**：每个阶段开工前先读 `remotion/rules/<stage>.md`
+- **规则先于执行**：每个阶段开工前先读 `rules/<stage>.md`
 - **每条事实都可追溯**：视频脚本提到的功能/数据/价格/品牌口吻，都必须能在 `resources/docs/` 找到原文
 - **默认不渲染**：永远先 `npm run dev` 让用户在 Studio 里审核，收到"开始渲染"才执行 `npx remotion render`
 

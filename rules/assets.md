@@ -12,7 +12,7 @@
 
 ### 1.1 输出位置
 
-`hyperframe/src/scenes/<主题>/assets.md` —— **source of truth，必须入库**（见 [checklist.md §F.7](../delivery/checklist.md#f-实现准备-5-项)）。
+`remotion/src/scenes/<主题>/assets.md` —— **source of truth，必须入库**（见 [checklist.md §F.7](checklist.md#f-实现准备-5-项)）。
 
 ### 1.2 清单分两节
 
@@ -258,7 +258,7 @@ npm run dev
 - ...
 ```
 
-> 详见 [video-types.md §混合类型](../planning/video-types.md#混合类型进阶)。
+> 详见 [video-types.md §混合类型](video-types.md#混合类型进阶)。
 
 ---
 
@@ -305,7 +305,7 @@ npm run dev
 |---|---|
 | **001_talking_head.mp4 ≥ 60s 不剪断** | 圆头像持续播放 = 嘴在动，**剪断就破坏"人设"** |
 | **同一份视频双用**（口播态全屏 + 辅助素材态缩圆头像）| 不可剪断，**不可分两段**；分两段会导致圆头像"嘴不动" |
-| **录屏/录视频用 `<video>` element + object-fit: cover + border-radius: 50%** | 实时抽帧，不能用第二张图（违反 [video-types.md §12.1](../planning/video-types.md#121-a-类专属反模式v3-新增--2026-06-10)）|
+| **录屏/录视频用 `<video>` element + object-fit: cover + border-radius: 50%** | 实时抽帧，不能用第二张图（违反 [video-types.md §12.1](video-types.md#121-a-类专属反模式v3-新增--2026-06-10)）|
 | **不拍"100_avatar.png"静态头像** | ❌ 旧版用照片做圆头像 → 观众立刻出戏 |
 | **辅助素材命名 010-/011- 连续编号** | 后期按顺序调用，与分镜 `data-shot-id` 一一对应 |
 
@@ -320,7 +320,7 @@ Step 5：拍数据图 / 代码截图（HTML/CSS 渲染优先，mmx 备用）
 Step 6：验收（主口播视频 ≥ 60s + 抽帧测试 + 同期声 + 连续性）
 ```
 
-> **为什么 A 类顺序特别重要**：**圆头像依赖主口播视频的连续播放**。如果先录辅助素材再录主口播视频，辅助素材对应的口型/表情都对不上——后期改起来非常痛苦。完整规范见 [shoot-checklist.md §3.A](../production/shoot-checklist.md#3a-a-类口播补充v3-新增--2026-06-10)。
+> **为什么 A 类顺序特别重要**：**圆头像依赖主口播视频的连续播放**。如果先录辅助素材再录主口播视频，辅助素材对应的口型/表情都对不上——后期改起来非常痛苦。完整规范见 [shoot-checklist.md §3.A](shoot-checklist.md#3a-a-类口播补充v3-新增--2026-06-10)。
 
 ### 8.2 B 类素材清单骨架
 

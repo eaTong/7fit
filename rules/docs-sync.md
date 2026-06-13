@@ -14,13 +14,13 @@
 |---|---|---|
 | **7fit 产品本体** | `/Users/eatong/eaTong_projects/fit_lc` | 产品代码、后端、PRD、功能细节 |
 | **7fit 品牌** | `/Users/eatong/eaTong_projects/7fit_opc` | 北极星、利基、Headline、转化漏斗 |
-| **视频脚本稿**（产物，非同步）| `resources/docs/copy/<主题>.md` | 这次视频的文案（用户手写或 AI 起草） |
+| **视频脚本稿**（产物，非同步）| `docs/copy/<主题>.md` | 这次视频的文案（用户手写或 AI 起草） |
 | **本仓库同步清单** | `docs/SUMMARY.md` | 三个源的索引 + 视频脚本可引用的事实清单 |
 
 > **目录分工**：
 > - `docs/` = 外部同步文档（fit_lc + 7fit_opc 的快照）
-> - `resources/docs/copy/` = 视频脚本稿（每视频一份 .md）
-> - `resources/docs/` = 旧位置（已废弃，新文件不再放这里）
+> - `docs/copy/` = 视频脚本稿（每视频一份 .md）
+> - `docs/` = 旧位置（已废弃，新文件不再放这里）
 
 ### 1.1 目录结构
 
@@ -174,7 +174,7 @@ docs/
 2. 对比上周发布视频引用的 fact，验证 SUMMARY.md 是否全
 3. 更新 SUMMARY.md
 4. 跑 §5 引用优先级，验证路径都对
-5. 记录到日历（[calendar.md §4 月度复盘](../delivery/calendar.md)）
+5. 记录到日历（[calendar.md §4 月度复盘](calendar.md)）
 ```
 
 ### 6.1 周复核 checklist
@@ -190,17 +190,17 @@ docs/
 ## 7 · 写脚本时的引用 SOP
 
 ```
-1. 用户说"做 X 视频"（[video-types.md §判定](../planning/video-types.md#判定流程必须问用户)）
+1. 用户说"做 X 视频"（[video-types.md §判定](video-types.md#判定流程必须问用户)）
    ↓
 2. 跑 §2 同步流程（确保主题相关文档已同步）
    ↓
 3. 读 docs/SUMMARY.md（看本次主题相关的事实在哪）
    ↓
-4. 写 [research.md](../production/research.md)（从评论/平台/竞品/事实 4 维）
+4. 写 [research.md](research.md)（从评论/平台/竞品/事实 4 维）
    ↓
 5. 写 copy.md，每条事实标 [来源: <docs 路径> §<章节>]
    ↓
-6. 跑 [copy.md §3.6 事实可追溯](../planning/copy.md#36-事实可追溯) 自检
+6. 跑 [copy.md §3.6 事实可追溯](copy.md#36-事实可追溯) 自检
 ```
 
 ---
