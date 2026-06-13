@@ -1,10 +1,10 @@
 import { AbsoluteFill } from "remotion";
 import { LayoutTransitionEngine } from "../../layout-state-machine/LayoutTransitionEngine";
 import { ShotContent } from "../../layout-state-machine/ShotContent";
-import { MediaFallback } from "../../components/MediaFallback";
-import { CodeDisplay } from "../../components/CodeDisplay";
-import { GitLogDisplay } from "../../components/GitLogDisplay";
-import { OrbitingVideo } from "../../components/OrbitingVideo";
+import { MediaFallback } from "../../components/media/MediaFallback";
+import { CodeDisplay } from "../../components/terminal/CodeDisplay";
+import { GitLogDisplay } from "../../components/terminal/GitLogDisplay";
+import { OrbitingVideo } from "../../components/media/OrbitingVideo";
 import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 
 // ============================================================

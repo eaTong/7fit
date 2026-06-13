@@ -11,7 +11,7 @@ export { LayoutTransitionEngine } from "./LayoutTransitionEngine";
 export { AnimatedTalkingHead } from "./AnimatedTalkingHead";
 export { ShotContent } from "./ShotContent";
 export { AuxiliaryContentManager } from "./AuxiliaryContentManager";
-export { MediaFallback } from "../components/MediaFallback";
+export { MediaFallback } from "../components/media/MediaFallback";
 
 export { registerLayout, getLayout, getAllLayouts } from "./layouts";
 export type { LayoutState, ShotEntry, TransitionEasing } from "./layouts";

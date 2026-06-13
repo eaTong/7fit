@@ -2,7 +2,7 @@
 
 import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { LayoutState, TransitionEasing } from "./layouts/types";
-import { MediaFallback } from "../components/MediaFallback";
+import { MediaFallback } from "../components/media/MediaFallback";
 
 const TRANSITION_FRAMES = 60; // 30fps × 2s 过渡动画
 

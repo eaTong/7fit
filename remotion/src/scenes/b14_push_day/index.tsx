@@ -27,10 +27,10 @@ import {
   staticFile,
 } from "remotion";
 import storyboard from "./storyboard.json";
-import { VoiceoverText } from "../../components/VoiceoverText";
-import { Grid2x2 } from "../../components/Grid2x2";
-import { ShotRenderer } from "../../components/ShotRenderer";
-import { BGMWithDucking } from "../../components/BGMWithDucking";
+import { VoiceoverText } from "../../components/data-display/VoiceoverText";
+import { Grid2x2 } from "../../components/layout/Grid2x2";
+import { ShotRenderer } from "../../components/transitions/ShotRenderer";
+import { BGMWithDucking } from "../../components/media/BGMWithDucking";
 import type { Shot } from "../../types/shot";
 
 /* === 配置 === */

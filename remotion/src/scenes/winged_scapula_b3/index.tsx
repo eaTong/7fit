@@ -40,10 +40,10 @@ import {
   staticFile,
 } from "remotion";
 import storyboard from "./storyboard.json";
-import { ActionDataCard } from "../../components/ActionDataCard";
-import { CTAButton } from "../../components/CTAButton";
-import { ShotRenderer } from "../../components/ShotRenderer";
-import { BGMWithDucking } from "../../components/BGMWithDucking";
+import { ActionDataCard } from "../../components/data-display/ActionDataCard";
+import { CTAButton } from "../../components/data-display/CTAButton";
+import { ShotRenderer } from "../../components/transitions/ShotRenderer";
+import { BGMWithDucking } from "../../components/media/BGMWithDucking";
 
 /* === 配置 === */
 const FPS = 30;

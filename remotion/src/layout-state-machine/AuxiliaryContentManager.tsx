@@ -2,7 +2,7 @@
 
 import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { useRef } from "react";
-import { MediaFallback } from "../components/MediaFallback";
+import { MediaFallback } from "../components/media/MediaFallback";
 
 const ENTER_FRAMES = 8;
 const EXIT_FRAMES = 8;

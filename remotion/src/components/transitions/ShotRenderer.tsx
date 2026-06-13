@@ -17,7 +17,7 @@
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
-import { getTransitionEffect } from "../utils/transition";
+import { getTransitionEffect } from "../../utils/transition";
 
 interface ShotRendererProps {
   /** 转场类型：转入 */

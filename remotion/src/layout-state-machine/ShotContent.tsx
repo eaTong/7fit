@@ -1,7 +1,7 @@
 import { AuxiliaryContentManager } from "./AuxiliaryContentManager";
 import type { LayoutState } from "./layouts/types";
-import { CodeDisplay } from "../components/CodeDisplay";
-import { GitLogDisplay, type GitLogEntry } from "../components/GitLogDisplay";
+import { CodeDisplay } from "../components/terminal/CodeDisplay";
+import { GitLogDisplay, type GitLogEntry } from "../components/terminal/GitLogDisplay";
 
 interface ShotContentProps {
   currentShotId: string;

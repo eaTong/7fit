@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { AnimatedTalkingHead } from "./AnimatedTalkingHead";
-import { MediaFallback } from "../components/MediaFallback";
+import { MediaFallback } from "../components/media/MediaFallback";
 import { getLayout } from "./layouts";
 import type { LayoutState, ShotEntry } from "./layouts/types";
 

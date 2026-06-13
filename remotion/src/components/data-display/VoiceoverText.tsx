@@ -12,7 +12,7 @@
  * - SubtitleSegment[]：含高亮标记的文本
  */
 
-import type { SubtitleSegment } from "../types/shot";
+import type { SubtitleSegment } from "../../types/shot";
 
 interface VoiceoverTextProps {
   text: string | string[] | SubtitleSegment[];
