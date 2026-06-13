@@ -27,7 +27,7 @@
 
 ## 2 · 核心架构
 
-### 2.1 四个核心角色
+### 2.1 四个核心角色 + 背景层
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -38,8 +38,15 @@
                        │ 查询当前布局
                        ▼
 ┌─────────────────────────────────────────────────────────┐
+│  BackgroundLayer（背景层）                               │
+│  · 由调用者通过 backgroundSrc 或 renderBackground 提供 │
+│  · 优先级：renderBackground > backgroundSrc > 无背景   │
+│  · 位于 AbsoluteFill 最底层，口播层下方                 │
+└──────────────────────┬──────────────────────────────────┘
+                       ▼
+┌─────────────────────────────────────────────────────────┐
 │  AnimatedTalkingHead（口播动画元素）                    │
-│  · 视频始终存在于 AbsoluteFill 最底层，永不 unmount      │
+│  · 视频始终存在于 AbsoluteFill，永不 unmount            │
 │  · position/size/radius 随 frame interpolate morphing  │
 └──────────────────────┬──────────────────────────────────┘
                        │ 接收 prevLayout + curLayout + transitionType
@@ -58,6 +65,11 @@
 │  · 每类素材独立入场动画（opacity spring 弹入）          │
 └─────────────────────────────────────────────────────────┘
 ```
+
+**渲染层级（从底到顶）**：
+1. 背景层（backgroundSrc / renderBackground）
+2. 口播动画层（AnimatedTalkingHead）
+3. 辅助素材层（children / ShotContent）
 
 ### 2.2 文件结构
 
@@ -271,27 +283,22 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
 - 监听当前 frame，计算当前处于哪个 shot
 - 当 shot 切换时，更新 prevLayout = curLayout，curLayout = 新布局
 - 将 prevLayout / curLayout / 当前 transitionType 下传给 AnimatedTalkingHead
+- **统一管理背景层**（backgroundSrc / renderBackground），位于口播层下方
 
-### 6.2 实现
+### 6.2 Props 接口
 
 ```tsx
-// src/scenes/<主题>/LayoutTransitionEngine.tsx
-
-import { useState, useEffect, useRef } from "react";
-import { useCurrentFrame } from "remotion";
-import { LayoutState, getLayout } from "./layouts";
-
-export interface ShotEntry {
-  shotId: string;
-  layoutId: string;
-  transitionType: string;
-  startFrame: number;
-  endFrame: number;
-}
-
 interface LayoutTransitionEngineProps {
   videoSrc: string;
   shotSequence: ShotEntry[];
+
+  /** 统一静态背景（所有 shot 相同）*/
+  backgroundSrc?: string;
+  backgroundType?: "video" | "image";
+
+  /** 自定义背景渲染函数（优先级高于 backgroundSrc）*/
+  renderBackground?: (currentShot: ShotEntry, curLayout: LayoutState) => React.ReactNode;
+
   children: (
     prevLayout: LayoutState,
     curLayout: LayoutState,
@@ -299,41 +306,28 @@ interface LayoutTransitionEngineProps {
     currentShotId: string,
   ) => React.ReactNode;
 }
+```
 
-export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
-  videoSrc,
-  shotSequence,
-  children,
-}) => {
-  const frame = useCurrentFrame();
+**背景优先级**：`renderBackground` > `backgroundSrc` > 无背景
 
-  // 找到当前 frame 对应的 shot
-  const currentShot = shotSequence.find(
-    (s) => frame >= s.startFrame && frame < s.endFrame
-  ) ?? shotSequence[shotSequence.length - 1];
+### 6.3 实现要点
 
-  const curLayout = getLayout(currentShot.layoutId) ?? getLayout("fullscreen")!;
-  const transitionType = currentShot.transitionType;
+```tsx
+// 渲染层级（从底到顶）
+<AbsoluteFill>
+  {/* Layer 1: 背景层 */}
+  {renderBackground
+    ? renderBackground(currentShot, curLayout)
+    : backgroundSrc
+    ? <OffthreadVideo src={staticFile(backgroundSrc)} style={{ ... }} />
+    : null}
 
-  // 找前一个 shot（用于 morph）
-  const currentIndex = shotSequence.indexOf(currentShot);
-  const prevShot = currentIndex > 0 ? shotSequence[currentIndex - 1] : null;
-  const prevLayout = prevShot ? (getLayout(prevShot.layoutId) ?? curLayout) : curLayout;
+  {/* Layer 2: 口播动画层（永不 unmount）*/}
+  <AnimatedTalkingHead ... />
 
-  return (
-    <>
-      {/* 口播动画元素（全局持久，最底层）*/}
-      <AnimatedTalkingHead
-        videoSrc={videoSrc}
-        prevLayout={prevLayout}
-        curLayout={curLayout}
-        transitionType={transitionType}
-      />
-      {/* 辅助内容（按 shot 渲染）*/}
-      {children(prevLayout, curLayout, transitionType, currentShot.shotId)}
-    </>
-  );
-};
+  {/* Layer 3: 辅助素材层 */}
+  {children(prevLayout, curLayout, transitionType, currentShot.shotId)}
+</AbsoluteFill>
 ```
 
 ---
