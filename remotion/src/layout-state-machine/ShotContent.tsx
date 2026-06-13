@@ -86,6 +86,9 @@ function getAuxiliaryStyle(layoutId: string): React.CSSProperties {
   switch (layoutId) {
     case "left_text_right_talking":
       return { left: 0, top: 0, width: 1390, height: 864 };
+    case "left_text_right_talking_50pct":
+      // 50pct 布局口播占满整个右半区，辅助内容放到左半区
+      return { left: 0, top: 0, width: 960, height: 864 };
     case "pip_bottom_right":
     case "pip_bottom_left":
       return { left: 0, top: 0, width: 1920, height: 864 };

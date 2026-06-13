@@ -11,11 +11,11 @@ import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 
 const shotSequence: ShotEntry[] = [
   // s1: Hook · 反常识开场（全屏口播，情绪高点）
-  { shotId: "s1", layoutId: "fullscreen",              transitionType: "zoom",       startFrame: 0,    endFrame: 90   },
+  { shotId: "s1", layoutId: "fullscreen",              transitionType: "zoom",       startFrame: 0,    endFrame: 90,    isCircle: true  },
   // s2: Pain · 健身困境（左文右口播，讲解痛点）
   { shotId: "s2", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 90,   endFrame: 210  },
   // s3: Solution · 7fit 登场（全屏口播，解决方案）
-  { shotId: "s3", layoutId: "fullscreen",              transitionType: "ease-out",   startFrame: 210,  endFrame: 300  },
+  { shotId: "s3", layoutId: "fullscreen",              transitionType: "ease-out",   startFrame: 210,  endFrame: 300,  isCircle: true  },
   // s4: Demo · 功能演示（左文右口播，演示核心功能）
   { shotId: "s4", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 300,  endFrame: 450  },
   // s5: Proof · 数据证明（2×2 网格，并列展示进步）
@@ -23,7 +23,7 @@ const shotSequence: ShotEntry[] = [
   // s6: Deep Dive · 深度讲解（左文右口播，讲解细节）
   { shotId: "s6", layoutId: "left_text_right_talking", transitionType: "slide-right", startFrame: 630, endFrame: 780 },
   // s7: CTA · 行动召唤（全屏口播，号召行动）
-  { shotId: "s7", layoutId: "fullscreen",              transitionType: "zoom",       startFrame: 780,  endFrame: 900  },
+  { shotId: "s7", layoutId: "fullscreen",              transitionType: "zoom",       startFrame: 780,  endFrame: 900,  isCircle: true  },
   // s8: Brand · 品牌收尾（全屏口播，品牌 statement）
   { shotId: "s8", layoutId: "fullscreen",              transitionType: "fade",      startFrame: 900,  endFrame: 990  },
   // s9: Code · 代码展示（左侧代码，右下角色口播）
@@ -32,8 +32,8 @@ const shotSequence: ShotEntry[] = [
   { shotId: "s10", layoutId: "left_text_right_talking", transitionType: "slide-right", startFrame: 1140, endFrame: 1290 },
   // s11: 50/50 分屏 · 左侧内容右侧口播
   { shotId: "s11", layoutId: "left_text_right_talking_50pct", transitionType: "ease-out", startFrame: 1290, endFrame: 1440 },
-  // s12: Circle · 圆形口播收尾（isCircle 特殊渲染）
-  { shotId: "s12", layoutId: "fullscreen", transitionType: "zoom", startFrame: 1440, endFrame: 1560 },
+  // s12: Circle · 圆形口播收尾
+  { shotId: "s12", layoutId: "fullscreen", transitionType: "zoom", startFrame: 1440, endFrame: 1560, isCircle: true },
 ];
 
 // ============================================================
@@ -130,7 +130,7 @@ export const WorkoutIntro: React.FC = () => {
               <div
                 style={{
                   position: "absolute",
-                  left: 960, top: 0, width: 910, height: 864,
+                  left: 0, top: 0, width: 860, height: 864,
                   background: "rgba(255,69,0,0.12)",
                   border: "2px solid #FF4500",
                   borderRadius: 20,
