@@ -40,6 +40,21 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
     [prevShot, curLayout]
   );
 
+  if (!shotSequence.length) {
+    const fallbackLayout = getLayout("fullscreen")!;
+    return (
+      <AbsoluteFill>
+        <AnimatedTalkingHead
+          videoSrc={videoSrc}
+          prevLayout={fallbackLayout}
+          curLayout={fallbackLayout}
+          transitionType="ease-out"
+        />
+        {children(fallbackLayout, fallbackLayout, "ease-out", "")}
+      </AbsoluteFill>
+    );
+  }
+
   return (
     <AbsoluteFill>
       <AnimatedTalkingHead
