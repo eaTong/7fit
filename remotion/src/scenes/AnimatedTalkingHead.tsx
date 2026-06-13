@@ -1,6 +1,6 @@
 // remotion/src/scenes/AnimatedTalkingHead.tsx
 
-import { AbsoluteFill, OffthreadVideo, useCurrentFrame, interpolate, Easing } from "remotion";
+import { OffthreadVideo, useCurrentFrame, interpolate, Easing } from "remotion";
 import { staticFile } from "remotion";
 import { LayoutState } from "./layouts/types";
 
@@ -18,7 +18,7 @@ interface AnimatedTalkingHeadProps {
   videoSrc: string;
   prevLayout: LayoutState;
   curLayout: LayoutState;
-  transitionType: string;
+  transitionType: keyof typeof EASING_MAP;
 }
 
 export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
