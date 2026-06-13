@@ -6,7 +6,7 @@ import { MediaFallback } from "../components/MediaFallback";
 
 const TRANSITION_FRAMES = 60; // 30fps × 2s 过渡动画
 
-const MIN_RADIUS = 8; // 默认最小圆角（防止 borderRadius=0 的硬边）
+const MIN_RADIUS = 20; // 默认最小圆角（防止 borderRadius=0 的硬边）
 
 const EASING_MAP: Record<string, (t: number) => number> = {
   "spring":          (t) => Easing.bezier(0.34, 1.56, 0.64, 1)(t),

@@ -36,21 +36,21 @@ registerLayout({
 registerLayout({
   id: "left_text_right_talking",
   left: 1440, top: 0, width: 480, height: 864,
-  borderRadius: 12, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
 });
 
 registerLayout({
   id: "pip_bottom_right",
   left: 1284, top: 567, width: 540, height: 303,
-  borderRadius: 12, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
 });
 
 registerLayout({
   id: "pip_bottom_left",
   left: 96, top: 567, width: 540, height: 303,
-  borderRadius: 12, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
 });
 
@@ -64,6 +64,6 @@ registerLayout({
 registerLayout({
   id: "left_text_right_talking_50pct",
   left: 960, top: 0, width: 960, height: 864,
-  borderRadius: 12, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
 });

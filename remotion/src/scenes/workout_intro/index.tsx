@@ -30,6 +30,10 @@ const shotSequence: ShotEntry[] = [
   { shotId: "s9", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 990,  endFrame: 1140 },
   // s10: GitLog · 版本历史展示（左侧滚动日志，右下角色口播）
   { shotId: "s10", layoutId: "left_text_right_talking", transitionType: "slide-right", startFrame: 1140, endFrame: 1290 },
+  // s11: 50/50 分屏 · 左侧内容右侧口播
+  { shotId: "s11", layoutId: "left_text_right_talking_50pct", transitionType: "ease-out", startFrame: 1290, endFrame: 1440 },
+  // s12: Circle · 圆形口播收尾（isCircle 特殊渲染）
+  { shotId: "s12", layoutId: "fullscreen", transitionType: "zoom", startFrame: 1440, endFrame: 1560 },
 ];
 
 // ============================================================
@@ -47,6 +51,8 @@ const BACKGROUND_MAP: Record<string, string> = {
   s8:  "images/bg/s8_brand.jpg",
   s9:  "images/bg/s9_code.jpg",
   s10: "images/bg/s10_gitlog.jpg",
+  s11: "images/bg/s11_talking.jpg",
+  s12: "images/bg/s12_portrait.jpg",
 };
 
 // ============================================================
@@ -117,6 +123,30 @@ export const WorkoutIntro: React.FC = () => {
                 gitlogVisibleCount={5}
                 curLayout={curLayout}
               />
+            );
+          }
+          if (currentShotId === "s11") {
+            return (
+              <div
+                style={{
+                  position: "absolute",
+                  left: 960, top: 0, width: 960, height: 864,
+                  background: "rgba(255,69,0,0.12)",
+                  border: "2px solid #FF4500",
+                  borderRadius: 20,
+                  padding: "32px 40px",
+                  backdropFilter: "blur(8px)",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  gap: 20,
+                }}
+              >
+                <div style={{ fontSize: 32, fontWeight: 700, color: "#FF4500" }}>用产品思维去健身</div>
+                <div style={{ fontSize: 24, color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
+                  把健身当成产品迭代<br />每一次训练都是用户研究
+                </div>
+              </div>
             );
           }
           return (
