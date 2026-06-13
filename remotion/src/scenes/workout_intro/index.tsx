@@ -130,7 +130,7 @@ export const WorkoutIntro: React.FC = () => {
               <div
                 style={{
                   position: "absolute",
-                  left: 960, top: 0, width: 960, height: 864,
+                  left: 960, top: 0, width: 910, height: 864,
                   background: "rgba(255,69,0,0.12)",
                   border: "2px solid #FF4500",
                   borderRadius: 20,
