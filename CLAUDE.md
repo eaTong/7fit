@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-七练（7fit）的视频生成仓库，用于通过 **Remotion** 制作产品宣传/营销视频。视频内容所需的素材由用户放在 `resources/`，文案/产品信息从外部仓库同步后写在 `resources/docs/`。
+七练（7fit）的视频生成仓库，用于通过 **Remotion** 制作产品宣传/营销视频。视频内容所需的素材由用户放在 `resources/`，文案/产品信息从外部仓库同步后写在 `docs/`。
 
 - **七练产品本体**（代码、后端、PRD）：`/Users/eatong/eaTong_projects/fit_lc`
 - **品牌定位/对外文案**（OPC 一人公司方法论产出）：`/Users/eatong/eaTong_projects/7fit_opc`
@@ -37,8 +37,8 @@ Composition   durationInFrames = 全文 × fps = 1800 帧
 
 **改任何时间字段的同步清单**（必走，否则下游会错）：
 
-1. `resources/docs/copy/<主题>.md` — 主体/钩子/收尾/预计
-2. `resources/docs/copy/<主题>.copy_notes.md` — 字数核对
+1. `docs/copy/<主题>.md` — 主体/钩子/收尾/预计
+2. `docs/copy/<主题>.copy_notes.md` — 字数核对
 3. `remotion/tools/recording-teleprompter.html` — `DEFAULT_TARGET_SPEED` + 3 档按钮
 4. `resources/audios/bgm/*.mp3` — 时长 ≥ 全文 + 3s
 5. `remotion/src/scenes/<主题>/storyboard.md` — 镜头时长
@@ -47,7 +47,7 @@ Composition   durationInFrames = 全文 × fps = 1800 帧
 8. `remotion/src/scenes/<主题>/assets.md` — §0 目标时长
 9. **CLAUDE.md（本文件）** — 统一语速控制小节
 
-**完整规则**：[remotion/rules/timing-sync.md](remotion/rules/timing-sync.md) §0-§8 全部必读。
+**完整规则**：[rules/timing-sync.md](rules/timing-sync.md) §0-§8 全部必读。
 
 > **被 7 个 rules 引用**：copy / subtitle / storyboard / bgm / script / animation / render / checklist 顶部都加了"必须遵循 timing-sync.md"提示。
 
@@ -57,42 +57,61 @@ Composition   durationInFrames = 全文 × fps = 1800 帧
 
 ```
 /Users/eatong/7fit/
-├── remotion/                # Remotion 视频项目（React + TS + Tailwind）
+├── CLAUDE.md               # 本文件（导航 + 极简铁律）
+├── rules/                  # ⭐ 22 份视频制作规范（按生产阶段分组）
+│   ├── README.md           # 规范索引
+│   ├── video-types.md      # ✅ 视频类型分类（A/B/C）—— 开工前先看
+│   ├── copy.md             # ✅ 文案规范
+│   ├── docs-sync.md        # ✅ 外部仓库同步
+│   ├── timing-sync.md      # ✅ ⏰ 统一语速控制
+│   ├── strategy.md         # ✅ 项目级发布策略
+│   ├── backlog.md         # ✅ 选题池
+│   ├── voice-anchor.md     # ✅ 声音锚定
+│   ├── anti-ai-tells.md    # ✅ 反 AI 味清单
+│   ├── research.md         # ✅ 主题调研
+│   ├── shoot-checklist.md  # ✅ 用户自拍清单
+│   ├── script.md           # ✅ 脚本规范
+│   ├── subtitle.md         # ✅ 字幕规范
+│   ├── storyboard.md       # ✅ 分镜规范
+│   ├── animation.md        # ✅ 动效规范
+│   ├── bgm.md              # ✅ BGM 规范
+│   ├── assets.md           # ✅ 素材清单规范
+│   ├── rhythm.md           # ✅ 制作节奏 SOP
+│   ├── checklist.md        # ✅ 自检清单
+│   ├── render.md           # ✅ 渲染规范
+│   ├── publish.md          # ✅ 发布与复盘
+│   ├── accounts.md         # ✅ 双账号档案
+│   ├── calendar.md         # ✅ 发布日历
+│   └── *.remotion          # Remotion 原版规则备份
+├── docs/                   # ⭐ 外部同步文档 + 视频脚本源
+│   ├── README.md
+│   ├── SUMMARY.md          # 同步清单（30 份外部文档索引）
+│   ├── fit_lc/            # fit_lc 产品本体文档快照（13 份）
+│   ├── opc/               # 7fit_opc 品牌定位文档快照（13 份）
+│   ├── copy/              # 视频文案稿（每视频一份 .md）
+│   ├── diagrams/          # 图表资源
+│   ├── superpowers/       # 超级能力文档
+│   └── topics/            # 主题文档
+├── remotion/               # Remotion 视频项目（React + TS + Tailwind）
 │   ├── src/
-│   │   ├── Root.tsx         # 视频 Composition 注册入口
-│   │   ├── Composition.tsx  # 视频组件定义（当前为空，需填充）
-│   │   ├── index.ts         # registerRoot 入口
-│   │   ├── index.css        # Tailwind 入口
-│   │   └── scenes/          # 每个视频一个独立入口（<主题>.tsx）
+│   │   ├── Root.tsx       # 视频 Composition 注册入口
+│   │   ├── index.ts       # registerRoot 入口
+│   │   ├── index.css      # Tailwind 入口
+│   │   └── scenes/        # 每个视频一个独立入口（<主题>.tsx）
 │   │       └── <主题>/
 │   │           ├── index.tsx
-│   │           ├── subtitles.json   # 自动生成的字幕
-│   │           ├── storyboard.md     # 分镜表
-│   │           ├── storyboard.json   # 分镜数据
-│   │           └── components/       # 每镜一组件
-│   ├── public/              # 视频静态资源（fonts/images 等）
-│   │   └── <主题>/          # 视频专属素材（脚本/分镜生成时自动从 resources/ 复制）
-│   ├── rules/               # 各阶段视频制作规范
-│   │   ├── video-types.md   # ✅ 视频类型分类（A/B/C）—— 开工前先看
-│   │   ├── copy.md          # ✅ 文案规范
-│   │   ├── script.md        # ✅ 脚本生成规范
-│   │   ├── subtitle.md      # ✅ 字幕生成规范
-│   │   ├── storyboard.md    # ✅ 分镜规范
-│   │   ├── animation.md     # ✅ 动效规范
-│   │   ├── bgm.md           # ✅ BGM 规范
-│   │   ├── assets.md        # ✅ 素材清单规范
-│   │   ├── checklist.md     # ✅ 自检清单（开工前/渲染前）
-│   │   └── render.md        # ✅ 渲染规范（默认只预览、竖屏、防卡帧）
-│   ├── remotion.config.ts   # Tailwind + 端口 4000 + jpeg 帧
+│   │           ├── subtitles.json
+│   │           ├── storyboard.md
+│   │           ├── storyboard.json
+│   │           └── components/
+│   ├── public/            # 视频静态资源
+│   ├── remotion.config.ts # Tailwind + 端口 4000 + jpeg 帧
 │   └── package.json
-└── resources/               # 用户维护的素材库
-    ├── docs/                # 同步后的产品/品牌文档（视频脚本源）
-    │   ├── SUMMARY.md
-    │   └── copy/            # 文案稿（每视频一份 .md）
-    ├── audios/              # 音频/语音文件
-    │   └── bgm/             # 背景音乐（与旁白分开管理）
-    ├── images/              # 图片素材（按视频内容命名）
-    └── videos/              # 视频素材（如 卧推80KG_10.mov、深蹲_100KG.mov）
+└── resources/              # 用户维护的素材库
+    ├── audios/           # 音频/语音文件
+    │   └── bgm/          # 背景音乐
+    ├── images/           # 图片素材
+    └── videos/           # 视频素材
 ```
 
 ## 常用命令
@@ -118,14 +137,14 @@ npm run lint
 npm run build
 ```
 
-> **⚠️ 渲染触发硬规则**（详见 [remotion/rules/render.md](remotion/rules/render.md)）：
+> **⚠️ 渲染触发硬规则**（详见 [rules/render.md](rules/render.md)）：
 >
 > - **默认只启动预览**，**不**直接渲染
 > - 必须用户说"开始渲染"才执行 `npx remotion render`
 > - 默认 **1080×1920 竖屏**（9:16），**禁止**默认横屏
 > - 模糊措辞（"OK"/"不错"）不视为渲染授权
 
-> **当前状态**：`Composition.tsx` 是 Remotion 模板占位文件，**实际视频不在这**。所有视频内容都按 [remotion/rules/script.md](remotion/rules/script.md) 第 1 节放在 `remotion/src/scenes/<主题>/`。
+> **当前状态**：`Composition.tsx` 是 Remotion 模板占位文件，**实际视频不在这**。所有视频内容都按 [rules/script.md](rules/script.md) 第 1 节放在 `remotion/src/scenes/<主题>/`。
 
 ### 第一个视频的目录初始化
 
@@ -170,21 +189,21 @@ export const RemotionRoot: React.FC = () => {
 - **图片/视频素材**：按视频内容命名（例如 `卧推80KG*10.mov`、`深蹲_100KG.mov`）。在 `resources/images/` 或 `resources/videos/` 下按文件名查找。
 - **代码/产品文档/PRD/git 记录**：直接读取 `/Users/eatong/eaTong_projects/fit_lc`（重点是 `docs/PRD.md`、`docs/PRD-planning.md`、`docs/architecture/`、`docs/PRD-details/`、各 `routes/` 源码），按需用代码块展示给用户，不要让用户提供截图。
 - **品牌/对外文案/转化漏斗**：读取 `/Users/eatong/eaTong_projects/7fit_opc`（重点是 `north-star.md`、`outputs/02-niche-positioning/02-niche-statement-v4.md`、`outputs/03-value-proposition/`、`outputs/07-conversion-loop/`）。
-- **音频（旁白）**：用户**自录**（**不用 TTS**）—— 详见 [`copy.md §9`](remotion/rules/copy.md)，统一输出 **`.m4a`**（iPhone 语音备忘录默认格式）
+- **音频（旁白）**：用户**自录**（**不用 TTS**）—— 详见 [`copy.md §9`](rules/copy.md)，统一输出 **`.m4a`**（iPhone 语音备忘录默认格式）
 - **音频/BGM 和图片生成**：使用 **mmx**（minimax）能力（BGM 仍为 `.mp3`，与旁白 `.m4a` 区分）
-- **音频 → 字幕转写**：也使用 **mmx**（minimax）能力，输出 `remotion/src/scenes/<主题>/subtitles.json`（详见 `remotion/rules/subtitle.md`，m4a 直传无需转码）
+- **音频 → 字幕转写**：也使用 **mmx**（minimax）能力，输出 `remotion/src/scenes/<主题>/subtitles.json`（详见 `rules/subtitle.md`，m4a 直传无需转码）
 
 ## 文档同步工作流（生成视频脚本前的强制步骤）
 
-在写视频脚本前，必须**先把两个外部仓库的文档增量同步到 `resources/docs/`**，并生成项目级总结。
-**完整规范见 [`docs-sync.md`](remotion/rules/docs-sync.md)**，本节只摘工作流概览：
+在写视频脚本前，必须**先把两个外部仓库的文档增量同步到 `docs/`**，并生成项目级总结。
+**完整规范见 [`docs-sync.md`](rules/docs-sync.md)**，本节只摘工作流概览：
 
 1. 扫描 `/Users/eatong/eaTong_projects/fit_lc/docs/` 与 `/Users/eatong/eaTong_projects/7fit_opc/outputs/` 的最近变更
-2. 把与视频主题相关的文档增量复制到 `resources/docs/`（按子目录或主题命名，例如 `prd.md`、`opc-niche.md`、`opc-headline.md`）
-3. 写一份总结性 markdown 放在 `resources/docs/SUMMARY.md`（哪些文档已同步、各自关键信息、视频脚本可用的"事实清单"）—— 模板见 [`docs-sync.md §2`](remotion/rules/docs-sync.md)
-4. 后续所有视频脚本都基于 `resources/docs/SUMMARY.md` + `resources/docs/` 下具体文档撰写
+2. 把与视频主题相关的文档增量复制到 `docs/`（按子目录或主题命名，例如 `prd.md`、`opc-niche.md`、`opc-headline.md`）
+3. 写一份总结性 markdown 放在 `docs/SUMMARY.md`（哪些文档已同步、各自关键信息、视频脚本可用的"事实清单"）—— 模板见 [`docs-sync.md §2`](rules/docs-sync.md)
+4. 后续所有视频脚本都基于 `docs/SUMMARY.md` + `docs/` 下具体文档撰写
 
-**不要假设视频脚本作者记得外部仓库的细节**——每条引用都要可追溯到 `resources/docs/` 下的某个文件。
+**不要假设视频脚本作者记得外部仓库的细节**——每条引用都要可追溯到 `docs/` 下的某个文件。
 
 ## 视频制作总流程（6 阶段 + 后期）
 
@@ -206,10 +225,10 @@ export const RemotionRoot: React.FC = () => {
 
 | 步骤 | 动作 | 规则 |
 |---|---|---|
-| **-2** | 读 OPC 文档（北极星/利基/PRD）| [video-types.md §0](remotion/rules/video-types.md) + `7fit_opc/` |
-| **-1** | 确定视频类型 A/B/C | [video-types.md](remotion/rules/video-types.md) ← **第一件事** |
-| **0** | 写文案稿 → `resources/docs/copy/<主题>.md` | [copy.md](remotion/rules/copy.md) |
-| **1** | 文档同步 → `resources/docs/SUMMARY.md` | [docs-sync.md](remotion/rules/docs-sync.md) ← 引用要可追溯 |
+| **-2** | 读 OPC 文档（北极星/利基/PRD）| [video-types.md §0](rules/video-types.md) + `7fit_opc/` |
+| **-1** | 确定视频类型 A/B/C | [video-types.md](rules/video-types.md) ← **第一件事** |
+| **0** | 写文案稿 → `docs/copy/<主题>.md` | [copy.md](rules/copy.md) |
+| **1** | 文档同步 → `docs/SUMMARY.md` | [docs-sync.md](rules/docs-sync.md) ← 引用要可追溯 |
 | ⭐ | **试读 + 文案确认环节** | 提词器试念 → 用户可要求改文案 → 回到步骤 0 |
 | 🚦 | **用户确认门** | 用户明确说"文案 OK"才能进 Phase 2 |
 
@@ -221,9 +240,9 @@ export const RemotionRoot: React.FC = () => {
 
 | 步骤 | 动作 | 规则 |
 |---|---|---|
-| ⭐ | **每段时长 = 字数 × 中速**（中速 3.4 字/秒默认）| [timing-sync.md §0](remotion/rules/timing-sync.md) |
-| ⭐ | **段间停顿 0.5-1s**（用户硬约束，让观众消化前段内容）| [timing-sync.md §3](remotion/rules/timing-sync.md) |
-| **8** | 实现分镜 → 每个 Shot 一个组件 | [script.md](remotion/rules/script.md) + [animation.md](remotion/rules/animation.md) |
+| ⭐ | **每段时长 = 字数 × 中速**（中速 3.4 字/秒默认）| [timing-sync.md §0](rules/timing-sync.md) |
+| ⭐ | **段间停顿 0.5-1s**（用户硬约束，让观众消化前段内容）| [timing-sync.md §3](rules/timing-sync.md) |
+| **8** | 实现分镜 → 每个 Shot 一个组件 | [script.md](rules/script.md) + [animation.md](rules/animation.md) |
 
 ---
 
@@ -233,8 +252,8 @@ export const RemotionRoot: React.FC = () => {
 
 | 步骤 | 动作 | 规则 |
 |---|---|---|
-| **2** | 用户自录旁白 → `resources/audios/<主题>.mp3` | [copy.md §9](remotion/rules/copy.md) ← **不用 TTS** |
-| **4** | mmx 识别旁白 → `subtitles.json` | [subtitle.md](remotion/rules/subtitle.md) |
+| **2** | 用户自录旁白 → `resources/audios/<主题>.mp3` | [copy.md §9](rules/copy.md) ← **不用 TTS** |
+| **4** | mmx 识别旁白 → `subtitles.json` | [subtitle.md](rules/subtitle.md) |
 
 ---
 
@@ -244,9 +263,9 @@ export const RemotionRoot: React.FC = () => {
 
 | 步骤 | 动作 | 规则 |
 |---|---|---|
-| **5** | 按字幕设计分镜 → `storyboard.md` / `.json` | [storyboard.md](remotion/rules/storyboard.md) |
-| ⭐ | **场景的转入 + 转出动效必标注**（每个 shot 边界）| [storyboard.md](remotion/rules/storyboard.md) + [animation.md §7](remotion/rules/animation.md) |
-| **6** | 输出素材清单 → `assets.md` + 自动复制已有素材 | [assets.md](remotion/rules/assets.md) + §4.4 批量 prompt + 验收 |
+| **5** | 按字幕设计分镜 → `storyboard.md` / `.json` | [storyboard.md](rules/storyboard.md) |
+| ⭐ | **场景的转入 + 转出动效必标注**（每个 shot 边界）| [storyboard.md](rules/storyboard.md) + [animation.md §7](rules/animation.md) |
+| **6** | 输出素材清单 → `assets.md` + 自动复制已有素材 | [assets.md](rules/assets.md) + §4.4 批量 prompt + 验收 |
 
 ---
 
@@ -266,7 +285,7 @@ export const RemotionRoot: React.FC = () => {
 
 | 步骤 | 动作 | 规则 |
 |---|---|---|
-| **3** | 选型/生成 BGM → `resources/audios/bgm/<类型>.mp3` | [bgm.md](remotion/rules/bgm.md) |
+| **3** | 选型/生成 BGM → `resources/audios/bgm/<类型>.mp3` | [bgm.md](rules/bgm.md) |
 
 > **为什么 BGM 放最后**：总时长是 Phase 6 之前才确定的（= 钩子 + 主体 + 转场 + 收尾 + 5s buffer）。提前选 BGM 长度会错。
 
@@ -278,14 +297,14 @@ export const RemotionRoot: React.FC = () => {
 
 | 步骤 | 动作 | 规则 |
 |---|---|---|
-| **7** | 【开工前自检】跑 checklist.md 6 大块检查 | [checklist.md](remotion/rules/checklist.md) ← 全部 ✅ 才能进下一步 |
-| **9** | 在 Composition 中组装 + 转场 + BGM | [script.md §8](remotion/rules/script.md) + [animation.md §7](remotion/rules/animation.md) + [bgm.md §7](remotion/rules/bgm.md) |
-| **10** | 【渲染前自检】再跑一次 checklist.md | [checklist.md](remotion/rules/checklist.md) ← 全部 ✅ 才能 render |
-| **11** | ⚠️ 【默认只预览】启动 Studio 让用户审核 | [render.md](remotion/rules/render.md) ← 不自动 render |
-| **12** | 收到"开始渲染"指令 → `npx remotion render` | [render.md](remotion/rules/render.md) ← 必须显式触发 |
-| **13** | 渲染后自检（看视频/听 BGM/查转场）| [render.md §7](remotion/rules/render.md) |
-| **14** | 【必做】发布到平台（账号/平台/标题/封面/标签/时间）| [publish.md §1-§8](remotion/rules/publish.md) |
-| **15** | 【必做】24h + 7d 数据复盘，反哺 OPC 文档 | [publish.md §9](remotion/rules/publish.md) |
+| **7** | 【开工前自检】跑 checklist.md 6 大块检查 | [checklist.md](rules/checklist.md) ← 全部 ✅ 才能进下一步 |
+| **9** | 在 Composition 中组装 + 转场 + BGM | [script.md §8](rules/script.md) + [animation.md §7](rules/animation.md) + [bgm.md §7](rules/bgm.md) |
+| **10** | 【渲染前自检】再跑一次 checklist.md | [checklist.md](rules/checklist.md) ← 全部 ✅ 才能 render |
+| **11** | ⚠️ 【默认只预览】启动 Studio 让用户审核 | [render.md](rules/render.md) ← 不自动 render |
+| **12** | 收到"开始渲染"指令 → `npx remotion render` | [render.md](rules/render.md) ← 必须显式触发 |
+| **13** | 渲染后自检（看视频/听 BGM/查转场）| [render.md §7](rules/render.md) |
+| **14** | 【必做】发布到平台（账号/平台/标题/封面/标签/时间）| [publish.md §1-§8](rules/publish.md) |
+| **15** | 【必做】24h + 7d 数据复盘，反哺 OPC 文档 | [publish.md §9](rules/publish.md) |
 
 ---
 
@@ -312,26 +331,26 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 
 ## 视频制作阶段与 rules 规范
 
-`remotion/rules/` 目录用于存放**各阶段（脚本、分镜、动效、配乐、合成）的规范文件**。执行某个阶段的动作前，先读取 `remotion/rules/<stage>.md` 了解该阶段的约束：
+`rules/` 目录用于存放**各阶段（脚本、分镜、动效、配乐、合成）的规范文件**。执行某个阶段的动作前，先读取 `rules/<stage>.md` 了解该阶段的约束：
 
 | 阶段 | 规范文件 | 说明 |
 |---|---|---|
-| **视频类型** | `remotion/rules/video-types.md` | **3 类视频分类**（A 个人人设 / B 健身知识 / C 七练介绍），开工前必看 + §0 OPC 文档同步指针 |
-| **文档同步** | `remotion/rules/docs-sync.md` | **外部 2 个仓库**（fit_lc / 7fit_opc）增量同步到 `resources/docs/` + SUMMARY.md 模板（必走，引用要可追溯）|
-| 文案 | `remotion/rules/copy.md` | 口语化、前 3 秒钩子、生活化对话、抖音/小红书违禁词 + §9 用户自录旁白规范（不用 TTS）|
-| 脚本 | `remotion/rules/script.md` | 入口命名、场景命名、字幕/标题安全区、配色、风格、转场、素材框 + §10 可复用数据组件库 |
-| 字幕 | `remotion/rules/subtitle.md` | 音频 → 字幕自动转写、字幕样式、弹跳动效、主体区域让位 |
-| 分镜 | `remotion/rules/storyboard.md` | 按字幕设计分镜、时长约束（视频 > 5s）、每镜必有实内容 + `code_component` 类型 |
-| 动效 | `remotion/rules/animation.md` | interpolate/spring/easing/sequence/transitions/light-leaks/音频可视化/3D/Lottie |
-| BGM | `remotion/rules/bgm.md` | 4 类情绪 × 4 种用途、synthwave/tech-house/ambient/glitch-hop、BPM 75-115、ducking |
-| 素材清单 | `remotion/rules/assets.md` | 脚本/分镜生成时配套输出，列出每个素材 + 自动复制已有素材到 `public/<主题>/` + §1.4 可代码实现内容不进 assets.md + §4.4 批量 prompt + 验收 |
-| 自检 | `remotion/rules/checklist.md` | 每个视频需求开工前/渲染前 | 6 大块 30+ 项检查，输出 Ready/Blocked 决策，缺失项给修复建议 |
-| 渲染 | `remotion/rules/render.md` | 渲染输出阶段 | ⚠️ 默认只预览不渲染；必须"开始渲染"才执行；默认 1080×1920 竖屏；防卡帧 7 类问题 |
-| **发布与复盘** | `remotion/rules/publish.md` | **账号矩阵（主/副号）+ 平台矩阵（抖音/小红书/视频号/B站）+ 标题/封面/标签/时间 + 24h + 7d 数据复盘**（视频投出去才算闭环）|
+| **视频类型** | `rules/video-types.md` | **3 类视频分类**（A 个人人设 / B 健身知识 / C 七练介绍），开工前必看 + §0 OPC 文档同步指针 |
+| **文档同步** | `rules/docs-sync.md` | **外部 2 个仓库**（fit_lc / 7fit_opc）增量同步到 `docs/` + SUMMARY.md 模板（必走，引用要可追溯）|
+| 文案 | `rules/copy.md` | 口语化、前 3 秒钩子、生活化对话、抖音/小红书违禁词 + §9 用户自录旁白规范（不用 TTS）|
+| 脚本 | `rules/script.md` | 入口命名、场景命名、字幕/标题安全区、配色、风格、转场、素材框 + §10 可复用数据组件库 |
+| 字幕 | `rules/subtitle.md` | 音频 → 字幕自动转写、字幕样式、弹跳动效、主体区域让位 |
+| 分镜 | `rules/storyboard.md` | 按字幕设计分镜、时长约束（视频 > 5s）、每镜必有实内容 + `code_component` 类型 |
+| 动效 | `rules/animation.md` | interpolate/spring/easing/sequence/transitions/light-leaks/音频可视化/3D/Lottie |
+| BGM | `rules/bgm.md` | 4 类情绪 × 4 种用途、synthwave/tech-house/ambient/glitch-hop、BPM 75-115、ducking |
+| 素材清单 | `rules/assets.md` | 脚本/分镜生成时配套输出，列出每个素材 + 自动复制已有素材到 `public/<主题>/` + §1.4 可代码实现内容不进 assets.md + §4.4 批量 prompt + 验收 |
+| 自检 | `rules/checklist.md` | 每个视频需求开工前/渲染前 | 6 大块 30+ 项检查，输出 Ready/Blocked 决策，缺失项给修复建议 |
+| 渲染 | `rules/render.md` | 渲染输出阶段 | ⚠️ 默认只预览不渲染；必须"开始渲染"才执行；默认 1080×1920 竖屏；防卡帧 7 类问题 |
+| **发布与复盘** | `rules/publish.md` | **账号矩阵（主/副号）+ 平台矩阵（抖音/小红书/视频号/B站）+ 标题/封面/标签/时间 + 24h + 7d 数据复盘**（视频投出去才算闭环）|
 
 **当前已落地的规范**：视频类型 + 文档同步 + 文案 + 脚本 + 字幕 + 分镜 + 动效 + BGM + 素材清单 + 自检 + 渲染 + 发布与复盘。共 12 个 rules 文件，覆盖内容创作 → 拍摄 → 剪辑 → 成片 → 发布 → 复盘 全流程。
 
-**脚本核心硬约束速览**（详见 `remotion/rules/script.md`）：
+**脚本核心硬约束速览**（详见 `rules/script.md`）：
 
 - 每个脚本一个独立入口（`remotion/src/scenes/<主题>.tsx`），场景名按内容自动命名
 - 禁止大面积纯色块遮挡画面
@@ -345,7 +364,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - **素材框**：半透明彩色 + 同色系（橙/红）边框/背景，禁用纯白/纯灰做素材框背景
 - **配字幕时**：主体区域不放长文字，让位给字幕
 
-**字幕核心硬约束速览**（详见 `remotion/rules/subtitle.md`）：
+**字幕核心硬约束速览**（详见 `rules/subtitle.md`）：
 
 - 用户音频放在 `resources/audios/`，用 **mmx** 自动识别 + 生成 `subtitles.json`
 - 字幕格式：`{ id, start, end, segments: [{ text, highlight }] }`
@@ -355,7 +374,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - 入场用 spring 弹跳（0.25-0.4s），重点 segment 叠加二次跳动
 - 单条字幕 ≤ 24 字、≤ 4s，不带句末标点
 
-**分镜核心硬约束速览**（详见 `remotion/rules/storyboard.md`）：
+**分镜核心硬约束速览**（详见 `rules/storyboard.md`）：
 
 - 触发条件：有字幕文件/音频时，必须按字幕设计分镜
 - 输出一份 `storyboard.md`（人类可读）+ `storyboard.json`（结构化）
@@ -366,17 +385,17 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - `description` 描述的是**画面在展示什么**，不是文字在说什么
 - 字幕对齐关系：默认 1:1，视频镜头 1:N，每镜一组件（`components/Shot<编号>_<描述>.tsx`）
 
-**文案核心硬约束速览**（详见 `remotion/rules/copy.md`）：
+**文案核心硬约束速览**（详见 `rules/copy.md`）：
 
-- 文案稿保存到 `resources/docs/copy/<主题>.md`
+- 文案稿保存到 `docs/copy/<主题>.md`
 - **口语化**：第一/二人称 + 短句（≤20字）+ 允许语气词 + 不堆砌形容词
 - **前 3 秒钩子**：5 种类型（反常识/痛点共鸣/数字冲击/身份代入/悬念提问），禁用寒暄式开场
 - **生活化对话**：像朋友聊健身，承认不完美，敢用第一人称吐槽
 - **避广告腔**：禁用"我们/本产品/极致/颠覆"等品牌堆砌
 - **违禁词自检**：抖音/小红书违禁词清单见 `copy.md` 第 4 节（13 类 + 自检脚本）
-- **事实可追溯**：提到的功能/价格/数字都能在 `resources/docs/` 找到原文
+- **事实可追溯**：提到的功能/价格/数字都能在 `docs/` 找到原文
 
-**动效核心硬约束速览**（详见 `remotion/rules/animation.md`）：
+**动效核心硬约束速览**（详见 `rules/animation.md`）：
 
 - **⚠️ 唯一可靠的动效方式**：`useCurrentFrame()` + `interpolate()` / `spring()`
 - **禁用 CSS transition/animation 和 Tailwind 动画类**——不会按帧渲染
@@ -389,7 +408,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - 数字滚动/颜色渐变用 `interpolate`；弹性入场用 `spring`
 - 未安装的包（`@remotion/transitions` / `@remotion/light-leaks` / `@remotion/media-utils`）用前先 `npx remotion add xxx`
 
-**BGM 核心硬约束速览**（详见 `remotion/rules/bgm.md`）：
+**BGM 核心硬约束速览**（详见 `rules/bgm.md`）：
 
 - **品牌契合**：理性深度（灵魂 why）+ 轻盈不沉重（钩子 hook）+ 同侪陪伴（中级用户）→ 不要健身房嗨曲/抒情 ballad/网红热曲
 - **4 类 BGM 选型**：
@@ -405,7 +424,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - **存放位置**：`resources/audios/bgm/`（与旁白分开）
 - **集成**：用 `<Audio>` 组件 + `useCurrentFrame` 动态音量实现 ducking
 
-**素材清单核心硬约束速览**（详见 `remotion/rules/assets.md`）：
+**素材清单核心硬约束速览**（详见 `rules/assets.md`）：
 
 - **触发条件**：每次生成脚本或分镜时，**必须**配套输出 `assets.md`
 - **输出位置**：`remotion/src/scenes/<主题>/assets.md`
@@ -417,7 +436,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - **缺失的视频素材**：训练动作演示建议**用户自己拍摄**——mmx 生成的"假人健身"质量不稳定
 - **实现 Scene 组件前**：先查 `assets.md` 的"已就位"列表，只有素材就位才能 import
 
-**视频类型核心硬约束速览**（详见 [remotion/rules/video-types.md](remotion/rules/video-types.md)）：
+**视频类型核心硬约束速览**（详见 [rules/video-types.md](rules/video-types.md)）：
 
 - **开工第一步**：用户说"做 X 视频"时，**先判断属于 3 类中的哪一类**——A/B/C，得到确认后再继续
 - **3 类速查**：
@@ -429,7 +448,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - **混合类型**：A→B / B→C / A→C 都可以，主体类型 = 时长占比最大的，切换时用 ≥0.3s 转场
 - **assets.md 混合类型**：要分两节列（"主体类型素材" + "辅助类型素材"）
 
-**自检核心硬约束速览**（详见 `remotion/rules/checklist.md`）：
+**自检核心硬约束速览**（详见 `rules/checklist.md`）：
 
 - **触发时机**：每个视频需求开工前 + 实现 Scene 组件前 + 准备渲染前
 - **6 大块 30+ 项检查**：
@@ -444,9 +463,9 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - **字幕/音频"完整"判定**：JSON 格式 + 时间线覆盖 + 文件就位 + 时长对齐（±0.3s）+ 重点标记 + 音画同步
 - **任一项 ❌ → 不要往下走**，先回到对应 rules 文件查细节再修复
 - **修复后必须重新跑清单**，不能凭印象"应该 OK 了"
-- **速查清单去重原则**：每个 rules 文件末尾的"速查清单"只列**本文件专属**项；跨阶段综合自检统一走 [remotion/rules/checklist.md](remotion/rules/checklist.md) 第 2 节（master 6 大块 30+ 项）。详见 [checklist.md 第 0 节](remotion/rules/checklist.md#0-关于本清单的设计去重原则)。
+- **速查清单去重原则**：每个 rules 文件末尾的"速查清单"只列**本文件专属**项；跨阶段综合自检统一走 [rules/checklist.md](rules/checklist.md) 第 2 节（master 6 大块 30+ 项）。详见 [checklist.md 第 0 节](rules/checklist.md#0-关于本清单的设计去重原则)。
 
-**渲染核心硬约束速览**（详见 [remotion/rules/render.md](remotion/rules/render.md)）：
+**渲染核心硬约束速览**（详见 [rules/render.md](rules/render.md)）：
 
 - **⚠️ 默认只启动 Studio 预览（`npm run dev`），绝不自动渲染**——必须用户说"开始渲染"才执行 `npx remotion render`
 - **触发渲染的有效关键词**："开始渲染" / "渲染吧" / "render" / "导出" / "可以渲染"
@@ -466,21 +485,21 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 
 ## Rules 索引
 
-`remotion/rules/` 下的所有规范文件 + 适用范围：
+`rules/` 下的所有规范文件 + 适用范围：
 
 | 阶段 | 规范文件 | 适用范围 | 关键约束 |
 |---|---|---|---|
-| **视频类型** | [remotion/rules/video-types.md](remotion/rules/video-types.md) | **开工第一步** | A 口播（人脸+片段） / B 知识（动作+参数） / C 介绍（弹出+背景） |
-| **⏰ 统一语速** | [remotion/rules/timing-sync.md](remotion/rules/timing-sync.md) | **改任何时间字段必走** | 主体 50s 锚点 / 中速 3.4 字/秒 / 4 档速度 / 7 文件同步清单 |
-| 文案 | [remotion/rules/copy.md](remotion/rules/copy.md) | 写文案/旁白/钩子 | 口语化 + 3 秒钩子 + 13 类违禁词 + copy.md / copy_notes.md 拆分 |
-| 脚本 | [remotion/rules/script.md](remotion/rules/script.md) | 实现 Scene 组件 | 入口/场景命名 + 安全区 + 配色（半透明彩色）+ 科技感/力量感 + 转场 + 素材框 |
-| 字幕 | [remotion/rules/subtitle.md](remotion/rules/subtitle.md) | 音频 → 字幕 | mmx 转写 + 纯白/28px + 弹跳动效 + 每条时长 = 字数/中速 |
-| 分镜 | [remotion/rules/storyboard.md](remotion/rules/storyboard.md) | 按字幕设计分镜 | 视频 > 5s / 图片 = 字幕 / 每镜必有实内容 + 镜头时长基于字幕 |
-| 动效 | [remotion/rules/animation.md](remotion/rules/animation.md) | 实现"会动"的元素 | interpolate + spring + 4 条贝塞尔曲线 + 禁用 CSS 动画 + Sequence 配 timing-sync |
-| BGM | [remotion/rules/bgm.md](remotion/rules/bgm.md) | 选型 + 混音 + 集成 | 4 类情绪（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）+ BPM 75-115 + ducking + 时长 ≥ 全文+3s |
-| 素材清单 | [remotion/rules/assets.md](remotion/rules/assets.md) | 脚本/分镜配套输出 | Option A 单表 + 拍摄清单外拆 + 自动从 `resources/` 复制到 `public/<主题>/` |
-| 自检 | [remotion/rules/checklist.md](remotion/rules/checklist.md) | 开工前/渲染前 | 6 大块 30+ 项检查 → Ready/Blocked 决策 + 修复建议 + timing-sync 同步检查 |
-| 渲染 | [remotion/rules/render.md](remotion/rules/render.md) | 渲染输出 | **默认只预览不渲染** + 竖屏 1080×1920 + 防卡帧 7 类 + durationInFrames 按 timing-sync |
+| **视频类型** | [rules/video-types.md](rules/video-types.md) | **开工第一步** | A 口播（人脸+片段） / B 知识（动作+参数） / C 介绍（弹出+背景） |
+| **⏰ 统一语速** | [rules/timing-sync.md](rules/timing-sync.md) | **改任何时间字段必走** | 主体 50s 锚点 / 中速 3.4 字/秒 / 4 档速度 / 7 文件同步清单 |
+| 文案 | [rules/copy.md](rules/copy.md) | 写文案/旁白/钩子 | 口语化 + 3 秒钩子 + 13 类违禁词 + copy.md / copy_notes.md 拆分 |
+| 脚本 | [rules/script.md](rules/script.md) | 实现 Scene 组件 | 入口/场景命名 + 安全区 + 配色（半透明彩色）+ 科技感/力量感 + 转场 + 素材框 |
+| 字幕 | [rules/subtitle.md](rules/subtitle.md) | 音频 → 字幕 | mmx 转写 + 纯白/28px + 弹跳动效 + 每条时长 = 字数/中速 |
+| 分镜 | [rules/storyboard.md](rules/storyboard.md) | 按字幕设计分镜 | 视频 > 5s / 图片 = 字幕 / 每镜必有实内容 + 镜头时长基于字幕 |
+| 动效 | [rules/animation.md](rules/animation.md) | 实现"会动"的元素 | interpolate + spring + 4 条贝塞尔曲线 + 禁用 CSS 动画 + Sequence 配 timing-sync |
+| BGM | [rules/bgm.md](rules/bgm.md) | 选型 + 混音 + 集成 | 4 类情绪（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）+ BPM 75-115 + ducking + 时长 ≥ 全文+3s |
+| 素材清单 | [rules/assets.md](rules/assets.md) | 脚本/分镜配套输出 | Option A 单表 + 拍摄清单外拆 + 自动从 `resources/` 复制到 `public/<主题>/` |
+| 自检 | [rules/checklist.md](rules/checklist.md) | 开工前/渲染前 | 6 大块 30+ 项检查 → Ready/Blocked 决策 + 修复建议 + timing-sync 同步检查 |
+| 渲染 | [rules/render.md](rules/render.md) | 渲染输出 | **默认只预览不渲染** + 竖屏 1080×1920 + 防卡帧 7 类 + durationInFrames 按 timing-sync |
 
 ### ⚠️ 命名约定：A/B/C 的两套含义
 
@@ -488,12 +507,12 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 
 | A/B/C 出处 | 含义 | 速查 |
 |---|---|---|
-| [video-types.md](remotion/rules/video-types.md) | **视频类型** | A 个人人设 / B 健身知识 / C 七练介绍 |
-| [bgm.md](remotion/rules/bgm.md) | **BGM 类型** | A Cyber Pulse / B Power Build / C Quiet Think / D Hop Pulse |
+| [video-types.md](rules/video-types.md) | **视频类型** | A 个人人设 / B 健身知识 / C 七练介绍 |
+| [bgm.md](rules/bgm.md) | **BGM 类型** | A Cyber Pulse / B Power Build / C Quiet Think / D Hop Pulse |
 
-> 默认搭配：A 视频类型 → C BGM 类型（Quiet Think）/ B 视频类型 → B BGM 类型（Power Build）/ C 视频类型 → A BGM 类型（Cyber Pulse）。详见 [video-types.md 第 6.4 节](remotion/rules/video-types.md#64-与-bgm-md-协同)。
+> 默认搭配：A 视频类型 → C BGM 类型（Quiet Think）/ B 视频类型 → B BGM 类型（Power Build）/ C 视频类型 → A BGM 类型（Cyber Pulse）。详见 [video-types.md 第 6.4 节](rules/video-types.md#64-与-bgm-md-协同)。
 
-### 违禁词快查（13 类，见 [copy.md 第 4 节](remotion/rules/copy.md#4-违禁词规则抖音--小红书)）
+### 违禁词快查（13 类，见 [copy.md 第 4 节](rules/copy.md#4-违禁词规则抖音--小红书)）
 
 | # | 类别 | 典型词 | 七练重点 |
 |---|---|---|---|
@@ -511,7 +530,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 | 4.12 | 自检脚本 | 手工 + 工具 | — |
 | 4.13 | 违禁词来源 | 法规 + 平台公约 | — |
 
-**完整清单 + 替换策略 + 自检脚本**：见 [remotion/rules/copy.md](remotion/rules/copy.md) 第 4 节。
+**完整清单 + 替换策略 + 自检脚本**：见 [rules/copy.md](rules/copy.md) 第 4 节。
 
 ## Remotion 关键约定
 
@@ -522,7 +541,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - Studio 端口 4000
 - 视频路径与时长由 `Composition` 的 `durationInFrames` + `fps` 决定
 - **每个视频一个独立 Composition**（放在 `remotion/src/scenes/<主题>.tsx`），并在 `Root.tsx` 中按主题注册
-- **动效的唯一合法实现方式**：`interpolate()` / `spring()` + `useCurrentFrame()`。**禁止 CSS transition/animation、Tailwind 动画类、`requestAnimationFrame`**（详见 [remotion/rules/animation.md](remotion/rules/animation.md) 第 1.2 节）
+- **动效的唯一合法实现方式**：`interpolate()` / `spring()` + `useCurrentFrame()`。**禁止 CSS transition/animation、Tailwind 动画类、`requestAnimationFrame`**（详见 [rules/animation.md](rules/animation.md) 第 1.2 节）
 - **所有 Sequence 都加 `premountFor={1 * fps}`**——避免渲染卡顿
 
 ## 小程序配色（视频主色板）
@@ -540,8 +559,8 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 
 - 强调色只用于关键数据/CTA 按钮/关键动作词，不大面积铺
 - 标题统一纯白 `#FFFFFF` + bold，不加渐变/描边/阴影
-- ⚠️ **元素背景禁止使用实色**（`#1A1A1A` / `#252525` / `#FFFFFF` 等已废弃做元素背景）——必须用强调色 1/2 叠加透明度（`bg-[#FF4500]/10` 等），详见 `remotion/rules/script.md` 第 5.1 节
-- 完整约束见 `remotion/rules/script.md`
+- ⚠️ **元素背景禁止使用实色**（`#1A1A1A` / `#252525` / `#FFFFFF` 等已废弃做元素背景）——必须用强调色 1/2 叠加透明度（`bg-[#FF4500]/10` 等），详见 `rules/script.md` 第 5.1 节
+- 完整约束见 `rules/script.md`
 
 ## 内容创作时优先引用的资料
 
@@ -560,6 +579,6 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 ## 工作流通用原则
 
 - **素材先于脚本**：写脚本前先看 `resources/images/` 和 `resources/videos/` 里有什么可用的实拍/截图；不够的用 mmx 生成
-- **同步先于创作**：写脚本前先完成 `resources/docs/` 同步
-- **规则先于执行**：每个阶段开工前先读/写 `remotion/rules/<stage>.md`
-- **每条事实都可追溯**：视频脚本中提到的功能、数据、价格、品牌口吻，都必须能在 `resources/docs/` 找到原文
+- **同步先于创作**：写脚本前先完成 `docs/` 同步
+- **规则先于执行**：每个阶段开工前先读/写 `rules/<stage>.md`
+- **每条事实都可追溯**：视频脚本中提到的功能、数据、价格、品牌口吻，都必须能在 `docs/` 找到原文
