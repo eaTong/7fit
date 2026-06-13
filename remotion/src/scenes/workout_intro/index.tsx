@@ -11,6 +11,7 @@ const shotSequence: ShotEntry[] = [
   { shotId: "s2", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 90,   endFrame: 210 },
   { shotId: "s3", layoutId: "pip_bottom_right",        transitionType: "zoom",       startFrame: 210,  endFrame: 360 },
   { shotId: "s4", layoutId: "grid_2x2",                 transitionType: "fade",      startFrame: 360,  endFrame: 540 },
+  { shotId: "s5", layoutId: "left_text_right_talking_50pct", transitionType: "push_left", startFrame: 540, endFrame: 720 },
 ];
 
 export const WorkoutIntro: React.FC = () => {

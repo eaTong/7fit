@@ -60,3 +60,10 @@ registerLayout({
   borderRadius: 0, borderWidth: 0, borderColor: "transparent",
   shadow: "none", zIndex: 10,
 });
+
+registerLayout({
+  id: "left_text_right_talking_50pct",
+  left: 960, top: 0, width: 960, height: 864,
+  borderRadius: 12, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
+});
