@@ -92,22 +92,17 @@ const CenteredCard: React.FC<{ title: string; lines: string[] }> = ({ title, lin
     style={{
       position: "absolute",
       left: 560, top: 190, width: 800, height: 700,
-      background: "rgba(10, 10, 20, 0.88)",
-      backdropFilter: "blur(12px)",
-      border: "1px solid rgba(0, 200, 255, 0.4)",
-      borderRadius: 20,
-      boxShadow: "0 0 30px rgba(0, 200, 255, 0.15), 0 8px 32px rgba(0,0,0,0.6)",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      gap: 24,
-      padding: "40px 48px",
+      gap: 28,
+      zIndex: 10,
     }}
   >
-    <div style={{ fontSize: 36, fontWeight: 700, color: "#FF4500" }}>{title}</div>
+    <div style={{ fontSize: 72, fontWeight: 900, color: "#FF4500" }}>{title}</div>
     {lines.map((line, i) => (
-      <div key={i} style={{ fontSize: 24, color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
+      <div key={i} style={{ fontSize: 40, color: "#FFFFFF", lineHeight: 1.6 }}>
         {line}
       </div>
     ))}
@@ -123,7 +118,7 @@ const DualAuxContent: React.FC = () => (
     <div
       style={{
         position: "absolute",
-        left: 50, top: 50, width: 620, height: 864,
+        left: 50, top: 50, width: 910, height: 864,
         background: "rgba(10, 10, 20, 0.88)",
         backdropFilter: "blur(8px)",
         border: "1px solid rgba(0, 200, 255, 0.4)",

@@ -111,7 +111,7 @@ registerLayout({
   borderRadius: 0, borderWidth: 0, borderColor: "transparent",
   shadow: "none", zIndex: 5,
   isBackgroundLayer: true,
-  bgOpacity: 0.4,
+  bgOpacity: 1,
   auxiliarySlots: [
     { id: "center", slot: "center", left: 560, top: 190, width: 800, height: 700 },
   ],
@@ -124,7 +124,7 @@ registerLayout({
   borderRadius: 240, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 15,
   auxiliarySlots: [
-    { id: "left", slot: "left", left: 50, top: 50, width: 620, height: 864 },
+    { id: "left", slot: "left", left: 50, top: 50, width: 910, height: 864 },
     { id: "right", slot: "right", left: 960, top: 50, width: 910, height: 864 },
   ],
 });

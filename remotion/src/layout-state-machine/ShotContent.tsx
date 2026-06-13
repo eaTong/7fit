@@ -45,29 +45,27 @@ export const ShotContent: React.FC<ShotContentProps> = ({
   // code_display 和 gitlog_display 独立渲染（不走 AuxiliaryContentManager）
   if (contentType === "code_display") {
     return (
-      <div style={{ position: "absolute", ...auxStyle }}>
-        <CodeDisplay
-          code={codeContent ?? "// no code provided"}
-          language="typescript"
-          fontSize={28}
-          showLineNumbers
-          maxHeight={typeof auxStyle.height === "number" ? auxStyle.height * 0.9 : 400}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </div>
+      <CodeDisplay
+        code={codeContent ?? "// no code provided"}
+        language="typescript"
+        fontSize={28}
+        showLineNumbers
+        maxHeight={typeof auxStyle.height === "number" ? auxStyle.height * 0.9 : 400}
+        plain
+        style={{ position: "absolute", ...auxStyle }}
+      />
     );
   }
 
   if (contentType === "gitlog_display") {
     return (
-      <div style={{ position: "absolute", ...auxStyle }}>
-        <GitLogDisplay
-          entries={gitlogEntries ?? []}
-          fontSize={28}
-          visibleCount={gitlogVisibleCount ?? 5}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </div>
+      <GitLogDisplay
+        entries={gitlogEntries ?? []}
+        fontSize={28}
+        visibleCount={gitlogVisibleCount ?? 5}
+        plain
+        style={{ position: "absolute", ...auxStyle }}
+      />
     );
   }
 
