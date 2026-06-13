@@ -43,7 +43,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="workout-intro"
         component={WorkoutIntro}
-        durationInFrames={1560}  // 52s × 30fps（对齐 s12 endFrame）
+        durationInFrames={975}  // 32.5s × 30fps（13镜×2.5s/镜）
         fps={30}
         width={1920}
         height={1080}
