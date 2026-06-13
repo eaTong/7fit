@@ -158,20 +158,65 @@ const Scene = () => {
 };
 ```
 
-### 4.1 5 类转场 Remotion 实现
+### 4.1 14 类转场 Remotion 实现
 
-| 转场 | 实现 |
-|---|---|
-| `fade` | `<Sequence>` 内用 `interpolate` opacity 0→1 |
-| `push_left` | `<Sequence>` 内用 `interpolate` translateX |
-| `slide_up` | `<Sequence>` 内用 `interpolate` translateY |
-| `pause_breath` | 见 [§5 段间停顿动效](#5--段间停顿动效pause_breath) |
-| `zoom` | `<Sequence>` 内用 `interpolate` scale |
+> **转场代码**：`src/utils/transition.ts` 的 `getTransitionEffect()` 函数。
+> **调性选择**：B 类力量感用 push_left/slide-left/zoom；A 类柔和用 fade/slide-up/down；C 类科技用 fade/slide-left/wipe-h。
+
+#### 4.1.1 纯透明度（1 种）
+
+| 转场 | 效果 | 适用场景 |
+|---|---|---|
+| `fade` | opacity 0↔1 | A 类人设 / 柔和切换 / 默认 |
+
+#### 4.1.2 水平位移 X 轴（4 种）
+
+| 转场 | 效果 | 适用场景 |
+|---|---|---|
+| `push_left` | translateX 80→0，有力硬切 | **B 类默认**，强调动作 |
+| `push_right` | translateX -80→0，有力右推 | B 类交替方向 |
+| `slide-left` | translateX 50→0，柔和滑入 | A 类柔和 / C 类科技 |
+| `slide-right` | translateX -50→0，柔和右滑 | A 类柔和 |
+
+#### 4.1.3 垂直位移 Y 轴（2 种）
+
+| 转场 | 效果 | 适用场景 |
+|---|---|---|
+| `slide-up` | translateY 50→0，上滑入 | A 类自然感 |
+| `slide-down` | translateY -50→0，下滑入 | A 类自然感 |
+
+#### 4.1.4 缩放（2 种）
+
+| 转场 | 效果 | 适用场景 |
+|---|---|---|
+| `zoom` | scale 1.1→1，放大入场 | B 类强调 / CTA |
+| `shrink` | scale 1→0.9，缩小退场 | B 类柔和收尾 |
+
+#### 4.1.5 条纹擦除 Wipe（2 种）
+
+> 3 条条纹依次扫过：wipe-h 横条纹从下往上，wipe-v 竖条纹从左往右。
+> 使用 `clipRect` 裁剪实现，不依赖 CSS `clip-path` 浏览器兼容。
+
+| 转场 | 效果 | 适用场景 |
+|---|---|---|
+| `wipe-h` | 3 条横条纹依次入场（从下往上扫）| C 类科技感切换 |
+| `wipe-v` | 3 条竖条纹依次入场（从左往右扫）| C 类科技感切换 |
+
+#### 4.1.6 特殊（3 种）
+
+| 转场 | 效果 | 适用场景 |
+|---|---|---|
+| `none` | 无动画，opacity=1 | 硬切 / freeze frame |
+| `pause_breath` | 见 [§5 段间停顿动效](#5--段间停顿动效pause_breath) | 段间停顿 |
+| （仅 exit 时 shrink）| scale 1→0.9 | 配合 zoom 入场对称 |
 
 ### 4.2 ❌ 禁用转场
 
 - ❌ **flip / 旋转 / 3D**（与"力量感"调性冲突）
 - ❌ 切换 < 0.3s（防卡帧核心规则）
+- ❌ blur_in / blur_out（Remotion canvas 不支持 CSS filter blur 渲染）
+- ❌ dissolve / iris（需要额外素材，不推荐）
+- ❌ wipe-blur / 光晕擦除（性能开销大）
 
 ---
 
