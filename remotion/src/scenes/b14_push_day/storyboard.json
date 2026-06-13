@@ -163,7 +163,7 @@
       "end": 32.0,
       "duration": 7.0,
       "content_type": "video",
-      "content_source": "outro.mp4 (用户提供)",
+      "content_source": "outro.mp4",
       "voiceover": "推力日计划，5 个动作 + 12 次 × 5 组。评论告诉我——你推了几个？",
       "description": "用户提供的收尾视频，底部 TTS 字幕 + 评论图标弹跳",
       "transition_in": "push_left",
