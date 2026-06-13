@@ -90,7 +90,7 @@ VIDEO_DURATION（= 全文，tl.duration() 锚点）
 4. `resources/audios/bgm/*.mp3` — 时长 ≥ 全文 + 3s
 5. `remotion/src/scenes/<主题>/storyboard.md` — 镜头时长
 6. `remotion/src/scenes/<主题>/subtitles.json` — 每条 `end - start`
-7. `remotion/src/scenes/<主题>/scene.js` — `tl.duration()` = VIDEO_DURATION
+7. `remotion/src/scenes/<主题>/index.tsx` — `COMPOSITION_FRAMES = Math.round(VIDEO_DURATION * FPS)`
 8. `remotion/src/scenes/<主题>/assets.md` — §0 目标时长
 9. **`CLAUDE.md`（仓库根）** — 统一语速控制小节
 10. **`./timing-sync.md`（本文件）** — §0 默认值表
@@ -120,7 +120,7 @@ VIDEO_DURATION（= 全文，tl.duration() 锚点）
 4. assets.md（目标时长）
 5. storyboard.md（镜头时长）
 6. subtitles.json（每条 end-start）
-7. scene.js（tl.duration）
+7. index.tsx（COMPOSITION_FRAMES）
 8. bgm 文件（长度 ≥ 新全文 + 3s）
 9. CLAUDE.md（默认值表）
 10. timing-sync.md（本文件）
@@ -289,16 +289,16 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 
 ## 8 · VIDEO_DURATION 全链路同步表
 
-> **VIDEO_DURATION 是单源真相**——`scene.js` 中的常量。所有下游字段必须与它一致。
+> **VIDEO_DURATION 是单源真相**——`index.tsx` 中的常量。所有下游字段必须与它一致。
 
 | 字段 | 来源 | 同步位置 |
 |---|---|---|
-| **VIDEO_DURATION** | `timing-sync.md` 推导 | `scene.js` 顶部常量 |
-| **timeline.duration** | = VIDEO_DURATION | `scene.js` |
+| **VIDEO_DURATION** | `timing-sync.md` 推导 | `index.tsx` 顶部常量 |
+| **COMPOSITION_FRAMES** | = VIDEO_DURATION * FPS | `index.tsx` |
 | **subtitles 总时长** | = VIDEO_DURATION | `subtitles.json` 末条 `end` |
 | **storyboard 总时长** | = VIDEO_DURATION | `storyboard.json` 末镜 `end` |
 | **bgm 文件时长** | ≥ VIDEO_DURATION + 3s | `resources/audios/bgm/` |
-| **渲染命令** | `--duration=VIDEO_DURATION` | `npm run render` |
+| **渲染命令** | `--duration=VIDEO_DURATION` | `npx remotion render` |
 
 > 改 VIDEO_DURATION = 6 处必同步。
 

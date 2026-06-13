@@ -15,6 +15,7 @@ out/
 
 # ───────── 渲染产物（已通过 remotion.config.ts 输出到 out/）─────────
 *.mp4
+*.webm
 *.mov
 *.webm
 *.gif
@@ -81,3 +82,11 @@ studio-*.png
 # ───────── 不要忽略的例外（重要规则文件必须进 git）─────────
 # .gitkeep 文件用于保留空目录结构
 !.gitkeep
+
+remotion/**/*.mp4
+remotion/**/**/*.webm
+remotion/**/**/*.mov
+remotion/**/**/*.gif
+remotion/**/**/*.m4a
+remotion/**/**/*.mp3
+remotion/**/**/*.wav

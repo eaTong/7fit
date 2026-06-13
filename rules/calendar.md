@@ -258,7 +258,7 @@ calendar.md （排期：什么时间发什么）
    ↓ 每周日
 backlog.md （选题：发什么主题）
    ↓ 制作过程
-copy.md / storyboard.md / scene.js
+copy.md / storyboard.md / index.tsx
    ↓ 发布后
 calendar.md （发布记录 + 24h + 7d 数据）
    ↓ 月底

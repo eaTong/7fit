@@ -1,28 +1,10 @@
 # 脚本生成规范（script.md）
 
-> **Phase 2 入口**：文案确认后，按本规范实现 Scene 组件 → 写 components/ → 写 scene.js 编排。
+> **Phase 2 入口**：文案确认后，按本规范实现 Scene 组件 → 写 components/ → 写 Scene 编排（index.tsx + Shot 组件）。
 >
 > **必须遵循**：[timing-sync.md](timing-sync.md)（时间字段锚点）+ [copy.md §15 下游接口](copy.md#15-下游接口说明)（文案稿字段→下游流向）
 >
 > **7fit 动效哲学**：**快进 + 留白 + 强调**——3 类基本节奏（详 §4.1）。所有动效都围绕"3 秒抓人 + 1 秒消化"展开。
-
----
-
-## 1 · 速查：Remotion → Hyperframes API 映射
-
-> **背景**：2026-06-05 框架迁移，原 Remotion（React + TS）→ Hyperframes（HTML + CSS + GSAP）。
-
-| 概念 | Remotion（旧） | Hyperframes（新） |
-|---|---|---|
-| 视频描述 | `<Composition>` (React) | `<div class="clip" data-start="..." data-duration="...">`（HTML）|
-| 时间容器 | `<Sequence from={n}>` | `gsap.timeline()` + `addLabel('shotB', 2.85)` |
-| 帧号 | `useCurrentFrame()` | `gsap timeline.time()` / `window.__hfTime` |
-| 插值 | `interpolate(frame, [0, 30], [0, 1])` | `gsap.fromTo(el, {y: 0}, {y: 100, duration: 1})` |
-| 弹簧 | `spring({frame, fps, config})` | `gsap.from(el, {y: 100, ease: 'back.out(1.7)'})` |
-| 视频元素 | `<Video src={...} />` | `<video muted playsinline>` + 分离 `<audio>` |
-| 字幕 | `<Sequence from={start}>` + 文本 | `<div class="subtitle" data-start="..." data-duration="...">` + GSAP |
-| 静态资源 | `staticFile()` | `fetch` + blob URL（避免相对路径错位）|
-| 渲染触发 | `npx remotion render` | `npm run render -- <SceneId> out/<name>.mp4` |
 
 ---
 
@@ -32,26 +14,25 @@
 
 | 文件 | 位置 | 作用 |
 |---|---|---|
-| **root.html** | `remotion/src/root.html` | 视频 Composition 注册入口（HTML 挂载），`<main id="stage" data-scene="<主题>">` |
-| **index.js** | `remotion/src/index.js` | 入口脚本，按 `data-scene` switch 初始化场景 |
+| **Root.tsx** | `remotion/src/Root.tsx` | Composition 注册入口（`<Composition id="..." component={...} />`）|
+| **index.ts** | `remotion/src/index.ts` | `registerRoot()` 入口 |
 | **index.css** | `remotion/src/index.css` | Tailwind/全局样式 + 7fit 色板 CSS 变量 |
 
 ### 2.2 每个视频一个独立 scene 目录
 
 ```
 remotion/src/scenes/<主题>/
-├── scene.html         # 场景结构
-├── scene.js           # GSAP timeline + 动效
+├── index.tsx          # Scene 主组件（useCurrentFrame + interpolate）
 ├── subtitles.json     # 自动生成的字幕
 ├── storyboard.md      # 分镜表
 ├── storyboard.json    # 分镜数据
 ├── assets.md          # 素材清单
 ├── research.md        # 主题调研
 ├── shoot-checklist.md # 拍摄清单
-└── components/        # 每镜一组件（Shot<N>_<描述>.html）
+└── components/        # 每镜一组件（Shot<N>_<描述>.tsx）
 ```
 
-> **强制门**：写 `scene.html` / `scene.js` 之前，§11 的 5 项必查全部 ✅。
+> **强制门**：实现 Scene 组件之前，§11 的 5 项必查全部 ✅。
 
 ---
 
@@ -141,15 +122,33 @@ remotion/src/scenes/<主题>/
 
 > **铁律**：pause_breath 必须**延长上一个视频**，禁止切换其他素材 / 纯字幕 / 装饰卡片。
 
-```js
-// 0.8× 慢动作
-videoEl.playbackRate = 0.8
-// 1.2× 加速
-videoEl.playbackRate = 1.2
-// 特写（zoom in 1.2×）
-gsap.to(videoEl, { scale: 1.2, duration: 0.7, ease: 'power2.out' })
-// freeze frame（定格）
-videoEl.pause()
+```tsx
+// 0.8× 慢动作 → playbackRate prop
+<OffthreadVideo
+  src={staticFile(videoSrc)}
+  playbackRate={0.8}
+  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+/>
+
+// 1.2× 加速 → playbackRate prop
+<OffthreadVideo
+  src={staticFile(videoSrc)}
+  playbackRate={1.2}
+  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+/>
+
+// 特写（zoom in 1.2×）→ interpolate scale
+const scale = interpolate(frame, [0, 21], [1, 1.2], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.cubic),
+});
+
+// freeze frame（定格）→ 用 Img 替代 Video
+<Img
+  src={staticFile(lastVideoFrame)}
+  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+/>
 ```
 
 ### 5.3 转场选型决策树
@@ -165,144 +164,212 @@ videoEl.pause()
 
 ---
 
-## 6 · 静态资源加载（推荐 `fetch` + blob URL）
+## 6 · 静态资源加载（使用 `staticFile()`）
 
-```html
-<div class="bg-video" data-asset="videos/卧推80KG_10.mov"></div>
+```tsx
+import { staticFile, Video, Img } from "remotion";
+
+// 视频：使用 <Video> 或 <OffthreadVideo> 组件
+<OffthreadVideo
+  src={staticFile("videos/卧推80KG_10.mov")}
+  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+/>
+
+// 图片：使用 <Img> 组件
+<Img
+  src={staticFile("images/翼状肩胛自测.png")}
+  style={{ width: "100%", height: "100%" }}
+/>
 ```
 
-```js
-// 视频：直接 muted + playsinline，不带音轨
-const bgVideo = document.querySelector('.bg-video')
-bgVideo.src = '/<主题>/videos/卧推80KG_10.mov'  // 相对路径
-bgVideo.muted = true
-bgVideo.playsinline = true
-
-// 图片：fetch + blob URL（避免相对路径错位）
-fetch('/<主题>/images/翼状肩胛自测.png')
-  .then(r => r.blob())
-  .then(blob => {
-    const url = URL.createObjectURL(blob)
-    document.querySelector('.hero-img').src = url
-  })
-```
+> **注意**：Remotion 中静态资源必须放在 `remotion/public/` 目录，使用 `staticFile()` 引用。
 
 ---
 
 ## 7 · 组件模板库（7 类常用组件）
 
-> **铁律**：**每个 shot 拆成独立组件**（`components/Shot<N>_<描述>.html`），不要在 `scene.html` 写满全部内容。
+> **铁律**：**每个 shot 拆成独立组件**（`components/Shot<N>_<描述>.tsx`），不要在 `index.tsx` 写满全部内容。
 >
 > 原因：组件化 → 复用 + 单测 + 调试效率。
 
-### 7.1 标题组件（`<h2 class="segment-title">`）
+### 7.1 标题组件
 
-```html
-<!-- components/Shot0_Hook_Title.html -->
-<div class="hook-text" data-shot-id="hook_question">
-  <h2 class="segment-title">你以为靠墙就能改翼状肩？</h2>
-</div>
-```
+```tsx
+// components/Shot0_Hook_Title.tsx
+import { useCurrentFrame, interpolate, Easing } from "remotion";
 
-```js
-// 入场（默认）
-gsap.from('.segment-title', {
-  y: 30, opacity: 0, duration: 0.5, ease: 'power2.out'
-})
-// 出场
-gsap.to('.segment-title', {
-  y: -20, opacity: 0, duration: 0.3, ease: 'power2.in'
-})
+export const Shot0_Hook_Title: React.FC = () => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(frame, [0, 15], [0, 1], { extrapolateRight: "clamp" });
+  const y = interpolate(frame, [0, 15], [30, 0], {
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.cubic),
+  });
+
+  return (
+    <div style={{ opacity, transform: `translateY(${y}px)` }}>
+      <h2 style={{ color: "#FFFFFF", fontSize: 48 }}>
+        你以为靠墙就能改翼状肩？
+      </h2>
+    </div>
+  );
+};
 ```
 
 ### 7.2 卡片组件（信息卡 / 数据卡 / CTA 卡）
 
-```html
-<!-- components/Shot2_Action_CountCard.html -->
-<div class="action-card" data-shot-id="action_wall_angel">
-  <div class="card__count">12</div>
-  <div class="card__unit">次 × 3 组</div>
-</div>
-```
+```tsx
+// components/Shot2_Action_CountCard.tsx
+import { useCurrentFrame, interpolate, Easing } from "remotion";
 
-```js
-// 卡片入场（右上角，缩放 + 弹跳）
-gsap.from('.action-card', {
-  x: 50, opacity: 0, scale: 0.9, duration: 0.4, ease: 'back.out(1.4)'
-})
-// 数字滚动
-gsap.to(cardCount, { val: 12, duration: 0.5, snap: { val: 1 },
-  onUpdate: () => cardCount.innerText = Math.round(cardCount.val)
-})
+export const Shot2_Action_CountCard: React.FC = () => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(frame, [0, 12], [0, 1], { extrapolateRight: "clamp" });
+  const scale = interpolate(frame, [0, 12], [0.9, 1], {
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.back(1.4)),
+  });
+
+  return (
+    <div style={{
+      opacity,
+      transform: `translateX(50px) scale(${scale})`,
+      position: "absolute",
+      top: 120,
+      right: 64,
+    }}>
+      <div style={{ color: "#FF4500", fontSize: 64 }}>12</div>
+      <div style={{ color: "#FFFFFF", fontSize: 24 }}>次 × 3 组</div>
+    </div>
+  );
+};
 ```
 
 ### 7.3 视频组件
 
-```html
-<!-- components/Shot1_SelfTest_Video.html -->
-<video class="action-video" data-shot-id="self_test_1"
-       muted playsinline preload="auto">
-  <source src="/<主题>/videos/自测_01.mov" type="video/mp4">
-</video>
-```
+```tsx
+// components/Shot1_SelfTest_Video.tsx
+import { OffthreadVideo, useCurrentFrame, interpolate, Easing } from "remotion";
 
-```js
-const video = document.querySelector('.action-video')
-video.muted = true
-video.playsinline = true
-// 入场
-gsap.from(video, { scale: 0.95, opacity: 0, duration: 0.5, ease: 'power2.out' })
+export const Shot1_SelfTest_Video: React.FC = () => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(frame, [0, 15], [0, 1], { extrapolateRight: "clamp" });
+  const scale = interpolate(frame, [0, 15], [0.95, 1], {
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.cubic),
+  });
+
+  return (
+    <OffthreadVideo
+      src={staticFile("videos/自测_01.mov")}
+      style={{ width: "100%", height: "100%", opacity, transform: `scale(${scale})` }}
+    />
+  );
+};
 ```
 
 ### 7.4 字幕组件
 
-```html
-<div class="subtitle" data-shot-id="self_test_1" data-start="3.5" data-duration="6.0">
-  <span class="subtitle__text">背对镜子站好，肩膀放松手垂下来</span>
-  <span class="subtitle__highlight">肩胛骨内侧明显突出</span>
-</div>
-```
+```tsx
+// components/Shot1_Subtitle.tsx
+import { useCurrentFrame, interpolate, Easing } from "remotion";
 
-```js
-// highlight 强制强调（1.15× 弹跳）
-gsap.fromTo('.subtitle__highlight',
-  { scale: 1 }, { scale: 1.15, duration: 0.25, yoyo: true, repeat: 1, ease: 'back.out(1.7)' }
-)
+export const Shot1_Subtitle: React.FC<{ text: string; highlight?: string }> = ({
+  text, highlight
+}) => {
+  const frame = useCurrentFrame();
+  const highlightFrame = frame - 10; // highlight 在第 10 帧开始
+  const scale = interpolate(highlightFrame, [0, 8], [1, 1.15], {
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.back(1.7)),
+  });
+
+  return (
+    <div style={{
+      position: "absolute",
+      bottom: 80,
+      left: "50%",
+      transform: "translateX(-50%)",
+      textAlign: "center",
+    }}>
+      <span style={{ color: "#FFFFFF", fontSize: 32 }}>{text}</span>
+      {highlight && (
+        <span style={{ color: "#FF4500", fontSize: 36, fontWeight: 700, transform: `scale(${scale})` }}>
+          {highlight}
+        </span>
+      )}
+    </div>
+  );
+};
 ```
 
 ### 7.5 装饰元素（数据可视化 / 进度条 / 时间轴）
 
-```html
-<div class="data-viz" data-shot-id="self_test_2">
-  <div class="progress-bar" data-progress="0.6"></div>
-</div>
-```
+```tsx
+// components/Shot_DataViz.tsx
+import { useCurrentFrame, interpolate, Easing } from "remotion";
 
-```js
-// 进度条
-gsap.to('.progress-bar', { width: '60%', duration: 1.0, ease: 'power3.inOut' })
+export const Shot_DataViz: React.FC = () => {
+  const frame = useCurrentFrame();
+  const barWidth = interpolate(frame, [20, 50], [0, 60], {
+    extrapolateRight: "clamp",
+    easing: Easing.bezier(0.2, 0, 0, 1),
+  });
+
+  return (
+    <div style={{
+      position: "absolute",
+      bottom: 200,
+      width: "80%",
+      height: 8,
+      background: "#333",
+    }}>
+      <div style={{ width: `${barWidth}%`, height: "100%", background: "#FF4500" }} />
+    </div>
+  );
+};
 ```
 
 ### 7.6 段间停顿组件（pause_breath）
 
-```html
-<!-- 强制延长上一个 video，不引入新元素 -->
-<!-- scene.js 中用 GSAP 触发动效 -->
-```
+> **pause_breath 在 Remotion 中通过 `<Video playbackRate>` 实现**。详见 [animation.md §5](animation.md#5--段间停顿动效pause_breath)。
 
-```js
-// 4 选 1（参考 §5.2）
-videoEl.playbackRate = 0.8  // 慢动作
+```tsx
+// 在 Shot 组件内通过 playbackRate 控制
+<OffthreadVideo
+  src={staticFile("videos/动作1.mov")}
+  playbackRate={0.8}  // 慢动作
+/>
 ```
 
 ### 7.7 CTA 组件（收尾 + 行动号召）
 
-```html
-<!-- components/Shot4_Outro_CTA.html -->
-<div class="cta-card" data-shot-id="outro_cta">
-  <h2 class="cta-card__title">去试试，评论区交作业</h2>
-  <div class="cta-card__icon">💬</div>
-</div>
+```tsx
+// components/Shot4_Outro_CTA.tsx
+import { useCurrentFrame, interpolate, Easing } from "remotion";
+
+export const Shot4_Outro_CTA: React.FC = () => {
+  const frame = useCurrentFrame();
+  const scale = interpolate(frame, [0, 15], [0.8, 1.15], {
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.back(1.4)),
+  });
+
+  return (
+    <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      xPercent: -50,
+      yPercent: -50,
+      transform: `scale(${scale})`,
+      textAlign: "center",
+    }}>
+      <h2 style={{ color: "#FFFFFF", fontSize: 48 }}>去试试，评论区交作业</h2>
+      <div style={{ fontSize: 64 }}>💬</div>
+    </div>
+  );
+};
 ```
 
 ### 7.8 A 类口播态组件（talking head，v4 锁版 · 2026-06-12）
@@ -311,61 +378,69 @@ videoEl.playbackRate = 0.8  // 慢动作
 >
 > **v4 更新（2026-06-12）**：v3 圆形 PIP 已废弃 → v4 左右分栏。
 
-```html
-<!-- components/Shot1_TalkingHead.html -->
-<div class="talking-head" data-shot-id="talking_head_1">
-  <video class="talking-head__video"
-         data-shot-id="talking_head_1"
-         muted playsinline preload="auto"
-         style="object-fit: cover; width: 100%; height: 100%;">
-    <source src="/<主题>/videos/001_talking_head.mp4" type="video/mp4">
-  </video>
-</div>
-```
+```tsx
+// components/TalkingHead.tsx
+// 双态：Full Screen（默认）| Split（缩到左侧）
+// 视频不停止播放 = 嘴动进度 = 旁白进度 = 字幕进度（三同步）
 
-```css
-/* 主口播视频：正方形容器，GSAP 控制大小/位置 */
-/* Full Screen（默认）：1080×1080 正方形居中 */
-.talking-head {
-  position: absolute;
-  top: 0; left: 420px;
-  width: 1080px; height: 1080px;
-  border-radius: 24px;
-  overflow: hidden;
-  /* 羽化描边（全屏态专用，Split 态关闭）*/
-  box-shadow: inset 0 0 30px 8px rgba(10,10,10,0.5),
-              0 0 80px 40px rgba(10,10,10,0.4);
-  mask-image: radial-gradient(circle 80% 80% at 50% 50%, black 10%, transparent 100%);
+interface TalkingHeadProps {
+  videoSrc: string;
+  mode: "full" | "split"; // 受父组件 frame 控制
+  transitionFrames?: number;
 }
-.talking-head__video {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: none;  /* ❌ CSS transition 禁用，全部交给 GSAP */
-}
-/* Split 态：574×574 正方形居左，feathering 关闭 */
-.talking-head--split {
-  left: 0; top: 260px;
-  width: 574px; height: 574px;
-  box-shadow: none;
-  mask-image: none;
-}
-```
 
-```js
-// 双态切换：全屏态 → 左右分栏态（0.5s）
-gsap.to('.talking-head', {
-  left: 0, top: 260, width: 574, height: 574,
-  duration: 0.5, ease: 'power2.inOut'
-})
-// 同时加 split class（用于关闭 feathering）
-document.querySelector('.talking-head').classList.add('talking-head--split')
+const TalkingHead: React.FC<TalkingHeadProps> = ({
+  videoSrc,
+  mode,
+  transitionFrames = 15, // 0.5s @ 30fps
+}) => {
+  const frame = useCurrentFrame();
 
-// 左右分栏态 → 全屏态（0.5s，反向）
-gsap.to('.talking-head', {
-  left: 420, top: 0, width: 1080, height: 1080,
-  duration: 0.5, ease: 'power2.inOut'
-})
-document.querySelector('.talking-head').classList.remove('talking-head--split')
+  // 双态布局参数
+  const FULL = { left: 420, top: 0, width: 1080, height: 1080 };
+  const SPLIT = { left: 0, top: 260, width: 574, height: 574 };
+
+  // 当前状态插值（GSAP power2.inOut 等效）
+  const progress = interpolate(frame, [0, transitionFrames], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.bezier(0.4, 0, 0.2, 1), // power2.inOut
+  });
+
+  const isFull = mode === "full";
+  const target = isFull ? FULL : SPLIT;
+
+  // GSAP.from/to 双态切换 → interpolate
+  const left = interpolate(progress, [0, 1], [isFull ? SPLIT.left : FULL.left, target.left]);
+  const top = interpolate(progress, [0, 1], [isFull ? SPLIT.top : FULL.top, target.top]);
+  const width = interpolate(progress, [0, 1], [isFull ? SPLIT.width : FULL.width, target.width]);
+  const height = interpolate(progress, [0, 1], [isFull ? SPLIT.height : FULL.height, target.height]);
+
+  // 羽化描边（全屏态开启，Split 态关闭）
+  const showFeathering = isFull;
+  const boxShadowOpacity = interpolate(progress, [0, 1], [isFull ? 0 : 1, showFeathering ? 1 : 0]);
+
+  return (
+    <AbsoluteFill
+      style={{
+        position: "absolute",
+        left,
+        top,
+        width,
+        height,
+        borderRadius: 24,
+        overflow: "hidden",
+        boxShadow:
+          "inset 0 0 30px 8px rgba(10,10,10,0.5), 0 0 80px 40px rgba(10,10,10,0.4)",
+      }}
+    >
+      <OffthreadVideo
+        src={staticFile(videoSrc)}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    </AbsoluteFill>
+  );
+};
 ```
 
 > **关键技术**：**不要 pause 视频**。双态切换 = 只改 CSS 位置/大小，**视频不停止播放**。这样视频里"嘴在动"的进度 = 主旁白进度 = 字幕进度，**三同步**。
@@ -376,98 +451,252 @@ document.querySelector('.talking-head').classList.remove('talking-head--split')
 
 > **A 类专属**。当文案提及"看这个""用这个工具"时，辅助素材按"飘浮规则"展示。
 
-```html
-<!-- components/Shot2_VisualSupport.html -->
-<div class="visual-support" data-shot-id="visual_support_1">
-  <div class="visual-support__frame" data-position="top-right">
-    <img class="visual-support__image"
-         src="/<主题>/images/100_code_screenshot.png"
-         alt="Cursor 代码截图">
-    <div class="visual-support__label">Cursor + Claude</div>
-  </div>
-</div>
-```
+```tsx
+// components/VisualSupport.tsx
+// 飘在右上角：半透明彩色边框 + backdrop blur
+// 入场：从右滑入 + 缩放（spring 弹跳）
 
-```css
-/* 飘在右上角：半透明彩色边框 + backdrop blur */
-.visual-support__frame[data-position="top-right"] {
-  position: absolute;
-  top: 140px; right: 64px;
-  width: 60%; max-width: 600px;
-  background: rgba(255, 69, 0, 0.10);
-  border: 2px solid rgba(255, 69, 0, 0.5);
-  border-radius: 16px;
-  backdrop-filter: blur(4px);
-  padding: 12px;
-  z-index: 10;
+interface VisualSupportProps {
+  imageSrc: string;
+  label: string;
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  enterFrame?: number; // 入场帧（相对于 Sequence 起点）
 }
-```
 
-```js
-// 入场：从右滑入 + 缩放
-gsap.from('.visual-support__frame', {
-  x: 100, opacity: 0, scale: 0.9,
-  duration: 0.4, ease: 'power2.out'
-})
+const VisualSupport: React.FC<VisualSupportProps> = ({
+  imageSrc,
+  label,
+  position = "top-right",
+  enterFrame = 0,
+}) => {
+  const frame = useCurrentFrame();
+  const localFrame = Math.max(0, frame - enterFrame);
+
+  // 滑入 + 缩放 spring 动画
+  const enterProgress = interpolate(localFrame, [0, 12], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.cubic),
+  });
+
+  const x = interpolate(enterProgress, [0, 1], [100, 0]); // 从右滑入
+  const opacity = interpolate(enterProgress, [0, 1], [0, 1]);
+  const scale = interpolate(enterProgress, [0, 1], [0.9, 1], {
+    easing: Easing.out(Easing.back(2)),
+  });
+
+  // 位置布局
+  const positions: Record<string, React.CSSProperties> = {
+    "top-right": { top: 140, right: 64, left: "auto" },
+    "top-left": { top: 140, left: 64, right: "auto" },
+    "bottom-right": { bottom: 200, right: 64, top: "auto", left: "auto" },
+    "bottom-left": { bottom: 200, left: 64, top: "auto", right: "auto" },
+  };
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        width: "60%",
+        maxWidth: 600,
+        background: "rgba(255, 69, 0, 0.10)",
+        border: "2px solid rgba(255, 69, 0, 0.5)",
+        borderRadius: 16,
+        backdropFilter: "blur(4px)",
+        padding: 12,
+        zIndex: 10,
+        opacity,
+        transform: `translateX(${x}px) scale(${scale})`,
+        ...positions[position],
+      }}
+    >
+      <Img
+        src={staticFile(imageSrc)}
+        style={{ width: "100%", borderRadius: 8 }}
+      />
+      <div
+        style={{
+          color: "#FFFFFF",
+          fontSize: 20,
+          marginTop: 8,
+          textAlign: "center",
+        }}
+      >
+        {label}
+      </div>
+    </div>
+  );
+};
 ```
 
 > **飘浮规则**详 [video-types.md §3.2.3](video-types.md#323-辅助素材的飘浮规则)
 
 ---
 
-## 8 · Scene.js 编排模板（完整 timeline）
+## 8 · Scene 编排模板（完整 timeline）
 
+> **Remotion 无需 GSAP timeline**。用 `<Sequence>` 组件按时间顺序排列 Shots，frame = 绝对时间轴位置。
+>
 > **8 节标准结构**：开场 → 钩子 → 主体（自测/动作 × N）→ 段间停顿 × (N-1) → 收尾 → CTA。
 
-### 8.1 完整 timeline 模板
+### 8.1 Remotion Scene 完整骨架
 
-```js
-// scene.js —— 标准 8 节结构
-const tl = gsap.timeline({ paused: true })
+```tsx
+// <主题>/index.tsx
+import {
+  AbsoluteFill,
+  Audio,
+  Sequence,
+  staticFile,
+  useCurrentFrame,
+  interpolate,
+  Easing,
+  Img,
+  OffthreadVideo,
+} from "remotion";
+import storyboard from "./storyboard.json";
 
-// 1. 开场（0-0.3s）—— 标题 / 主题元素入场
-tl.from('.brand-mark', { opacity: 0, duration: 0.3 }, 0)
+const FPS = 30;
+const TRANSITION_FRAMES = 9; // 0.3s 转场
 
-// 2. 钩子（0.3-3.3s）
-tl.from('.hook-text', { y: 50, opacity: 0, duration: 0.4, ease: 'power2.out' }, 0.3)
-  .to('.hook-text', { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.3)
+interface Shot {
+  shot_id: string;
+  start: number;
+  end: number;
+  duration: number;
+  content_type: string;
+  content_source: string | null;
+  voiceover: string;
+  description: string;
+  transition_in: string;
+  transition_out: string;
+}
 
-// 3. 主体段 1（3.5-9.5s）—— 自测 / 动作 1
-tl.addLabel('segment-1', 3.5)
-  .from('.segment-1', { opacity: 0, duration: 0.3 }, 'segment-1')
-  .to('.segment-1', { opacity: 1, duration: 0.3 }, 'segment-1+=0.3')
+export const <SceneName>: React.FC = () => {
+  const frame = useCurrentFrame();
+  const shots = storyboard.shots as Shot[];
 
-// 4. 段间停顿（9.5-10.2s）—— pause_breath
-tl.addLabel('pause-1', 9.0)
-  .to('.segment-1 video', { playbackRate: 0.8, duration: 0.7 }, 'pause-1')
+  return (
+    <AbsoluteFill style={{ background: "#0A0A0A" }}>
+      {/* BGM + Ducking */}
+      <Audio
+        src={staticFile("bgm/<类型>.mp3")}
+        volume={(f) => {
+          // Ducking：旁白期间降 volume
+          if (f > 90 && f < 270) return 0.15;
+          return 0.25;
+        }}
+      />
 
-// 5. 主体段 2-N（10.2-...）—— 重复段 1 结构
-// ...
+      {/* Shots — 按 storyboard 顺序排列 */}
+      {shots.map((shot, idx) => {
+        const startFrame = Math.round(shot.start * FPS);
+        const durationFrames = Math.round(shot.duration * FPS);
+        const isLast = idx === shots.length - 1;
 
-// 6. 主体结束（X-Y s）—— 主体收尾
-tl.to('.segment-N', { opacity: 0, duration: 0.3 }, 'main-end')
+        // 计算 exit 延伸（crossfade）
+        let paddedDuration = durationFrames;
+        if (idx < shots.length - 1) {
+          const nextShot = shots[idx + 1];
+          const nextStart = Math.round(nextShot.start * FPS);
+          const myEnd = startFrame + durationFrames;
+          const gap = Math.max(0, nextStart - myEnd);
+          paddedDuration += gap + TRANSITION_FRAMES;
+        }
 
-// 7. 收尾（Y-Z s）—— 1s 留白 + fade
-tl.addLabel('outro', 'main-end+=0.3')
-  .from('.outro-cta', { y: 30, opacity: 0, duration: 0.5, ease: 'power2.out' }, 'outro')
+        return (
+          <Sequence
+            key={shot.shot_id}
+            from={startFrame}
+            durationInFrames={paddedDuration}
+            premountFor={1 * FPS}
+          >
+            <ShotRenderer shot={shot} isLast={isLast} />
+          </Sequence>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
 
-// 8. 末段停顿（Z-...）—— BGM fade out
-tl.addLabel('fade-out', 'outro+=4')
-  .to('.bgm', { volume: 0, duration: 3 }, 'fade-out')
+/* === Shot 渲染器（按 content_type 分支）=== */
+const ShotRenderer: React.FC<{ shot: Shot; isLast: boolean }> = ({ shot, isLast }) => {
+  const frame = useCurrentFrame();
+  const durationFrames = Math.round(shot.duration * FPS);
 
-// 必须：锁住首帧 + 注册全局
-tl.progress(0).render(0)
-window.__timelines = window.__timelines || {}
-window.__timelines['scene_id'] = tl
+  // 转场动画
+  const enterProgress = interpolate(frame, [0, TRANSITION_FRAMES], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.cubic),
+  });
+
+  const exitStart = durationFrames - TRANSITION_FRAMES;
+  const exitProgress = isLast
+    ? 1
+    : interpolate(frame, [exitStart, durationFrames], [1, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: Easing.in(Easing.cubic),
+      });
+
+  const opacity = Math.min(enterProgress, exitProgress);
+
+  // 按 content_type 渲染
+  switch (shot.content_type) {
+    case "video":
+      return (
+        <AbsoluteFill style={{ opacity }}>
+          <OffthreadVideo
+            src={staticFile(shot.content_source || "")}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </AbsoluteFill>
+      );
+
+    case "pause_breath": // 段间停顿
+      return (
+        <AbsoluteFill style={{ opacity }}>
+          <Img
+            src={staticFile(shot.content_source || "")}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </AbsoluteFill>
+      );
+
+    case "text_card":
+      return (
+        <AbsoluteFill
+          style={{
+            background: "#0A0A0A",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h1 style={{ color: "#FFFFFF", fontSize: 72 }}>{shot.description}</h1>
+        </AbsoluteFill>
+      );
+
+    default:
+      return (
+        <AbsoluteFill style={{ background: "#0A0AA" }}>
+          <div style={{ color: "#FF4500", fontSize: 32 }}>
+            ⚠️ {shot.content_type}
+          </div>
+        </AbsoluteFill>
+      );
+  }
+};
 ```
 
-### 8.2 timeline 标注速查
+### 8.2 Sequence 时间计算速查
 
-| 标注 | 含义 | 用法 |
-|---|---|---|
-| **绝对时间** | `addLabel('foo', 3.5)` | 在 3.5s 标注 foo |
-| **相对时间** | `'foo+=0.3'` | 距 foo 0.3s 后 |
-| **重叠转场** | `'shot2-in'`（shot1 出场后立刻开始）| 防硬切 |
+| 场景 | 计算方式 |
+|---|---|
+| **绝对帧** | `startFrame = Math.round(shot.start * FPS)` |
+| **Sequence from** | `from={startFrame}`（绝对时间轴） |
+| **paddedDuration** | `durationFrames + gap + TRANSITION_FRAMES`（转场延伸） |
+| **premountFor** | `premountFor={1 * FPS}`（防黑屏） |
 
 ---
 
@@ -536,10 +765,10 @@ window.__timelines['scene_id'] = tl
 
 | 维度 | 上限 |
 |---|---|
-| **scene.js 行数** | ≤ 300 行（超了拆 modules/）|
-| **scene.html 行数** | ≤ 200 行（不含 components/）|
+| **index.tsx 行数** | ≤ 300 行（超了拆 modules/）|
+| **单 shot 组件行数** | ≤ 150 行 |
 | **单文件嵌套深度** | ≤ 3 层 |
-| **shot 组件复用次数** | ≥ 2 次（一次性的塞 scene.html）|
+| **shot 组件复用次数** | ≥ 2 次（一次性的塞 Scene 入口）|
 
 ---
 
@@ -563,7 +792,7 @@ window.__timelines['scene_id'] = tl
 |---|---|---|---|---|
 | **安全区** | 标题/CTA 压 120px | 全在安全区内 | 全在安全区 + 留 ≥ 20px 余量 | — |
 | **配色** | 用实色背景 / 纯白框 | 用半透明强调色 | 半透明 + 强对比 + 3 处呼应 | — |
-| **动效** | 用 CSS transition / RAF | 全用 GSAP | 全用 GSAP + ease 选型合理 | — |
+| **动效** | 用 CSS transition / RAF | 用 interpolate + useCurrentFrame | interpolate + easing + premountFor 完整 | — |
 | **转场** | < 0.3s / 用 flip | ≥ 0.3s + 5 类之一 | ≥ 0.3s + 决策树选型 + 标注完整 | — |
 | **性能** | > 8 个同时动画 / 触发 layout | ≤ 8 个 + 全 transform | ≤ 6 个 + 单镜 ≤ 50 DOM | — |
 
@@ -572,7 +801,7 @@ window.__timelines['scene_id'] = tl
 **设计原则**：素材未就绪也能预览剪辑节奏和图形动画，聚焦"剪得好不好"而非"素材拍没拍"。
 
 **预览能看的（无需素材）**：
-- ✅ GSAP timeline 动画（字幕淡入淡出、数字卡翻转、callout 滑入）
+- ✅ Remotion 动效（interpolate 字幕淡入淡出、数字卡翻转、callout 滑入）
 - ✅ 图形界面（hook 数字卡、callout 面板、CTA 卡片）
 - ✅ 字幕文字显示和切换节奏
 - ✅ 双态布局切换（PIP ↔ Split Left）
@@ -590,15 +819,12 @@ window.__timelines['scene_id'] = tl
 
 **预览命令（素材未就绪时）**：
 ```bash
-cd hyperframe
-# B 类（B13 等）：直接预览
-npm run dev -- --scene=gym_machine_judge_b13
-
-# A 类（A2 等）：用 ?scene= 参数指定
-npm run dev -- --scene=a2_one_person_50_videos
+cd remotion
+# 启动 Studio 预览
+npm run dev
 ```
 
-> 注意：A2 在 scene.html 里已补全 `onerror` fallback；gen-scene.js 通用模板（B/C 类）内置了 `renderVideoShot()` 的 video-missing fallback。新增 A 类场景时，确保 scene.html 的 `<video>` 标签也加了 `onerror` fallback。
+> 注意：Remotion 组件用 `<OffthreadVideo>` 自带 `onError` fallback；新增 A 类场景时，确保 video-missing fallback 组件已实现（见 §7.6）。
 
 ---
 
@@ -625,19 +851,24 @@ npm run dev -- --scene=a2_one_person_50_videos
 **症状**：Studio 打开后首帧黑屏。
 
 **排查顺序**：
-1. timeline 是否 `paused: true` + `.progress(0).render(0)` ？
-2. 元素 CSS `opacity: 0` 没补 `.to(..., { opacity: 1 })` ？
-3. 视频 `preload="auto"` 缺失？加 `await videoEl.play()` ？
+1. `Sequence` 的 `premountFor={1 * fps}` 是否缺失？（必加，防黑屏）
+2. `<OffthreadVideo>` 的 `src` 路径是否正确？（用 `staticFile()` 包裹）
+3. 资源文件是否在 `remotion/public/<主题>/` 下？
 4. 图片 `fetch` 失败？看 Network 面板
 
 **修法模板**：
 
-```js
-// ✅ 修法：所有 from/to 配对 + 首帧锁
-const tl = gsap.timeline({ paused: true })
-tl.from('.text', { y: 30, opacity: 0, duration: 0.4 }, 0)
-  .to('.text', { y: 0, opacity: 1, duration: 0.4 }, 0)  // ← 必须有 to
-tl.progress(0).render(0)  // ← 锁首帧
+```tsx
+// ✅ 修法：Sequence + premountFor
+<Sequence from={0} premountFor={1 * FPS}>
+  <ShotRenderer />
+</Sequence>
+
+// ✅ 修法：静态资源路径
+<OffthreadVideo
+  src={staticFile("videos/xxx.mov")}
+  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+/>
 ```
 
 ### 13.2 卡帧 / 元素卡住不动
@@ -645,34 +876,25 @@ tl.progress(0).render(0)  // ← 锁首帧
 **症状**：某镜切换时元素没动到位。
 
 **排查**：
-1. 转场时长 < 0.3s？
-2. 入场用 `from` 没补 `to` ？
-3. transform 与 CSS `transform: translate(-50%, -50%)` 冲突？改 `xPercent: -50, yPercent: -50`
+1. 转场 `TRANSITION_FRAMES` < 9（0.3s）？
+2. `interpolate` 缺 `extrapolateLeft/Right: "clamp"`？
+3. `easing` 用 `Easing.bezier()` 而非 GSAP 字符串？
 
 ### 13.3 音画不同步
 
 **症状**：BGM 跟字幕/动作对不上。
 
 **排查**：
-1. 视频用了自带音轨？（必须分离 → muted video + 独立 audio）
-2. BGM 元素没接 timeline？（`<audio>` 元素是独立的，用 `currentTime` 同步）
-
-**修法**：
-
-```js
-// BGM 与 timeline 同步
-const bgm = document.querySelector('.bgm')
-bgm.currentTime = 0
-tl.eventCallback('onStart', () => bgm.play())
-tl.eventCallback('onComplete', () => bgm.pause())
-```
+1. 视频用了自带音轨？（必须 `muted` + 独立 `<Audio>` 旁白）
+2. Composition `durationInFrames` 是否与 BGM 时长匹配？
+3. BGM ducking 的 `volume()` 回调 frame 范围是否与旁白字幕对齐？
 
 ### 13.4 性能差 / 帧率掉
 
 **排查**：
 1. 同时动画元素数 > 8？减少
 2. 触发 layout 属性？看 Chrome DevTools Performance 面板的 Layout Shift
-3. 视频同时播放 > 2？改用图片或预渲染
+3. 视频同时播放 > 2？改用 `<Img>` freeze frame
 
 ### 13.5 元素位置错位
 
@@ -680,8 +902,8 @@ tl.eventCallback('onComplete', () => bgm.pause())
 
 **排查**：
 1. 安全区 ≥ 120px top / ≥ 64px left/right？
-2. 用 CSS `transform: translate(-50%, -50%)` 居中？改 `xPercent: -50, yPercent: -50`
-3. 视频 `object-fit: cover` 缺失？容器变形
+2. 用 `transform: translate(-50%, -50%)` 居中？改 `xPercent: -50, yPercent: -50`
+3. `object-fit: cover` 缺失？容器变形
 
 ---
 
@@ -696,14 +918,14 @@ tl.eventCallback('onComplete', () => bgm.pause())
 - ❌ 转场用 flip / 旋转 / 3D（与力量感冲突）
 - ❌ 素材框用纯白 / 纯灰背景
 - ❌ 配字幕时主体区域放长文字
-- ❌ 跳过 components/ 直接在 scene.html 写满全部内容
-- ❌ 用 CSS transition/animation / Tailwind 动画类（hyperframes 按帧渲染时不按帧推进）
+- ❌ 跳过 components/ Shot 组件直接在 index.tsx 写满全部内容
+- ❌ 用 CSS transition/animation / Tailwind 动画类（remotion 按帧渲染时不按帧推进）
 - ❌ 用 `requestAnimationFrame` / `Date.now()` / `performance.now()` 算动画进度
 - ❌ **video 自带音轨**（必须分离：muted video + 独立 audio）
-- ❌ **timeline 没 `paused: true` + `.progress(0).render(0)`**（首帧黑屏）
+- ❌ **Sequence 没加 `premountFor={1 * fps}`**（首帧黑屏）
 - ❌ **单文件 > 300 行**（超了必拆 modules/）
 - ❌ **跳过 5 维评分卡直接给用户**（容易漏项）
-- ❌ **用 `setInterval` 算数字滚动**（不同步 timeline）
+- ❌ **用 `setInterval` 算数字滚动**（用 `useCurrentFrame()` + `interpolate()`）
 - ❌ **同时动画 > 8 个元素**（移动端必卡）
 - ❌ **不跑自检就 npm run render**（违反 [render.md](render.md) 触发规则）
 
@@ -718,7 +940,7 @@ tl.eventCallback('onComplete', () => bgm.pause())
 - ❌ 双态切换时主口播视频 pause 了（视频里"嘴不动"了，破坏三同步）
 - ❌ 辅助素材当主体（不飘角落也不弱化，直接全屏替代人脸）
 - ❌ 双态切换 < 0.3s（生硬）或 > 1s（节奏拖）
-- ❌ 用 CSS `transition` 做双态切换（hyperframes 引擎不按帧推进 → 卡帧）
+- ❌ 用 CSS `transition` 做双态切换（remotion 引擎不按帧推进 → 卡帧）
 - ❌ **口播视频未裁切为正方形**（竖屏素材直接居中两侧黑边）
 - ❌ **Split 态视频宽度 ≥ 576px**（占比 ≥ 30%）
 - ❌ **全片单一背景图**（A 类应有 per-scene 场景化背景）
@@ -730,13 +952,13 @@ tl.eventCallback('onComplete', () => bgm.pause())
 
 > **铁律（2026-06-11 立）**：所有 `<video>` 元素**必须**带 `muted playsinline` 属性，**视频文件自身的音轨不进入最终输出**。声音一律走**独立的 `<audio>` 元素**。
 >
-> **反面教训**：[gym_machine_judge_b13 修复](https://github.com/heygen-com/hyperframes/issues)（2026-06-11）—— 没有这条铁律导致 B 类视频普遍踩坑：视频音轨 + 独立音频双重播放，runtime 报警告 / 数据不对齐。
+> **反面教训**：视频音轨 + 独立音频双重播放导致 B 类视频普遍踩坑：runtime 报警告 / 数据不对齐。
 
 ### 15.1 为什么必须
 
 1. **framework 自动检测**：`muted` → `data-has-audio="false"` → render 阶段 `extractVideosStage` **不会**把视频音轨加到 `composition.audios` 数组。最终输出只含 1 个音轨（独立 `<audio>` 处理结果），不会有视频自带音轨。
 2. **避免音轨冲突**：视频自带音轨 + 独立音频同时存在 → 双重播放 → 观众听两遍，且音量不可独立控。
-3. **音量控制统一**：声音全走 `<audio>` 元素，`data-volume` / `gsap.to(audio, { volume })` 单独可控（fade-in / fade-out / 段间停顿静音都靠它）。
+3. **音量控制统一**：声音全走 `<Audio>` 元素，Remotion 的 `volume` 属性函数 `volume={(f) => ...}` 单独可控（fade-in / fade-out / ducking 都靠它）。
 4. **后期可换**：换 BGM / 调音量 / 加段间停顿不需要重录视频。
 
 ### 15.2 模式
@@ -754,40 +976,40 @@ tl.eventCallback('onComplete', () => bgm.pause())
        data-start="0" data-duration="62.33" data-track-index="1" preload="auto"></audio>
 ```
 
-### 15.3 自检 checklist（写完 scene.html 后）
+### 15.3 自检 checklist（实现 Scene 组件后）
 
 ```bash
-# 1. 所有 <video> 都有 muted
-grep -c '<video' compositions/<topic>.html        # 视频总数
-grep -c 'muted' compositions/<topic>.html         # muted 总数
-# 上面两行输出必须相等
+# 1. 所有 <OffthreadVideo> / <Video> 都是 muted（默认）
+grep -n 'OffthreadVideo' src/scenes/<topic>/index.tsx | wc -l   # 视频数
+grep -n 'muted' src/scenes/<topic>/index.tsx | wc -l             # muted 数
+# 上面两行输出应相等（或视频组件默认 muted）
 
-# 2. 没有任何 <video> 标记 data-has-audio="true"
-grep 'data-has-audio="true"' compositions/<topic>.html
-# 期望：无输出
-
-# 3. 声音元素全在 <audio> 里
-grep '<audio' compositions/<topic>.html
+# 2. 音频全走 <Audio> 组件（volume 函数可调）
+grep -n '<Audio' src/scenes/<topic>/index.tsx
 # 至少包含 voiceover + BGM（如有）
+
+# 3. BGM 有 ducking 逻辑（旁白帧期间降 volume）
+grep -n 'volume' src/scenes/<topic>/index.tsx
+# 应有 volume={(f) => ...} 回调
 ```
 
 ### 15.4 反例
 
-- ❌ `<video src="...mp4" data-has-audio="true">`（不静音 → 视频自带音轨进 render）
-- ❌ `<video src="...mp4">` 不写 `muted`（默认有声 → framework 走"双音轨"路径，runtime 报警告）
+- ❌ `<OffthreadVideo>` 带音轨（应 `muted` + 独立 `<Audio>` 旁白）
 - ❌ 视频自带 BGM（"录的时候顺便加了个 BGM" → BGM 没法独立控音量，段间停顿做不到）
-- ❌ 配音轨通过 video 的 `volume` 属性（video 应全程 muted，音量全在 `<audio>` 上）
+- ❌ BGM 没有 ducking（旁白期间 BGM 没降 volume）
+- ❌ BGM fade-in/fade-out 缺失（首帧刺耳 / 末帧突然断）
 
-### 15.5 三个 track-index 的语义
+### 15.5 Remotion 音轨结构
 
-| track | 用途 | 例子 |
+| 用途 | 组件 | 说明 |
 |---|---|---|
-| `data-track-index="0"` | voiceover / 旁白 | `<audio id="voiceover">` |
-| `data-track-index="1"` | BGM / 背景音乐 | `<audio id="bgm">` |
-| `data-track-index="2"` | 视频 / 视觉元素 | `<video>`, `<div class="shot">` |
+| voiceover / 旁白 | `<Audio src={staticFile("voiceover.m4a")} />` | 用户自录旁白 |
+| BGM / 背景音乐 | `<Audio src={staticFile("bgm.mp3")} volume={(f) => ...} />` | 带 ducking 回调 |
+| 视频元素 | `<OffthreadVideo muted ... />` | 全程 muted |
 
-> 数字大小只代表轨道编号（不表视觉层级），框架对所有 track 一视同仁。  
-> 同一 track 上的元素**不重叠时间**，不同 track 任意重叠——这是 voiceover + BGM 混音的基础。
+> Remotion 的 `<Audio>` 组件通过 `volume` 函数实现 ducking / fade-in / fade-out。
+> 同一 Composition 内的多个 `<Audio>` 可以任意重叠时间——这是 voiceover + BGM 混音的基础。
 
 ---
 
@@ -796,7 +1018,7 @@ grep '<audio' compositions/<topic>.html
 | 我想... | 看... |
 |---|---|
 | 写一个 Shot 组件 | [§7 组件模板库](#7-组件模板库7-类常用组件) |
-| 编排完整 timeline | [§8 Scene.js 编排模板](#8-scenejs-编排模板完整-timeline) |
+| 编排完整 timeline | [§8 Scene 编排模板](#8-scene-编排模板完整-timeline) |
 | 按视频类型差异化 | [§9 A/B/C 三类视频的脚本实现差异化](#9-abc-三类视频的脚本实现差异化) |
 | 修首帧黑屏 | [§13.1 黑屏 / 首帧空白](#131-黑屏--首帧空白) |
 | 跑 5 维评分 | [§12 5 维评分卡 + 评审 SOP](#12-5-维评分卡--评审-sop) |
@@ -810,14 +1032,14 @@ grep '<audio' compositions/<topic>.html
 ### v3（2026-06-11）— 音频分离铁律
 
 - **新增 §15 音频分离铁律**："`<video>` 必带 `muted playsinline` + 声音走独立 `<audio>`" 立为铁律，附 4 条理由 + 模式模板 + 3 步自检 grep + 4 类反例 + 3 个 track-index 语义表
-- 触发：gym_machine_judge_b13 修复时发现 hyperframes 0.6.72 在多 audio 元素场景下的语音丢失 bug；为避免下次再因"video 自带音轨 + 独立 audio"导致双重播放 / 静默丢音，把音轨分离硬约束写进规范
+- 触发：gym_machine_judge_b13 修复时发现 remotion 0.6.72 在多 audio 元素场景下的语音丢失 bug；为避免下次再因"video 自带音轨 + 独立 audio"导致双重播放 / 静默丢音，把音轨分离硬约束写进规范
 - 附录 A 速查索引新增 §15 入口
 - §14 反模式已有"❌ video 自带音轨"条目，与 §15 互为引用
 
 ### v2（2026-06-09）— 深化拓展
 
-- **新增 §7 组件模板库**：7 类常用组件（标题/卡片/视频/字幕/装饰/pause_breath/CTA），含 HTML + GSAP 代码
-- **新增 §8 Scene.js 编排模板**：8 节标准结构（开场→钩子→主体→段间→收尾→CTA）+ timeline 标注速查
+- **新增 §7 组件模板库**：7 类常用组件（标题/卡片/视频/字幕/装饰/pause_breath/CTA），含 TSX + interpolate 代码
+- **新增 §8 Scene 编排模板**：8 节标准结构（开场→钩子→主体→段间→收尾→CTA）+ Sequence 速查
 - **新增 §9 A/B/C 三类视频的脚本实现差异化**：每镜时长/镜数/转场/卡片占比/入场动效 5 维对照 + 3 类脚本骨架
 - **新增 §10 性能与可维护性约束**：6 项性能铁律 + 4 项可维护性铁律
 - **新增 §12 5 维评分卡 + 评审 SOP**：每维 ≥ 3 分 + 总分 ≥ 18 才能进用户审阅
@@ -825,10 +1047,9 @@ grep '<audio' compositions/<topic>.html
 - **新增附录 A 速查索引** + **附录 B 变更日志**
 - **§5 转场规范扩 5.3 决策树**
 - **§14 反模式从 12 条扩到 21 条**
-- **保留不变**：§1 API 映射 + §2 目录结构 + §3 安全区 + §4 设计风格 + §6 静态资源加载 + §11 实现前必查
+- **保留不变**：§2 目录结构 + §3 安全区 + §4 设计风格 + §6 静态资源加载 + §11 实现前必查
 
 ### v1（2026-06-06）— 初版
 
-- Remotion → Hyperframes API 映射
 - 安全区 + 配色 + 转场 + 资源加载
 - 由 winged_scapula_b3 实战沉淀

@@ -4,7 +4,7 @@
 >
 > **必须遵循**：[timing-sync.md](timing-sync.md)（`tl.duration()` 对齐）+ [checklist.md](checklist.md)（渲染前必跑 50+ 项）+ [script.md](script.md)（Scene 实现）
 >
-> **渲染哲学**：**默认只预览，渲染要授权**。Hyperframes 按帧确定性渲染，需要**用户显式说"开始渲染"**才能 `npm run render`。模糊措辞（"OK"/"不错"）**不**视为授权。3 要素：**用户授权** + **自检 50+ 项** + **渲染后看一遍**。
+> **渲染哲学**：**默认只预览，渲染要授权**。Remotion 按帧确定性渲染，需要**用户显式说"开始渲染"**才能 `npm run render`。模糊措辞（"OK"/"不错"）**不**视为授权。3 要素：**用户授权** + **自检 50+ 项** + **渲染后看一遍**。
 
 ---
 
@@ -81,19 +81,19 @@ const sceneParam = params.get('scene') || 'a2_one_person_50_videos';
 
 ## 2 · 常用命令
 
-所有命令在 `hyperframe/` 目录下执行：
+所有命令在 `remotion/` 目录下执行：
 
 ```bash
-cd hyperframe
+cd remotion
 
-# 启动 Studio 预览（http://localhost:4000）—— 默认动作
-npm run dev                    # = npx hyperframes studio
+# 启动 Studio 预览（http://localhost:4668）—— 默认动作
+npm run dev                    # = npx remotion studio
 
 # 渲染视频（产物输出到 out/）—— ⚠️ 必须用户说"开始渲染"才执行
-npm run render -- <SceneId> out/<name>.mp4
+npx remotion render <CompositionId> out/<name>.mp4
 
 # 单帧抽检（可疑帧静态检查）
-npm run still -- <SceneId> --frame=900
+npx remotion still <CompositionId> --frame=900
 
 # 类型检查 + ESLint
 npm run lint
@@ -166,17 +166,17 @@ out/<主题>_<日期>_v<N>.mp4
 
 | # | 问题 | 解决方案 |
 |---|---|---|
-| 1 | shot 之间硬切 | GSAP timeline label 重叠 ≥ 0.3s |
-| 2 | `stagger` / `fromTo` 配 `lazy: false` 手动 seek 失败 | 配 `lazy: false` 时手动 seek 一次 |
-| 3 | 首帧黑屏 | timeline 构造时 `.progress(0).render(0)` 锁住初始帧 |
-| 4 | 资产加载延迟 | `preload="auto"` |
-| 5 | shot 内部时间错乱 | 用 `timeline.time()` 拿本地时间 |
+| 1 | shot 之间硬切 | `<Sequence premountFor={1*fps}>` + `TRANSITION_FRAMES` 重叠 ≥ 0.3s |
+| 2 | `stagger` / `fromTo` 配 `lazy: false` 手动 seek 失败 | Remotion 无此问题（frame-accurate seek）|
+| 3 | 首帧黑屏 | `<Sequence premountFor={1*fps}>` 锁住初始帧 |
+| 4 | 资产加载延迟 | `prefetch()` 预加载 |
+| 5 | shot 内部时间错乱 | 用 `useCurrentFrame()` 拿本地帧（Sequence 内）|
 | 6 | 子元素定位错乱 | 父容器绝对定位 + 子元素 absolute |
-| 7 | 末段静音/字幕提前消失 | `timeline.duration() = VIDEO_DURATION` |
+| 7 | 末段静音/字幕提前消失 | `durationInFrames = VIDEO_DURATION * fps` |
 | 8 | transform 居中冲突 | 用 `xPercent: -50, yPercent: -50`（不用 CSS `translate(-50%,-50%)`）|
-| 9 | 视频自带音轨 | `<video muted playsinline>` + 分离 `<audio>` |
-| 10 | CSS transition/animation 残留 | 全部用 GSAP 替换 |
-| 11 | 视频同时播放 > 2 个 | 改图片或预渲染 |
+| 9 | 视频自带音轨 | `<OffthreadVideo muted>` + 分离 `<Audio>` |
+| 10 | CSS transition/animation 残留 | 全部用 `interpolate` + `useCurrentFrame()` 替换 |
+| 11 | 视频同时播放 > 2 个 | 改 `<Img>` freeze frame |
 
 ---
 
@@ -196,7 +196,7 @@ npm run dev    # 会超时挂掉
 
 ```bash
 # 指定端口
-npm run dev -- --port=4000
+npm run dev -- --port=4668
 
 # 指定 scene
 npm run dev -- --scene=winged_scapula_b3
@@ -207,17 +207,27 @@ npm run dev -- --open
 
 ---
 
-## 6 · timeline duration 硬约束
+## 6 · Composition duration 硬约束
 
-```js
-const VIDEO_DURATION = 65.4  // 秒（来自 [timing-sync.md]）
-const tl = gsap.timeline({ paused: true })
-// ... 所有 tween
-tl.duration(VIDEO_DURATION)  // ⭐ 必加
-tl.progress(0).render(0)
+```tsx
+// index.tsx
+const VIDEO_DURATION = 65.4;  // 秒（来自 [timing-sync.md]）
+const FPS = 30;
+const COMPOSITION_FRAMES = Math.round(VIDEO_DURATION * FPS);  // ⭐ 必加
+
+export const MyScene: React.FC = () => (
+  <AbsoluteFill>
+    {/* Shots */}
+    {shots.map((shot, idx) => (
+      <Sequence key={shot.shot_id} from={startFrame} durationInFrames={paddedDuration} premountFor={1 * FPS}>
+        <ShotRenderer shot={shot} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
 ```
 
-> **为什么必加**：防止 timeline 跑到末尾后继续 seek 到无声/无字幕区间。
+> **为什么必加**：防止 Composition 跑到末尾后继续 seek 到无声/无字幕区间。
 
 ### 6.1 VIDEO_DURATION 同步
 
@@ -225,8 +235,8 @@ tl.progress(0).render(0)
 |---|---|
 | **文案稿** | 钩子 + 主体 + 段间停顿 + 收尾 |
 | **timing-sync.md** | `全文时长` 字段 |
-| **scene.js** | `const VIDEO_DURATION = 65.4` |
-| **渲染命令** | `--duration=65.4` |
+| **index.tsx** | `const COMPOSITION_FRAMES = Math.round(VIDEO_DURATION * FPS)` |
+| **渲染命令** | `npx remotion render <CompositionId> --duration=65.4` |
 
 > 改 VIDEO_DURATION 必须 4 处同步。
 
@@ -248,7 +258,7 @@ tl.progress(0).render(0)
 - [ ] 输出文件存到 `out/`（不入库）
 ```
 
-> **失败怎么办**：回 `[ ] checklist.md` 查具体项，修复后**重新渲染**（不是只改 scene.js 就算完）。
+> **失败怎么办**：回 `[ ] checklist.md` 查具体项，修复后**重新渲染**（不是只改 Scene 组件就算完）。
 
 ### 7.1 渲染后自检 SOP
 
@@ -265,15 +275,15 @@ tl.progress(0).render(0)
 
 ---
 
-## 8 · Remotion → Hyperframes 渲染速查
+## 8 · Remotion 渲染速查
 
-| 概念 | Remotion | Hyperframes |
-|---|---|---|
-| 渲染命令 | `npx remotion render <id> out/<name>.mp4` | `npm run render -- <SceneId> out/<name>.mp4` |
-| 抽帧 | `npx remotion still <id> out/<frame>.png --frame=900` | `npm run still -- <SceneId> --frame=900` |
-| 预览 | `npx remotion studio` | `npm run dev` |
-| 合成 ID | `<Composition id="..." />` | `<main data-scene="...">` |
-| 视频/音频分离 | `<Video src={...} />`（自带音轨）| `<video muted playsinline>` + `<audio>` |
+| 概念 | 命令/实现 |
+|---|---|
+| 渲染命令 | `npx remotion render <CompositionId> out/<name>.mp4` |
+| 抽帧 | `npx remotion still <CompositionId> out/<frame>.png --frame=900` |
+| 预览 | `npm run dev`（Studio 端口 4668）|
+| 合成 ID | `<Composition id="..." />`（在 Root.tsx 注册）|
+| 视频/音频分离 | `<Video src={...} muted playsinline>` + 分离 `<audio>` |
 
 ---
 
@@ -356,14 +366,14 @@ ffmpeg -i out/part1.mp4 -i out/part2.mp4 -filter_complex "[0:v][0:a][1:v][1:a]co
 
 | # | 失败现象 | 根本原因 | 修法 |
 |---|---|---|---|
-| 1 | 视频开头 1s 黑屏 | timeline 没 `.progress(0).render(0)` | 加锁初始帧（§6）|
-| 2 | 字幕提前 0.5s 消失 | `tl.duration()` < VIDEO_DURATION | 改 `tl.duration(VIDEO_DURATION)` |
-| 3 | BGM 比旁白响 | BGM volume 没设 | 设 `volume: 0.4`（-8 dB）|
-| 4 | 转场硬切 | 入场/出场没重叠 0.3s | GSAP addLabel 重叠 |
-| 5 | 视频比 mp3 长 5s | 视频自带音轨 | 改 `<video muted>` + 分离 audio |
+| 1 | 视频开头 1s 黑屏 | Sequence 缺 `premountFor` | 加 `premountFor={1*FPS}` |
+| 2 | 字幕提前 0.5s 消失 | `durationInFrames` < VIDEO_DURATION | 改 `COMPOSITION_FRAMES = Math.round(VIDEO_DURATION * FPS)` |
+| 3 | BGM 比旁白响 | BGM volume 没设 ducking | 设 `volume={(f) => f < 90 ? 0.25 : 0.4}` |
+| 4 | 转场硬切 | 入场/出场没重叠 0.3s | Sequence 加 `TRANSITION_FRAMES` 重叠 |
+| 5 | 视频比 mp3 长 5s | 视频自带音轨 | 改 `<OffthreadVideo muted>` + 分离 `<Audio>` |
 | 6 | 末段静音 | VIDEO_DURATION 短了 | 改 VIDEO_DURATION = 钩子+主体+收尾 |
-| 7 | 钩子弹跳入场失效 | ease 用错 | 改 `back.out(1.7)`（不是 `power2.out`）|
-| 8 | 数字滚动不同步 | 用 `setInterval` | 改 GSAP `snap: { val: 1 }` |
+| 7 | 钩子弹跳入场失效 | easing 用错 | 改 `Easing.backOut(1.7)`（不是 `Easing.out`）|
+| 8 | 数字滚动不同步 | 用 `setInterval` | 改 `useCurrentFrame()` + `interpolate` |
 | 9 | 移动端首屏慢 | DOM 节点 > 50 | 拆组件 / 懒加载 |
 | 10 | 输出文件 0 字节 | 渲染中崩溃 | 跑 §10.2 重试 |
 
@@ -411,11 +421,11 @@ ffmpeg -i out/part1.mp4 -i out/part2.mp4 -filter_complex "[0:v][0:a][1:v][1:a]co
 - ❌ "OK / 不错" 视为渲染授权
 - ❌ 默认横屏（必须用户明确说"做横屏"）
 - ❌ `npm run dev` 前台跑（超时挂掉）
-- ❌ timeline 没 `.duration(VIDEO_DURATION)` 锚点
-- ❌ timeline 没 `.progress(0).render(0)` 锁初始帧
+- ❌ Composition 没 `durationInFrames` 锚点
+- ❌ Sequence 没 `premountFor={1*FPS}` 锁初始帧
 - ❌ shot 之间转场 < 0.3s（硬切）
-- ❌ 用 CSS `transform: translate(-50%,-50%)` 居中（与 GSAP 冲突）
-- ❌ 视频本身带音轨（违反 Hyperframes 音视频分离）
+- ❌ 用 CSS `transform: translate(-50%,-50%)` 居中（与 Remotion interpolate 冲突）
+- ❌ 视频本身带音轨（违反音视频分离原则）
 - ❌ 渲染后只看产物存在（必须打开看一遍）
 - ❌ 渲染后自检失败但不重新渲染（半成品发布）
 - ❌ `out/<name>.mp4` 入库（永久 gitignore）

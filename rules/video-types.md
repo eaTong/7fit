@@ -147,19 +147,20 @@
 |---|---|---|
 | **a** | 口播视频**统一显示正方形**（无论提供横屏/竖屏） | 视频容器固定 `width: N, height: N`（Full Screen `1080×1080` / Split `574×574`）+ `video { object-fit: cover }` |
 | **b** | Split 态视频占比 **< 30%**（1920×0.3 = 576px 上限） | Split 态视频宽度 ≤ 574px（`574/1920 = 29.9% < 30%`），当前 560px 符合规范 |
-| **c** | A 类视频**每个场景必须有独立背景图** | 每场景一个 `bg_scene_<N>.png`，GSAP timeline 在 shot 入场时切换 `opacity`（当前场景显示，其余隐藏）；**禁止无背景图空场景** |
+| **c** | A 类视频**每个场景必须有独立背景图** | 每场景一个 `<Img>` 组件，`Sequence` 入场时切换 `opacity`（当前场景显示，其余隐藏）；**禁止无背景图空场景** |
 | **d** | Split 态**视频列无背景色/装饰效果** | Split 态时 `.talking-head` 的 `box-shadow` / `mask-image` 羽化效果关闭（`box-shadow: none; mask-image: none`），视频列直接透明叠在画布背景上 |
 
 > **技术实现 c（per-scene 背景切换）**：
-> ```html
-> <img class="bg-scene" data-scene="shot-0" src="bg_scene_0.png">
-> <img class="bg-scene" data-scene="shot-1" src="bg_scene_1.png" style="display:none">
-> ...
-> ```
-> ```js
-> // shot 入场时切换背景
-> tl.to('.bg-scene[data-scene="shot-0"]', { opacity: 0, duration: 0.3 }, 'shot-0-out')
-> tl.to('.bg-scene[data-scene="shot-1"]', { opacity: 0.28, duration: 0.4 }, 'shot-1-in')
+> ```tsx
+> // 每个 Shot 有独立背景 Img，Sequence 入场时淡入
+> <AbsoluteFill style={{ opacity: currentScene === 0 ? 1 : 0 }}>
+>   <Img src={staticFile("bg_scene_0.png")} style={{ width: "100%", height: "100%" }} />
+> </AbsoluteFill>
+> <AbsoluteFill style={{ opacity: currentScene === 1 ? 1 : 0 }}>
+>   <Img src={staticFile("bg_scene_1.png")} style={{ width: "100%", height: "100%" }} />
+> </AbsoluteFill>
+> // 用 frame 或 scene index 控制 opacity
+> const bgOpacity = interpolate(sceneFrame, [0, 12], [0, 1], { extrapolateLeft: "clamp", ... });
 > ```
 
 ---
@@ -289,19 +290,25 @@
 ```
 
 #### 3.3.3.5 布局切换动效（A类专属）
-```js
-// 全屏态 → 左右分栏态（0.5s, power2.inOut）
-gsap.to('.talking-head', {
-  left: 96, top: 324,
-  width: 768, height: 432,
-  duration: 0.5, ease: 'power2.inOut'
-})
+```tsx
+// 全屏态 → 左右分栏态（0.5s, Easing.bezier）
+const t = interpolate(frame, [0, 15], [0, 1], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.bezier(0.4, 0, 0.2, 1),
+});
+const left = interpolate(t, [0, 1], [96, 0]);
+const top = interpolate(t, [0, 1], [324, 0]);
+const width = interpolate(t, [0, 1], [768, 574]);
+const height = interpolate(t, [0, 1], [432, 574]);
 
-// 同时：辅助素材入场
-gsap.from('.visual-support', {
-  x: 100, opacity: 0, scale: 0.92,
-  duration: 0.4, ease: 'power2.out'
-}, '<+=0.1')  // 视频缩小后 0.1s 辅助素材接续入场
+// 辅助素材入场（视频缩小后 0.1s 接续）
+const supportT = interpolate(Math.max(0, frame - 3), [0, 12], [0, 1], {
+  extrapolateLeft: "clamp",
+  easing: Easing.out(Easing.cubic),
+});
+const supportX = interpolate(supportT, [0, 1], [100, 0]);
+const supportOpacity = interpolate(supportT, [0, 1], [0, 1]);
 ```
 
 ### 3.3.4 布局技术实现（B类）
@@ -356,20 +363,29 @@ gsap.from('.visual-support', {
 ```
 
 #### 3.3.4.3 节拍驱动（Beat Driven）
-```js
+```tsx
 // 动作视频中央 + 四角参数卡随节拍脉冲
-const analyser = audioCtx.createAnalyser()
-analyser.fftSize = 128
-const data = new Uint8Array(analyser.frequencyBinCount)
+// ❌ 禁用 requestAnimationFrame（Remotion 用 useCurrentFrame + interpolate）
+// ✅ Remotion 音频可视化：用 useAudioData from @remotion/media-utils
+import { useAudioData, interpolate } from "remotion";
 
-function tick() {
-  analyser.getByteFrequencyData(data)
-  const bass = data.slice(0, 4).reduce((a, b) => a + b) / 4
-  // 四角参数卡随节拍脉冲
-  gsap.to('.beat-card', { scale: 1 + bass / 500, duration: 0.05 })
-  requestAnimationFrame(tick)
-}
-tick()
+const BeatCard: React.FC = () => {
+  const audioData = useAudioData(audioData);
+  const frame = useCurrentFrame();
+
+  // 用音频数据的 amplitude 驱动缩放
+  const bass = audioData?.slice(0, 4).reduce((a, b) => a + b, 0) / 4 ?? 0;
+  const scale = interpolate(frame, [0, 1], [1, 1 + bass / 500], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  return (
+    <div style={{ transform: `scale(${scale})` }}>
+      {/* beat card content */}
+    </div>
+  );
+};
 ```
 
 ### 3.3.5 布局选型决策树

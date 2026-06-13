@@ -656,7 +656,7 @@ sleep 5  # 等服务起来
 
 **预期**：终端输出 Hyperframes preview server 启动信息
 
-- [ ] **Step 2: 浏览器打开 http://localhost:4000 检查**
+- [ ] **Step 2: 浏览器打开 http://localhost:4668 检查**
 
 用 playwright MCP 工具或浏览器手动检查：
 - 画布比例 9:16 竖屏（不是 16:9 横屏）

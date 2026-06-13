@@ -93,9 +93,9 @@
 
 **优先级**：低。**影响**：仅 lint 报错；**不影响** Studio preview 渲染（虽然 Studio preview iframe 因为 mount config 也没显示）和最终渲染。**建议**：可加 `hyperframe/resources/` symlink 或更新 lint config 兜底，但**非阻塞**。
 
-### 4.3 Studio preview 端口变化（4000 → 3002）
+### 4.3 Studio preview 端口变化（4668 → 3002）
 
-**症状**：plan 假设 `http://localhost:4000`，实际 Hyperframes 0.6.72 默认 3002。
+**症状**：plan 假设 `http://localhost:4668`，实际 Hyperframes 0.6.72 默认 3002。
 
 **优先级**：无。**影响**：仅文档/计划与现实的小偏差。**建议**：未来 plan 更新端口默认值。
 

@@ -80,7 +80,7 @@
 | `zoom` | 0.5s | 强调重点 | `back.out(1.7)` |
 | ❌ flip / 旋转 / 3D | — | 与"力量感"调性冲突 | — |
 
-> GSAP 实现见 [animation.md §3 转场](animation.md#3--转场动画)。
+> Remotion 实现：`<Sequence premountFor={1*fps}>` + `interpolate` 转场，见 [animation.md §3 转场](animation.md#3--转场动画)。
 
 ### 4.1 转场选型决策树
 
@@ -95,31 +95,41 @@
 
 ### 4.2 A 类视频转场适配方案（v4.2 新增）
 
-> **A 类视频转场核心**：**柔和 + 双态切换**——转场风格偏柔和（fade / slide_up），加上双态切换（0.5s power2.inOut）。
+> **A 类视频转场核心**：**柔和 + 双态切换**——转场风格偏柔和（fade / slide_up），加上双态切换（0.5s Easing.bezier）。
 
-| 转场位置 | 转场类型 | 时长 | ease | 说明 |
+| 转场位置 | 转场类型 | 时长 | easing | 说明 |
 |---|---|---|---|---|
-| 钩子段 → 段1 | `fade` | 0.4s | `power2.inOut` | 柔和过渡 |
-| 段1 → 段2（双态切换）| `double_state_switch` | 0.5s | `power2.inOut` | 视频缩小+辅助内容入场 |
+| 钩子段 → 段1 | `fade` | 0.4s | `Easing.bezier(0.4,0,0.2,1)` | 柔和过渡 |
+| 段1 → 段2（双态切换）| `double_state_switch` | 0.5s | `Easing.bezier(0.4,0,0.2,1)` | 视频缩小+辅助内容入场 |
 | 段间停顿 | `pause_breath` | 0.5-1s | 4 选 1 | 0.8× 慢动作 / 1.2× 加速 / 特写 / freeze frame |
-| 段2 → 段3 | `fade` | 0.4s | `power2.inOut` | 柔和过渡 |
-| 收尾段 | `fade` | 1s | `power2.inOut` | 1s 沉淀 |
+| 段2 → 段3 | `fade` | 0.4s | `Easing.bezier(0.4,0,0.2,1)` | 柔和过渡 |
+| 收尾段 | `fade` | 1s | `Easing.bezier(0.4,0,0.2,1)` | 1s 沉淀 |
 
 #### 4.2.1 A 类双态切换转场（专属）
 > 详见 [animation.md §12 A 类双态切换动效](animation.md#12--a-类双态切换动效2026-06-10-新增)。
 
-```js
-// 全屏态 → 左右分栏态（0.5s, power2.inOut）
-gsap.to('.talking-head', {
-  left: 0, top: 260, width: 574, height: 574,
-  duration: 0.5, ease: 'power2.inOut'
-})
+```tsx
+// 全屏态 → 左右分栏态（0.5s, Easing.bezier power2.inOut）
+const transitionProgress = interpolate(frame, [0, 15], [0, 1], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.bezier(0.4, 0, 0.2, 1),
+});
 
-// 同时：辅助素材入场
-gsap.from('.visual-support__frame', {
-  x: 80, opacity: 0, scale: 0.92,
-  duration: 0.4, ease: 'power2.out'
-}, '<+=0.1')  // 视频缩小后 0.1s 辅助素材接续入场
+// 视频缩小到左侧分栏
+const left = interpolate(transitionProgress, [0, 1], [420, 0]);
+const top = interpolate(transitionProgress, [0, 1], [0, 260]);
+const width = interpolate(transitionProgress, [0, 1], [1080, 574]);
+const height = interpolate(transitionProgress, [0, 1], [1080, 574]);
+
+// 辅助素材入场（视频缩小后 0.1s 接续）
+const supportProgress = interpolate(Math.max(0, frame - 3), [0, 12], [0, 1], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.cubic),
+});
+const x = interpolate(supportProgress, [0, 1], [80, 0]);
+const opacity = interpolate(supportProgress, [0, 1], [0, 1]);
 ```
 
 ### 4.3 B 类视频转场适配方案（v4.2 新增）
@@ -128,30 +138,32 @@ gsap.from('.visual-support__frame', {
 
 | 转场位置 | 转场类型 | 时长 | ease | 说明 |
 |---|---|---|---|---|---|
-| 钩子段 → 自测段 | `push_left` | 0.4s | `power2.inOut` | 时间推进感 |
+| 钩子段 → 自测段 | `push_left` | 0.4s | `Easing.bezier(0.4,0,0.2,1)` | 时间推进感 |
 | 自测段 → 动作段 | `pause_breath` | 0.5-1s | 4 选 1 | 段间停顿 |
-| 动作段之间 | `zoom` | 0.5s | `back.out(1.7)` | 强调重点动作 |
-| 动作段 → 收尾段 | `push_left` | 0.4s | `power2.inOut` | 时间推进感 |
-| 收尾段 | `fade` | 1s | `power2.inOut` | 1s 沉淀 |
+| 动作段之间 | `zoom` | 0.5s | `Easing.backOut(1.7)` | 强调重点动作 |
+| 动作段 → 收尾段 | `push_left` | 0.4s | `Easing.bezier(0.4,0,0.2,1)` | 时间推进感 |
+| 收尾段 | `fade` | 1s | `Easing.bezier(0.4,0,0.2,1)` | 1s 沉淀 |
 
 #### 4.3.1 B 类动作段之间转场（zoom 强调）
-```js
-// 动作段之间：zoom（0.5s, back.out(1.7)）
-gsap.fromTo('.action-highlight',
-  { scale: 1 },
-  { scale: 1.3, duration: 0.5, ease: 'back.out(1.7)' }
-)
+```tsx
+// 动作段之间：zoom（0.5s, Easing.backOut）
+const zoomProgress = interpolate(frame, [0, 15], [0, 1], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.back(1.7)),
+});
+const scale = interpolate(zoomProgress, [0, 1], [1, 1.3]);
 ```
 
 ### 4.4 转场时长与 ease 选型规范
 
-| 转场类型 | 时长 | ease | 适用场景 |
+| 转场类型 | 时长 | easing | 适用场景 |
 |---|---|---|---|
-| **通用转场**（fade / push / slide）| 0.4s | `power2.inOut` | 大部分场景 |
-| **强调转场**（zoom）| 0.5s | `back.out(1.7)` | 重点动作 / 关键数据 |
+| **通用转场**（fade / push / slide）| 0.4s | `Easing.bezier(0.4,0,0.2,1)` | 大部分场景 |
+| **强调转场**（zoom）| 0.5s | `Easing.backOut(1.7)` | 重点动作 / 关键数据 |
 | **段间停顿**（pause_breath）| 0.5-1s | 4 选 1 | 段间消化 |
-| **双态切换**（A 类专属）| 0.5s | `power2.inOut` | A 类双态切换 |
-| **收尾沉淀**（fade）| 1s | `power2.inOut` | 收尾段 |
+| **双态切换**（A 类专属）| 0.5s | `Easing.bezier(0.4,0,0.2,1)` | A 类双态切换 |
+| **收尾沉淀**（fade）| 1s | `Easing.bezier(0.4,0,0.2,1)` | 收尾段 |
 
 > **铁律**：转场时长 ≥ 0.3s，否则观众反应不过来（详 [animation.md §4.2 转场时长约束](animation.md#42-转场时长约束)）。
 
@@ -570,12 +582,12 @@ components/
 - ❌ 视频类镜头 < 5s（切换太频繁观众反应不过来）
 - ❌ 图片类镜头 ≠ 字幕时长（不同步）
 - ❌ `pause_breath` 切换其他素材（破坏消化节奏）
-- ❌ 转场没标 `transition_in` / `transition_out`（下游 scene.js 写不出来）
+- ❌ 转场没标 `transition_in` / `transition_out`（下游 Scene 组件实现不出来）
 - ❌ `description` 写"讲什么"而不是"展示什么"
 - ❌ 字幕对应关系错乱（视频镜 1:N 写成了 1:1）
 - ❌ components 文件用 snake_case（应 PascalCase）
 - ❌ `data_shot_id` 用 PascalCase（应 snake_case，与 DOM 选择器友好）
-- ❌ 不用 B-roll 标签，scene.js 不知道这是辅助镜头
+- ❌ 不用 B-roll 标签，Scene 组件不知道这是辅助镜头
 - ❌ **description 缺 5 要素**（主体/动作/位置/辅元素/动效）
 - ❌ **video 镜 1:1 配字幕**（视频镜必须 1:N，对应多条字幕）
 - ❌ **text_card 镜时长 ≠ 字幕时长**（卡片没看完就走）

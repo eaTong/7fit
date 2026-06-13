@@ -54,7 +54,7 @@
 ```bash
 cd remotion
 
-# 启动 Studio 预览（http://localhost:4000）—— 默认动作
+# 启动 Studio 预览（http://localhost:4668）—— 默认动作
 npm run dev
 
 # 类型检查 + ESLint
@@ -211,7 +211,7 @@ export const RemotionRoot: React.FC = () => {
 - 转场用 `@remotion/transitions` 的 `TransitionSeries` + `fade`/`slide`，**禁用 flip/旋转/3D**
 - 静态资源放在 `remotion/public/`，引用时用 `staticFile('xxx')`
 - Tailwind v4 已通过 `@remotion/tailwind-v4` 启用（`enableTailwind`）
-- Studio 默认端口 **4000**，帧格式 **jpeg**
+- Studio 默认端口 **4668**，帧格式 **jpeg**
 
 ---
 

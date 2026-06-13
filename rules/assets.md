@@ -23,11 +23,11 @@
 
 ### 1.3 不进 assets.md
 
-- ❌ **可代码实现的内容**（用 GSAP 动画 / 数字滚动 / 数据可视化能做的）
+- ❌ **可代码实现的内容**（用 `interpolate` 数字滚动 / 数据可视化能做的）
 - ❌ **代码文件**（`subtitles.json` / `storyboard.md` 不进 public/）
 - ❌ **抽象图形**（简单色块、icon、emoji）
 
-> 例：动作次数 / 重量 / RPE 等数据 → 用代码渲染（数字滚动 GSAP），**不**用图片。
+> 例：动作次数 / 重量 / RPE 等数据 → 用代码渲染（数字滚动 `interpolate`），**不**用图片。
 
 ### 1.4 §缺失 必须标优先级
 
@@ -45,28 +45,35 @@
 
 ```bash
 # 1. 创建视频专属素材目录
-mkdir -p hyperframe/public/<主题>/{videos,images,audios/bgm,audios/sfx}
+mkdir -p remotion/public/<主题>/{videos,images,audios/bgm,audios/sfx}
 
-# 2. 复制视频
-cp resources/videos/卧推80KG_10.mov hyperframe/public/<主题>/videos/
+# 2. 复制并转码视频 → WebM VP9（浏览器兼容）
+ffmpeg -y -i "resources/videos/卧推80KG_10.mov" \
+  -vcodec libvpx-vp9 -crf 35 -b:v 0 \
+  -pix_fmt yuv420p \
+  -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2" \
+  -deadline realtime \
+  "remotion/public/<主题>/videos/卧推80KG_10.webm"
 
 # 3. 复制图片
-cp resources/images/翼状肩胛自测.png hyperframe/public/<主题>/images/
+cp resources/images/翼状肩胛自测.png remotion/public/<主题>/images/
 
 # 4. 复制 BGM
-cp resources/audios/bgm/power_build.mp3 hyperframe/public/<主题>/audios/bgm/
+cp resources/audios/bgm/power_build.mp3 remotion/public/<主题>/audios/bgm/
 
 # 5. 复制 SFX
-cp resources/audios/sfx/whoosh.mp3 hyperframe/public/<主题>/audios/sfx/
+cp resources/audios/sfx/whoosh.mp3 remotion/public/<主题>/audios/sfx/
 ```
 
+> **铁律**：视频文件（.mov / .mp4）**必须转码为 WebM VP9** 再复制到 public/。Remotion 的 OffthreadVideo 在渲染时通过浏览器代理加载视频，MOV/MP4/H264 在 macOS Chrome 环境存在解码兼容性问题，**只有 VP9/WebM 可以稳定流式加载**。
+>
 > **不复制代码文件**：`subtitles.json` / `storyboard.md` 留在 scene 目录，不进 public/。
 
 ### 2.1 复制后自检
 
 ```bash
 # 1. 数量核对（§已就位 列表条数 = 实际文件数）
-ls hyperframe/public/<主题>/videos/ | wc -l
+ls remotion/public/<主题>/videos/ | wc -l
 
 # 2. 命名核对（文件名与 storyboard.json `content_source` 完全一致）
 # 见 §3 命名约定
@@ -114,7 +121,7 @@ npm run dev
 > **mmx 是项目默认 AI 工具**。本文 §4 给出**业务级** prompt（针对 7fit 视频素材），完整规范 + 通用模板 + 实践经验见 [tools/mmx.md §3.3](../../tools/mmx.md#33-4-类-prompt-模板项目标准)。
 >
 > 4 个业务级 prompt 类型：
-> - **4.1 data_viz**（数据图）—— 默认用 GSAP 代码渲染，mmx 图片仅作 fallback
+> - **4.1 data_viz**（数据图）—— 默认用 `interpolate` 代码渲染，mmx 图片仅作 fallback
 > - **4.2 screen_recording**（用户录）—— **AI 不可替代**，必须用户自录
 > - **4.3 动画元素**（合成动效）—— mmx 生成
 > - **4.4 UI 截图** —— mmx 生成
@@ -382,7 +389,7 @@ Step 6：验收（主口播视频 ≥ 60s + 抽帧测试 + 同期声 + 连续性
 | 1 | "健身房图片" → 生成抽象卡通 | 没指定风格 | 加 "realistic photo, 1080×1920, dim lighting" |
 | 2 | "训练动作" → 生成 6 根手指的怪人 | AI 生成人体不稳 | **改用用户自拍**（详 §5.1）|
 | 3 | "数据图" → 白色背景 | 没指定背景 | 加 "dark background #0A0A0A" |
-| 4 | "logo 截图" → 文字乱码 | AI 不会写字 | 用代码渲染文字（GSAP）|
+| 4 | "logo 截图" → 文字乱码 | AI 不会写字 | 用代码渲染文字（`interpolate` + `<Text>`）|
 | 5 | "动作对比" → 4 张图但比例不一致 | 没指定尺寸 | 加 "1080×1920 严格" |
 
 ### 9.3 mmx 命令模板
@@ -466,7 +473,7 @@ mmx music generate --prompt "tech house, 105 BPM, D minor, 75s, NO vocals" \
 
 ## 12 · 反模式
 
-- ❌ 跳过 assets.md 直接写 scene.js（可能引用不存在的素材）
+- ❌ 跳过 assets.md 直接写 Scene 组件（可能引用不存在的素材）
 - ❌ 可代码实现的内容写进 assets.md（数字滚动、数据图表）
 - ❌ 代码文件（subtitles.json / storyboard.md）复制到 public/
 - ❌ 训练动作用 mmx 生成的"假人健身"（质量不稳定）

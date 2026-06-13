@@ -31,35 +31,30 @@ import {
   Easing,
 } from "remotion";
 import storyboard from "./storyboard.json";
+import { VoiceoverText } from "./components/VoiceoverText";
 
 /* === 配置 === */
 const FPS = 30;
-const TRANSITION_FRAMES = 9; // 0.3s @ 30fps
-const COMPOSITION_FRAMES = Math.round(32 * FPS); // 32s × 30fps
+const TRANSITION_FRAMES = 9;
+const COMPOSITION_FRAMES = Math.round(32 * FPS);
 
-/* === 资源根路径 === */
 const BASE = "b14_push_day";
 
-/* === BGM 配置（120 BPM gym beat）=== */
-const BGM_VOLUME_NORMAL = 0.25;   // 无旁白正常音量
-const BGM_VOLUME_DUCK = 0.15;    // TTS 期间 ducking
-const FADE_IN_FRAMES = 30;        // 首 1s fade in
-const FADE_OUT_FRAMES = 60;       // 末 2s fade out
+const BGM_VOLUME_NORMAL = 0.25;
+const FADE_IN_FRAMES = 30;
+const FADE_OUT_FRAMES = 60;
 
-/* === 资源路径 helper === */
 const video = (name: string) => `${BASE}/videos/${name}`;
 const audio = (name: string) => `${BASE}/audios/${name}`;
 
-/* === 视频时长映射（用于 playbackRate 计算）=== */
 const VIDEO_DURATIONS: Record<string, number> = {
-  "push_lying.mov": 3.0,
-  "push_seated.mov": 3.0,
-  "push_overhead.mov": 3.0,
-  "push_front.mov": 3.0,
-  "push_reverse.mov": 3.0,
+  "push_lying.mp4": 5.873,
+  "push_seated.mp4": 6.231,
+  "push_overhead.mp4": 5.687,
+  "push_front.mp4": 13.747,
+  "push_reverse.mp4": 6.771,
 };
 
-/* === Storyboard Shot 类型 === */
 interface Shot {
   shot_id: string;
   start: number;
@@ -74,14 +69,13 @@ interface Shot {
   grid_cells?: Array<{ position: string; source: string }>;
 }
 
-/* === 2×2 网格钩子组件 === */
 const Grid2x2: React.FC<{ cells: Array<{ position: string; source: string }> }> = ({ cells }) => {
   const cellSize = 480;
   const gap = 8;
   const gridWidth = cellSize * 2 + gap;
   const gridHeight = cellSize * 2 + gap;
   const offsetX = (1080 - gridWidth) / 2;
-  const offsetY = (1920 - gridHeight) / 2 - 100; // 偏上，底部留字幕空间
+  const offsetY = (1920 - gridHeight) / 2 - 100;
 
   const positions: Record<string, React.CSSProperties> = {
     "top-left": { left: offsetX, top: offsetY },
@@ -92,52 +86,23 @@ const Grid2x2: React.FC<{ cells: Array<{ position: string; source: string }> }> 
 
   return (
     <AbsoluteFill>
-      {/* 网格线 */}
-      <svg
-        style={{ position: "absolute", width: "100%", height: "100%", zIndex: 10 }}
-      >
-        {/* 横线 */}
+      <svg style={{ position: "absolute", width: "100%", height: "100%", zIndex: 10 }}>
         <line x1={offsetX} y1={offsetY + cellSize} x2={offsetX + gridWidth} y2={offsetY + cellSize} stroke="white" strokeWidth={2} />
-        {/* 竖线 */}
         <line x1={offsetX + cellSize} y1={offsetY} x2={offsetX + cellSize} y2={offsetY + gridHeight} stroke="white" strokeWidth={2} />
       </svg>
-
-      {/* 4 个格子视频 */}
       {cells.map((cell, i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            width: cellSize,
-            height: cellSize,
-            ...positions[cell.position],
-          }}
-        >
-          <OffthreadVideo
-            src={staticFile(video(cell.source))}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
+        <div key={i} style={{ position: "absolute", width: cellSize, height: cellSize, ...positions[cell.position] }}>
+          <OffthreadVideo src={staticFile(video(cell.source))} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
       ))}
     </AbsoluteFill>
   );
 };
 
-/* === Shot 渲染器 === */
-const ShotRenderer: React.FC<{ shot: Shot; index: number; isLast: boolean }> = ({
-  shot,
-  index,
-  isLast,
-}) => {
+const ShotRenderer: React.FC<{ shot: Shot; index: number; isLast: boolean }> = ({ shot, index, isLast }) => {
   const frame = useCurrentFrame();
   const durationFrames = Math.round(shot.duration * FPS);
-  const startFrame = Math.round(shot.start * FPS);
 
-  // 转场动画：fade/push_left/zoom
   const enterProgress = interpolate(frame, [0, TRANSITION_FRAMES], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -154,118 +119,81 @@ const ShotRenderer: React.FC<{ shot: Shot; index: number; isLast: boolean }> = (
       });
 
   const opacity = Math.min(enterProgress, exitProgress);
-
-  // push_left 位移
   const pushX = frame < TRANSITION_FRAMES
-    ? interpolate(frame, [0, TRANSITION_FRAMES], [50, 0], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      })
+    ? interpolate(frame, [0, TRANSITION_FRAMES], [50, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })
     : 0;
 
-  // 2×2 网格钩子
   if (shot.content_type === "video_grid" && shot.grid_cells) {
     return (
       <AbsoluteFill style={{ opacity, transform: `translateX(${pushX}px)` }}>
         <Grid2x2 cells={shot.grid_cells} />
+        {shot.voiceover && <VoiceoverText text={shot.voiceover} />}
       </AbsoluteFill>
     );
   }
 
-  // freeze frame（段间停顿）
   if (shot.content_type === "pause_breath") {
+    const src = shot.content_source?.replace(" (freeze frame)", "").trim() || "";
     return (
       <AbsoluteFill style={{ opacity }}>
-        <Img
-          src={staticFile(video(shot.content_source?.replace(" (freeze frame)", "").trim() || "")}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+        <Img src={staticFile(video(src))} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        {shot.voiceover && <VoiceoverText text={shot.voiceover} />}
       </AbsoluteFill>
     );
   }
 
-  // 普通视频镜
   if (shot.content_type === "video" && shot.content_source) {
     const videoDur = VIDEO_DURATIONS[shot.content_source] || shot.duration;
     const playbackRate = videoDur / shot.duration;
-
     return (
       <AbsoluteFill style={{ opacity, transform: `translateX(${pushX}px)` }}>
-        <OffthreadVideo
-          src={staticFile(video(shot.content_source))}
-          playbackRate={playbackRate}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+        <OffthreadVideo src={staticFile(video(shot.content_source))} playbackRate={playbackRate} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        {shot.voiceover && <VoiceoverText text={shot.voiceover} />}
       </AbsoluteFill>
     );
   }
 
-  // key_tips / outro（缺失素材占位）
   return (
-    <AbsoluteFill
-      style={{
-        background: "#0A0A0A",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ color: "#FF4500", fontSize: 32, textAlign: "center" }}>
-        ⚠️ {shot.content_type}
-        <br />
-        <span style={{ fontSize: 18, color: "#888" }}>
-          {shot.content_source || "missing source"}
-        </span>
-      </div>
+    <AbsoluteFill style={{ background: "#0A0A0A", justifyContent: "center", alignItems: "center" }}>
+      {shot.voiceover && <VoiceoverText text={shot.voiceover} fontSize={48} />}
     </AbsoluteFill>
   );
 };
 
-/* === BGM + Ducking === */
 const BGMWithDucking: React.FC = () => (
   <Audio
     src={staticFile(audio("bgm/gym_beat_b14.mp3"))}
     volume={(f) => {
       let v = BGM_VOLUME_NORMAL;
-      // Fade in
-      if (f < FADE_IN_FRAMES) {
-        v = BGM_VOLUME_NORMAL * (f / FADE_IN_FRAMES);
-      }
-      // Fade out
-      if (f > COMPOSITION_FRAMES - FADE_OUT_FRAMES) {
-        v = BGM_VOLUME_NORMAL * ((COMPOSITION_FRAMES - f) / FADE_OUT_FRAMES);
-      }
+      if (f < FADE_IN_FRAMES) v = BGM_VOLUME_NORMAL * (f / FADE_IN_FRAMES);
+      if (f > COMPOSITION_FRAMES - FADE_OUT_FRAMES) v = BGM_VOLUME_NORMAL * ((COMPOSITION_FRAMES - f) / FADE_OUT_FRAMES);
       return Math.max(0, v);
     }}
   />
 );
 
-/* === 主 Scene === */
 export const B14PushDay: React.FC = () => {
-  const shots = (storyboard.shots as Shot[]);
+  const shots = storyboard.shots as Shot[];
 
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
-      {/* BGM */}
       <BGMWithDucking />
-
-      {/* Shots */}
       {shots.map((shot, idx) => {
         const startFrame = Math.round(shot.start * FPS);
         const durationFrames = Math.round(shot.duration * FPS);
+        const isLast = idx === shots.length - 1;
 
-        // 计算 exit 延伸（crossfade）
         let paddedDuration = durationFrames;
         if (idx < shots.length - 1) {
-          const nextShot = shots[idx + 1];
-          const nextStart = Math.round(nextShot.start * FPS);
+          const nextStart = Math.round(shots[idx + 1].start * FPS);
           const myEnd = startFrame + durationFrames;
           const gap = Math.max(0, nextStart - myEnd);
           paddedDuration += gap + TRANSITION_FRAMES;
         }
 
         return (
-          <Sequence key={shot.shot_id} from={startFrame} durationInFrames={paddedDuration}>
-            <ShotRenderer shot={shot} index={idx} isLast={idx === shots.length - 1} />
+          <Sequence key={shot.shot_id} from={startFrame} durationInFrames={paddedDuration} premountFor={1 * FPS}>
+            <ShotRenderer shot={shot} index={idx} isLast={isLast} />
           </Sequence>
         );
       })}

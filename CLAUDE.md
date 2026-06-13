@@ -105,7 +105,7 @@ Composition   durationInFrames = 全文 × fps = 1800 帧
 │   │           ├── storyboard.json
 │   │           └── components/
 │   ├── public/            # 视频静态资源
-│   ├── remotion.config.ts # Tailwind + 端口 4000 + jpeg 帧
+│   ├── remotion.config.ts # Tailwind + 端口 4668 + jpeg 帧
 │   └── package.json
 └── resources/              # 用户维护的素材库
     ├── audios/           # 音频/语音文件
@@ -121,7 +121,7 @@ Composition   durationInFrames = 全文 × fps = 1800 帧
 ```bash
 cd remotion
 
-# 启动 Studio 预览（http://localhost:4000）—— 默认动作
+# 启动 Studio 预览（http://localhost:4668）—— 默认动作
 npm run dev
 
 # 渲染视频（产物输出到 out/）—— ⚠️ 必须用户说"开始渲染"才执行
@@ -538,7 +538,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - 静态资源放在 `remotion/public/`，引用时使用 `staticFile('xxx')`
 - 已通过 `@remotion/tailwind-v4` 启用 Tailwind v4（`enableTailwind`）
 - 帧格式默认 jpeg（`Config.setVideoImageFormat("jpeg")`），输出默认覆盖
-- Studio 端口 4000
+- Studio 端口 4668
 - 视频路径与时长由 `Composition` 的 `durationInFrames` + `fps` 决定
 - **每个视频一个独立 Composition**（放在 `remotion/src/scenes/<主题>.tsx`），并在 `Root.tsx` 中按主题注册
 - **动效的唯一合法实现方式**：`interpolate()` / `spring()` + `useCurrentFrame()`。**禁止 CSS transition/animation、Tailwind 动画类、`requestAnimationFrame`**（详见 [rules/animation.md](rules/animation.md) 第 1.2 节）

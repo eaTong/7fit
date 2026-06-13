@@ -269,7 +269,7 @@
 - [ ] 主号发 7 条（B 4 + C 3），数据回收到
 - [ ] 副号发 2 条，0 关联 + 0 熟人发现
 - [ ] 流程跑通（copy→storyboard→assets→render→publish 6 阶段）
-- [ ] 工具稳定（mmx / ffmpeg / Studio / Hyperframes）
+- [ ] 工具稳定（mmx / ffmpeg / Studio / Remotion）
 - [ ] A/B/C 各 2-3 个模板沉淀
 - [ ] 数据基线建立（5 指标 + 24h + 7d）
 ```

@@ -54,7 +54,7 @@
 | 跑 checklist | 15 min | checklist.md |
 | 启动 Studio 预览 | 2 min | npm run dev |
 | 等用户授权 | 不计 | "开始渲染"指令 |
-| 渲染 | 2-5 min | npx hyperframes render |
+| 渲染 | 2-5 min | npx remotion render |
 | 后处理/上传 | 10 min | 标题/标签/封面 |
 | 发布 | 5 min | 上传抖音 |
 | 数据记录 | 5 min | [[calendar.md]] |
@@ -131,7 +131,7 @@
 ### 3.2 素材完成
 
 - [ ] **assets.md 包含每个素材的"拍摄要求"**（视频素材必填 5 维度：机位/光线/时长/动作/其他）—— 见 [assets.md §1](assets.md#1-5-维拍摄规格必填项)
-- [ ] 通过 [assets.md](assets.md) 自动复制已有素材到 `hyperframe/public/<主题>/`
+- [ ] 通过 [assets.md](assets.md) 自动复制已有素材到 `remotion/public/<主题>/`
 - [ ] 缺失素材 0 项（或明确标注"等待生成"）
 - [ ] 训练动作视频 ≥ 5s（[storyboard.md §2](storyboard.md#2-时长硬约束)）
 - [ ] 文件名一致（resources/、assets.md、组件 staticFile 三处）
@@ -151,7 +151,7 @@
 ### 3.4 实现完成（Scene 组件）
 
 - [ ] 所有 Sequence 加 `premountFor={1 * fps}`
-- [ ] `gsap.timeline()` 构造时 `paused: true` + `.progress(0).render(0)` 锁初始帧
+- [ ] 所有 `<Sequence>` 加 `premountFor={1 * fps}` 锁初始帧
 - [ ] 转场帧重叠 ≥ 0.3s
 - [ ] 入场用 spring、出场用 Easing.in
 - [ ] 半透明彩色背景，没有纯色块遮挡
@@ -247,16 +247,16 @@
 
 ```bash
 # 启动 Studio 预览
-cd hyperframe && npm run dev
+cd remotion && npm run dev
 
 # 渲染（用户授权后）
-cd hyperframe && npx hyperframes render <CompositionId> out/<name>.mp4
+cd remotion && npx remotion render <CompositionId> out/<name>.mp4
 
 # 单帧抽检
-cd hyperframe && npx hyperframes still <CompositionId> --frame=90
+cd remotion && npx remotion still <CompositionId> --frame=90
 
 # 类型检查
-cd hyperframe && npm run lint
+cd remotion && npm run lint
 ```
 
 ### 5.2 模板文件速查
@@ -303,7 +303,7 @@ cd hyperframe && npm run lint
 
 ### 6.2 渲染失败
 
-1. 跑 `npx hyperframes still <id> --frame=<错帧>` 定位
+1. 跑 `npx remotion still <id> --frame=<错帧>` 定位
 2. 对照 [render.md §11 失败 case 库](render.md#11-渲染失败-case-库)
 3. 修复 → 重跑 checklist → 重渲染
 

@@ -2,7 +2,7 @@
 
 > **Phase 6 产物**（**放最后**）：视频总时长确定后 → 按总时长设计 BGM。
 >
-> **必须遵循**：[timing-sync.md](timing-sync.md)（BGM 时长 ≥ 全文 + 3s fade out）+ [script.md §0 音视频分离](script.md#1--速查remotion--hyperframes-api-映射)（`<video muted playsinline>` + 分离 `<audio>`）
+> **必须遵循**：[timing-sync.md](timing-sync.md)（BGM 时长 ≥ 全文 + 3s fade out）+ [script.md 音视频分离](script.md#15--音频分离铁律video-muted--独立-audio)（`<video muted playsinline>` + 分离 `<audio>`）
 >
 > **BGM 哲学**：**BGM 是"情绪地基"**——不抢人声，烘托气氛。3 要素：**音量克制**（-8 ~ -12 dB）+ **风格匹配**（视频类型 → BGM 类型）+ **节奏匹配**（BPM 与动作同步）。
 
@@ -175,23 +175,24 @@ tl.to(bgmEl, { volume: 0.4, duration: 0.5, ease: 'power2.in' }, 'voiceover-end')
 
 ---
 
-## 7 · 集成（`<audio>` 标签 + GSAP volume tween）
+## 7 · 集成（Remotion `<Audio>` 组件 + volume 函数）
 
-```html
-<audio id="bgm" preload="auto" loop>
-  <source src="/<主题>/audios/bgm/<topic>.mp3" type="audio/mpeg">
-</audio>
+```tsx
+import { Audio } from "remotion";
+
+<Audio
+  src={staticFile("bgm/<topic>.mp3")}
+  volume={(f) => {
+    // fade in：前 45 帧（1.5s）从 0 渐变到 0.4
+    if (f < 45) return interpolate(f, [0, 45], [0, 0.4], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+    // ducking：旁白期间降 volume
+    if (f > 90 && f < 270) return 0.25;
+    return 0.4;
+  }}
+/>
 ```
 
-```js
-const bgmEl = document.getElementById('bgm')
-bgmEl.volume = 0  // 初始 0，fade in
-
-// 在 timeline 起点 fade in
-tl.fromTo(bgmEl, { volume: 0 }, { volume: 0.4, duration: 1.5 }, 0)
-```
-
-> **不要**在视频本身带音轨（`<video muted playsinline>` + 分离 `<audio>`，见 [script.md §1](script.md#1--速查remotion--hyperframes-api-映射)）。
+> **不要**在视频本身带音轨（`<OffthreadVideo muted>` + 分离 `<Audio>`，见 [script.md §15](script.md#15--音频分离铁律video-muted--独立-audio)）。
 
 ### 7.1 多音频元素规范
 
@@ -314,14 +315,20 @@ resources/audios/sfx/         ← 音效（与 BGM 区分）
 </audio>
 ```
 
-```js
-const popSfx = document.getElementById('sfx-pop')
+```tsx
+// highlight segment 弹跳时同步播放 SFX
+import { Audio } from "remotion";
 
-// highlight segment 弹跳时同步播放
-gsap.fromTo(highlightEl, { scale: 1 }, {
-  scale: 1.15, duration: 0.25, yoyo: true, repeat: 1, ease: 'back.out(1.7)',
-  onStart: () => { popSfx.currentTime = 0; popSfx.play() }
-})
+// highlight segment 弹跳动效（Remotion spring）
+const scale = interpolate(frame, [0, 7, 14], [1, 1.15, 1], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.back(1.7)),
+});
+
+// SFX 用 Audio 组件（播放一次）
+<Audio src={staticFile("sfx/pop.mp3"} volume={0.6} />
+// 在 highlight 入场时播放（用 Sequence 或 frame 触发）
 ```
 
 ### 11.3 SFX 选型决策表
@@ -438,7 +445,7 @@ voiceoverEvents.forEach(vo => {
 - ❌ 用健身房嗨曲 / 抒情 ballad / 网红热曲（与 7fit 调性冲突）
 - ❌ 用大调（Am/Dm/F/Gm 小调优先）
 - ❌ BPM > 115 或 < 75（节奏感不对）
-- ❌ 在视频本身带音轨（违反 Hyperframes 音视频分离规则）
+- ❌ 在视频本身带音轨（违反音视频分离原则）
 - ❌ 旁白放 `bgm/` 目录（混在一起找不到）
 - ❌ **BPM 与动作不同步**（B 类训练必用 100-115 BPM）
 - ❌ **BPM > 120**（盖过旁白节奏感）

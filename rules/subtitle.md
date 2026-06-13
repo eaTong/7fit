@@ -27,7 +27,7 @@ remotion/src/scenes/<主题>/subtitles.json
   ↓
 【可选】录旁白 → resources/audios/<主题>.m4a（仅用于视频合成，**不影响字幕 timing**）
   ↓
-scene.js 加载 + GSAP 弹跳入场
+Scene 组件加载 + spring 弹跳入场
   ↓
 5 维评分卡自评（≥ 18 分才能进用户审阅）
 ```
@@ -35,7 +35,7 @@ scene.js 加载 + GSAP 弹跳入场
 > **为什么不需要 STT**：
 > - copy.md 的标点（句号、破折号）就是**确定的**句界和停顿点
 > - 计算时长 = `字数 / 3.4 + 破折号 × 0.5`（deterministic）
-> - 录旁白只是**音频轨道**，与字幕 timing **解耦**——音频时长可以略超/略短字幕，Hyperframes 引擎独立 seek
+> - 录旁白只是**音频轨道**，与字幕 timing **解耦**——音频时长可以略超/略短字幕，Remotion 引擎独立 seek
 > - 之前用 Whisper 实际识别（基于录音）反而引入"用户念错的字 → STT 错字"的污染链，且不匹配 timeline 计划
 
 ---
@@ -190,43 +190,44 @@ scene.js 加载 + GSAP 弹跳入场
 
 ---
 
-## 5 · 入场动效（GSAP 弹跳）
+## 5 · 入场动效（Remotion spring + interpolate）
 
 ### 5.1 默认入场
 
-```js
-gsap.from(subtitleEl, {
-  y: 30,
-  opacity: 0,
-  duration: 0.35,
-  ease: 'power2.out'
-})
+```tsx
+// spring 弹跳入场
+const enterProgress = interpolate(localFrame, [0, 10], [0, 1], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.cubic),
+});
+const y = interpolate(enterProgress, [0, 1], [30, 0]);
+const opacity = enterProgress;
 ```
 
 ### 5.2 highlight segment 二次跳动
 
-```js
-gsap.fromTo(highlightEl,
-  { scale: 1 },
-  {
-    scale: 1.15,
-    duration: 0.25,
-    ease: 'back.out(1.7)',
-    yoyo: true,
-    repeat: 1
-  }
-)
+```tsx
+// highlight 二次跳动（back.out spring）
+const highlightProgress = interpolate(localFrame, [0, 7, 14], [0, 1, 0], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.out(Easing.back(1.7)),
+});
+const scale = interpolate(highlightProgress, [0, 1], [1, 1.15]);
 ```
 
 ### 5.3 出场
 
-```js
-gsap.to(subtitleEl, {
-  y: -20,
-  opacity: 0,
-  duration: 0.3,
-  ease: 'power2.in'
-})
+```tsx
+// 出场：向上滑出 + 淡出
+const exitProgress = interpolate(localFrame, [durationFrames - 9, durationFrames], [1, 0], {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+  easing: Easing.in(Easing.cubic),
+});
+const y = interpolate(exitProgress, [0, 1], [0, -20]);
+const opacity = exitProgress;
 ```
 
 ### 5.4 动效选型（按字幕类型）
@@ -434,7 +435,7 @@ gsap.to(subtitleEl, {
 | **字数合规** | > 30% 条违反 ≤ 24 字 | < 10% 违反 | 0 违反 | — |
 | **highlight 合理** | 全篇 50% highlight | 全篇 20-30% | 全篇 20-25% + 关键 4 类齐全 | — |
 | **样式规范** | 字号 < 28px / 句末带标点 | 全部 ≥ 28px + 无句末标点 | 全部规范 + 5 类样式选型对 | — |
-| **动效同步** | 用 CSS transition / 漏动效 | 全用 GSAP + 0.3-0.4s | 全用 GSAP + 5 类选型对 + 节奏匹配段间 | — |
+| **动效同步** | 用 CSS transition / 漏动效 | 全用 interpolate + 0.3-0.4s | 全用 interpolate + 5 类选型对 + 节奏匹配段间 | — |
 
 ### 11.2 评审 SOP
 
@@ -463,7 +464,7 @@ gsap.to(subtitleEl, {
 - ❌ 字幕带句末标点
 - ❌ 字号 < 28px（移动端不可读）
 - ❌ 全部 highlight（高亮无意义）
-- ❌ 用 CSS transition / animation 做入场（hyperframes 按帧渲染时不按帧推进）
+- ❌ 用 CSS transition / animation 做入场（remotion 按帧渲染时不按帧推进）
 - ❌ 不校验时长直接用 mmx 输出（节奏可能与 [timing-sync.md](timing-sync.md) 锚点不符）
 - ❌ 录完旁白才发现节奏不对，回头改文案但不改字幕时间
 - ❌ **1 条字幕 3 个 highlight segment**（眼花）
@@ -484,7 +485,7 @@ gsap.to(subtitleEl, {
 | 写 JSON | [§2 JSON 格式](#2-json-格式) |
 | 控制样式 | [§3 字幕样式硬约束](#3-字幕样式硬约束) |
 | 标 highlight | [§4 重点 segment 标记规则](#4-重点-segment-标记规则) |
-| 写动效 | [§5 入场动效](#5-入场动效gsap-弹跳) |
+| 写动效 | [§5 入场动效](#5-入场动效remotion-spring--interpolate) |
 | 拆 / 合字幕 | [§8 拆条与合并策略](#8-拆条与合并策略) |
 | 选字幕样式 | [§9 字幕样式库（5 类）](#9-字幕样式库5-类) |
 | 按视频类型差异化 | [§10 A/B/C 三类字幕差异化](#10-abc-三类字幕差异化) |

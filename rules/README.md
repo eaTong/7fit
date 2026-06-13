@@ -2,12 +2,12 @@
 
 > **本目录是七练 (7fit) 视频生产的「工艺标准」。** 所有视频脚本撰写 → 分镜 → 渲染都必须遵循这里的规定。
 >
-> **核心范式**：AI 驱动 + Remotion/Hyperframes 双引擎支持。
+> **核心范式**：AI 驱动 + Remotion 视频引擎。
 >
 > **北极星**：「用产品思维去健身，用健身改造产品。」
 > **钩子句**：「让健身更简单。」
 >
-> **来源**：由 7fit_hp（Hyperframes）规则同步合并而来（2026-06-13），合并了 Remotion 原生规则的最佳实践。
+> **来源**：由 7fit 规则体系演进而来（2026-06-13），统一使用 Remotion 引擎。
 
 ---
 
@@ -28,7 +28,7 @@
 | 11 | [script.md](script.md) | 视频脚本编排规范 | 写 components/ 时 |
 | 12 | [subtitle.md](subtitle.md) | 字幕层：Whisper 转写 + highlight segment 标记 | 录旁白后 |
 | 13 | [storyboard.md](storyboard.md) | 分镜表：shot + pause + 段间停顿差异化动效 | 有字幕后设计分镜时 |
-| 14 | [animation.md](animation.md) | GSAP 动效：4 条 ease + 段间停顿 3 模式 + 元素入场/出场 | 写 scene.js 时 |
+| 14 | [animation.md](animation.md) | Remotion 动效：interpolate + spring + 4 条 easing + 转场动画 | 写 Scene 组件时 |
 | 15 | [bgm.md](bgm.md) | 4 类 BGM（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）+ ducking | 选 BGM 时 |
 | 16 | [assets.md](assets.md) | 素材清单 + 缺失补齐（mmx prompt 模板）| 写分镜时配套输出 |
 | 17 | [rhythm.md](rhythm.md) | 单条视频制作流程 SOP（5 步 + 1 触发 + T-3/T+7 节奏）| 制作单条视频时 |
@@ -119,7 +119,7 @@
 
 | 日期 | 变更 |
 |---|---|
-| 2026-06-13 | 由 7fit_hp（Hyperframes）规则同步合并，新增 9 份规则（strategy/backlog/voice-anchor/anti-ai-tells/research/rhythm/shoot-checklist/accounts/calendar），共 22 份规则 |
+| 2026-06-13 | 规则体系演进，统一使用 Remotion 引擎，新增 9 份规则（strategy/backlog/voice-anchor/anti-ai-tells/research/rhythm/shoot-checklist/accounts/calendar），共 22 份规则 |
 
 ---
 

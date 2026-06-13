@@ -26,7 +26,7 @@
        cd remotion
        npm run dev
        ↓
-4. 告诉用户"已启动预览，请打开 http://localhost:4000 确认效果"
+4. 告诉用户"已启动预览，请打开 http://localhost:4668 确认效果"
        ↓
 5. ⏸️ 等待用户审核
        ↓
@@ -56,7 +56,7 @@
 
 直接告诉用户：
 
-> "视频 Scene 组件已实现完毕，自检全部 ✅。Studio 预览已启动，请打开 http://localhost:4000 查看效果。确认 OK 后告诉我'开始渲染'，我再执行 `npx remotion render` 导出视频。"
+> "视频 Scene 组件已实现完毕，自检全部 ✅。Studio 预览已启动，请打开 http://localhost:4668 查看效果。确认 OK 后告诉我'开始渲染'，我再执行 `npx remotion render` 导出视频。"
 
 ---
 

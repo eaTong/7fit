@@ -86,7 +86,7 @@ const sceneParam = params.get('scene') || 'a2_one_person_50_videos';
 ```bash
 cd hyperframe
 
-# 启动 Studio 预览（http://localhost:4000）—— 默认动作
+# 启动 Studio 预览（http://localhost:4668）—— 默认动作
 npm run dev                    # = npx hyperframes studio
 
 # 渲染视频（产物输出到 out/）—— ⚠️ 必须用户说"开始渲染"才执行
@@ -196,7 +196,7 @@ npm run dev    # 会超时挂掉
 
 ```bash
 # 指定端口
-npm run dev -- --port=4000
+npm run dev -- --port=4668
 
 # 指定 scene
 npm run dev -- --scene=winged_scapula_b3
