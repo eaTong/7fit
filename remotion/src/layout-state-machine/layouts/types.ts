@@ -19,6 +19,22 @@ export interface LayoutState {
   shadow: string;
   /** 层叠顺序（默认 10）*/
   zIndex: number;
+  /** 口播是否为背景层（用于 centered_fullscreen_bg）*/
+  isBackgroundLayer?: boolean;
+  /** 口播背景层透明度（0~1）*/
+  bgOpacity?: number;
+  /** 多辅助元素区域槽位（布局可定义多个 auxiliary slot）*/
+  auxiliarySlots?: AuxiliarySlot[];
+}
+
+export interface AuxiliarySlot {
+  id: string;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  /** 槽位名称（如 "left", "right", "center"）*/
+  slot: string;
 }
 
 export type TransitionEasing =

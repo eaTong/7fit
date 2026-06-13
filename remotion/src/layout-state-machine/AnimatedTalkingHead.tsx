@@ -31,6 +31,10 @@ interface AnimatedTalkingHeadProps {
   isCircle?: boolean;
   /** 边缘羽化颜色，默认为白色（匹配深色背景）*/
   edgeGlowColor?: string;
+  /** 口播作为背景层（全屏半透明铺底）*/
+  isBackground?: boolean;
+  /** 背景层透明度（0~1）*/
+  bgOpacity?: number;
 }
 
 export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
@@ -41,6 +45,8 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
   transitionType = "ease-out",
   isCircle = false,
   edgeGlowColor = "rgba(255,255,255,0.5)",
+  isBackground = false,
+  bgOpacity = 1,
 }) => {
   const frame = useCurrentFrame();
   const relFrame = frame - shotStartFrame;
@@ -55,12 +61,17 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
   const CANVAS_W = 1920;
   const CANVAS_H = 1080;
   const isFullscreen = curLayout.id === "fullscreen";
+  const isBgMode = isBackground || curLayout.isBackgroundLayer;
+  const opacity = isBgMode ? (curLayout.bgOpacity ?? bgOpacity) : 1;
 
   // 分屏布局留白边，防止顶着屏幕边缘或邻侧素材
   const PADDING = 50;
 
   // 正方形：取宽高中较小值（分屏布局用有效区域减去 padding 后的尺寸）
-  const squareSize = isFullscreen
+  // 背景模式用全画布尺寸（1920×1080），不做 square 裁剪
+  const squareSize = isBgMode
+    ? CANVAS_W  // 1920 = 全画布宽，背景层填满
+    : isFullscreen
     ? Math.min(width, height)
     : Math.min(width - PADDING * 2, height - PADDING * 2);
 
@@ -98,15 +109,17 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
     <div
       style={{
         position: "absolute",
-        left: squareLeft,
-        top: squareTop,
-        width: squareSize,
-        height: squareSize,
-        borderRadius: finalRadius,
+        // 背景模式：全画布铺满，不做 square 居中
+        left: isBgMode ? 0 : squareLeft,
+        top: isBgMode ? 0 : squareTop,
+        width: isBgMode ? CANVAS_W : squareSize,
+        height: isBgMode ? CANVAS_H : squareSize,
+        borderRadius: isBgMode ? 0 : finalRadius,
         overflow: "hidden",
-        border: curLayout.borderWidth > 0 ? `${curLayout.borderWidth}px solid ${curLayout.borderColor}` : "none",
-        boxShadow: glowShadow,
-        zIndex: curLayout.zIndex,
+        border: isBgMode ? "none" : curLayout.borderWidth > 0 ? `${curLayout.borderWidth}px solid ${curLayout.borderColor}` : "none",
+        boxShadow: isBgMode ? "none" : glowShadow,
+        zIndex: isBgMode ? 5 : curLayout.zIndex,
+        opacity,
       }}
     >
       <MediaFallback

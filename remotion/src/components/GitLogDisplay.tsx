@@ -19,7 +19,7 @@ export interface GitLogEntry {
 interface GitLogDisplayProps {
   entries: GitLogEntry[];
   fontSize?: number;
-  visibleCount?: number;   // 可见行数，默认 5
+  visibleCount?: number;   // 可见行数，默认 15
   scrollSpeed?: number;     // 每秒滚动行数，默认 1
   highlightColor?: string;  // 高亮色，默认 #FF4500
   style?: React.CSSProperties;
@@ -28,7 +28,7 @@ interface GitLogDisplayProps {
 export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
   entries,
   fontSize = 28,
-  visibleCount = 5,
+  visibleCount = 15,
   scrollSpeed = 1,
   highlightColor = "#FF4500",
   style,

@@ -101,3 +101,45 @@ registerLayout({
   borderRadius: 180, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 0 20px rgba(255,255,255,0.3)", zIndex: 20,
 });
+
+// ── 新增 3 种多辅助元素布局 ──
+
+// 口播视频全屏铺满背景（半透明），内容叠加在正中央
+registerLayout({
+  id: "centered_fullscreen_bg",
+  left: 0, top: 0, width: 1920, height: 1080,
+  borderRadius: 0, borderWidth: 0, borderColor: "transparent",
+  shadow: "none", zIndex: 5,
+  isBackgroundLayer: true,
+  bgOpacity: 0.4,
+  auxiliarySlots: [
+    { id: "center", slot: "center", left: 560, top: 190, width: 800, height: 700 },
+  ],
+});
+
+// 口播居中，左右两侧辅助内容
+registerLayout({
+  id: "center_dual_aux",
+  left: 720, top: 192, width: 480, height: 480,
+  borderRadius: 240, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 15,
+  auxiliarySlots: [
+    { id: "left", slot: "left", left: 50, top: 50, width: 620, height: 864 },
+    { id: "right", slot: "right", left: 960, top: 50, width: 910, height: 864 },
+  ],
+});
+
+// 口播居中圆形，多个视频环绕旋转
+registerLayout({
+  id: "orbiting_center",
+  left: 780, top: 270, width: 360, height: 360,
+  borderRadius: 180, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 0 30px rgba(255,255,255,0.4)", zIndex: 15,
+  auxiliarySlots: [
+    // 环绕轨道槽位（4 个方位）
+    { id: "orbit_right", slot: "orbit", left: 0, top: 0, width: 200, height: 150 },
+    { id: "orbit_left", slot: "orbit", left: 0, top: 0, width: 200, height: 150 },
+    { id: "orbit_top", slot: "orbit", left: 0, top: 0, width: 200, height: 150 },
+    { id: "orbit_bottom", slot: "orbit", left: 0, top: 0, width: 200, height: 150 },
+  ],
+});

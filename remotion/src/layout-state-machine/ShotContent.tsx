@@ -100,6 +100,11 @@ function getAuxiliaryStyle(layoutId: string): React.CSSProperties {
     case "overlay_talking_head":
       // 口播在左上角小窗叠加（zIndex=20），辅助内容全屏
       return { left: 0, top: 0, width: 1920, height: 864 };
+    case "centered_fullscreen_bg":
+    case "center_dual_aux":
+    case "orbiting_center":
+      // 这些布局内容复杂，在 workout_intro children 里直接渲染
+      return { display: "none" };
     case "pip_bottom_right":
     case "pip_bottom_left":
       return { left: 0, top: 0, width: 1920, height: 864 };
