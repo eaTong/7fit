@@ -35,7 +35,7 @@ registerLayout({
 
 registerLayout({
   id: "left_text_right_talking",
-  left: 1344, top: 0, width: 480, height: 864,
+  left: 1440, top: 0, width: 480, height: 864,
   borderRadius: 12, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
 });

@@ -51,8 +51,31 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
   const width  = interpolate(relFrame, [0, TRANSITION_FRAMES], [prevLayout.width, curLayout.width], { easing, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const height = interpolate(relFrame, [0, TRANSITION_FRAMES], [prevLayout.height, curLayout.height], { easing, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-  // 正方形：取宽高中较小值
-  const squareSize = Math.min(width, height);
+  // canvas 居中（fullscreen 以 canvas 中心为基准）
+  const CANVAS_W = 1920;
+  const CANVAS_H = 1080;
+  const isFullscreen = curLayout.id === "fullscreen";
+
+  // 分屏布局留白边，防止顶着屏幕边缘或邻侧素材
+  const PADDING = 50;
+
+  // 正方形：取宽高中较小值（分屏布局用有效区域减去 padding 后的尺寸）
+  const squareSize = isFullscreen
+    ? Math.min(width, height)
+    : Math.min(width - PADDING * 2, height - PADDING * 2);
+
+  const effectiveLeft = left + PADDING;
+  const effectiveTop  = top  + PADDING;
+  const effectiveWidth  = width  - PADDING * 2;
+  const effectiveHeight = height - PADDING * 2;
+
+  const squareLeft = isFullscreen
+    ? (CANVAS_W - squareSize) / 2
+    : effectiveLeft + (effectiveWidth - squareSize) / 2;
+
+  const squareTop = isFullscreen
+    ? (CANVAS_H - squareSize) / 2
+    : effectiveTop + (effectiveHeight - squareSize) / 2;
 
   // 圆形：borderRadius = squareSize / 2
   const rawRadius = interpolate(relFrame, [0, TRANSITION_FRAMES], [prevLayout.borderRadius, curLayout.borderRadius], { easing, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -62,19 +85,6 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
   const finalRadius = isCircle
     ? circleRadius
     : Math.max(rawRadius, MIN_RADIUS);
-
-  // canvas 居中（fullscreen 以 canvas 中心为基准）
-  const CANVAS_W = 1920;
-  const CANVAS_H = 1080;
-  const isFullscreen = curLayout.id === "fullscreen";
-
-  const squareLeft = isFullscreen
-    ? (CANVAS_W - squareSize) / 2
-    : left + (width - squareSize) / 2;
-
-  const squareTop = isFullscreen
-    ? (CANVAS_H - squareSize) / 2
-    : top + (height - squareSize) / 2;
 
   // 边缘羽化：用多层 box-shadow 模拟内外羽化
   // 内圈：紧贴边缘的柔和 glow（0-8px 模糊）

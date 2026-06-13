@@ -59,7 +59,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       }}
     >
       {name && (
-        <div style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF" }}>
+        <div style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>
           {name}
         </div>
       )}
@@ -68,19 +68,19 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
         <div style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
           {reps && (
             <div>
-              <span style={{ fontSize: 14, color: "#888", marginRight: 4 }}>次</span>
+              <span style={{ fontSize: 24, color: "#888", marginRight: 4 }}>次</span>
               <Num>{reps}</Num>
             </div>
           )}
           {sets && (
             <div>
-              <span style={{ fontSize: 14, color: "#888", marginRight: 4 }}>组</span>
+              <span style={{ fontSize: 24, color: "#888", marginRight: 4 }}>组</span>
               <Num>{sets}</Num>
             </div>
           )}
           {rhythm && (
             <div>
-              <span style={{ fontSize: 14, color: "#888", marginRight: 4 }}>秒</span>
+              <span style={{ fontSize: 24, color: "#888", marginRight: 4 }}>秒</span>
               <Num size={28}>{rhythm}</Num>
             </div>
           )}
@@ -88,7 +88,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       )}
 
       {bottom && (
-        <div style={{ fontSize: 14, color: "#FFFFFF" }}>
+        <div style={{ fontSize: 24, color: "#FFFFFF" }}>
           {bottom}
         </div>
       )}

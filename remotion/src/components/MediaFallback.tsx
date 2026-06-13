@@ -49,28 +49,29 @@ export const MediaFallback: React.FC<MediaFallbackProps> = ({
       });
   }, [src]);
 
-  // 渐变 fallback UI
+  // 半透明渐变 fallback UI（背景可透出）
   const renderFallback = () => (
     <div
       className={className}
       style={{
         width: "100%",
         height: "100%",
-        background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+        background: "linear-gradient(135deg, rgba(26,26,46,0.85) 0%, rgba(22,33,62,0.85) 50%, rgba(15,52,96,0.85) 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
+        backdropFilter: "blur(2px)",
         ...style,
       }}
     >
-      <div style={{ textAlign: "center", padding: "0 24px", wordBreak: "break-all" }}>
-        <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.6 }}>
+      <div style={{ textAlign: "center", padding: "0 32px", wordBreak: "break-all" }}>
+        <div style={{ fontSize: 56, marginBottom: 16, opacity: 0.6 }}>
           {type === "video" ? "🎬" : "🖼"}
         </div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 24,
             color: "rgba(255,255,255,0.55)",
             fontFamily: "monospace",
             lineHeight: 1.5,
@@ -83,9 +84,9 @@ export const MediaFallback: React.FC<MediaFallbackProps> = ({
             <>
               <div
                 style={{
-                  fontSize: 10,
+                  fontSize: 24,
                   color: "rgba(255,255,255,0.3)",
-                  marginBottom: 4,
+                  marginBottom: 6,
                   letterSpacing: "0.1em",
                 }}
               >
