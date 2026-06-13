@@ -5,8 +5,8 @@ import { MediaFallback } from "../../components/MediaFallback";
 import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 
 // ============================================================
-// 8-Shot A类视频叙事弧
-// 叙事弧：Hook → Pain → Solution → Demo → Proof → Deep Dive → CTA → Brand
+// 10-Shot A类视频叙事弧
+// 叙事弧：Hook → Pain → Solution → Demo → Proof → Deep Dive → CTA → Brand → Code → GitLog
 // ============================================================
 
 const shotSequence: ShotEntry[] = [
@@ -26,6 +26,10 @@ const shotSequence: ShotEntry[] = [
   { shotId: "s7", layoutId: "fullscreen",              transitionType: "zoom",       startFrame: 780,  endFrame: 900  },
   // s8: Brand · 品牌收尾（全屏口播，品牌 statement）
   { shotId: "s8", layoutId: "fullscreen",              transitionType: "fade",      startFrame: 900,  endFrame: 990  },
+  // s9: Code · 代码展示（左侧代码，右下角色口播）
+  { shotId: "s9", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 990,  endFrame: 1140 },
+  // s10: GitLog · 版本历史展示（左侧滚动日志，右下角色口播）
+  { shotId: "s10", layoutId: "left_text_right_talking", transitionType: "slide-right", startFrame: 1140, endFrame: 1290 },
 ];
 
 // ============================================================
@@ -33,15 +37,48 @@ const shotSequence: ShotEntry[] = [
 // 对应 shotSequence 的每个 shotId
 // ============================================================
 const BACKGROUND_MAP: Record<string, string> = {
-  s1: "images/bg/s1_hook.jpg",
-  s2: "images/bg/s2_pain.jpg",
-  s3: "images/bg/s3_solution.jpg",
-  s4: "images/bg/s4_demo.jpg",
-  s5: "images/bg/s5_proof.jpg",
-  s6: "images/bg/s6_deep_dive.jpg",
-  s7: "images/bg/s7_cta.jpg",
-  s8: "images/bg/s8_brand.jpg",
+  s1:  "images/bg/s1_hook.jpg",
+  s2:  "images/bg/s2_pain.jpg",
+  s3:  "images/bg/s3_solution.jpg",
+  s4:  "images/bg/s4_demo.jpg",
+  s5:  "images/bg/s5_proof.jpg",
+  s6:  "images/bg/s6_deep_dive.jpg",
+  s7:  "images/bg/s7_cta.jpg",
+  s8:  "images/bg/s8_brand.jpg",
+  s9:  "images/bg/s9_code.jpg",
+  s10: "images/bg/s10_gitlog.jpg",
 };
+
+// ============================================================
+// 真实项目数据
+// ============================================================
+
+const CODE_SAMPLE = `interface ShotEntry {
+  shotId: string;
+  layoutId: string;
+  transitionType: TransitionEasing;
+  startFrame: number;
+  endFrame: number;
+  isCircle?: boolean;
+}
+
+const shotSequence: ShotEntry[] = [
+  { shotId: "s1", layoutId: "fullscreen",
+    transitionType: "zoom", startFrame: 0, endFrame: 90 },
+  { shotId: "s2", layoutId: "left_text_right_talking",
+    transitionType: "slide-left", startFrame: 90, endFrame: 210 },
+];`;
+
+const GITLOG_ENTRIES = [
+  { hash: "506f249", author: "Claude", date: "2026-06-13", message: "feat: 文字最小24px规范落地 + 布局间距优化" },
+  { hash: "03b1682", author: "Claude", date: "2026-06-13", message: "feat: add 8 AI-generated background images for workout_intro" },
+  { hash: "fab61df", author: "Claude", date: "2026-06-13", message: "feat: enhance AnimatedTalkingHead with edge glow, circle mode" },
+  { hash: "da5cbe2", author: "Claude", date: "2026-06-13", message: "feat(workout_intro): redesign 8-shot storyboard with per-shot AI backgrounds" },
+  { hash: "9b4a7c5", author: "Claude", date: "2026-06-13", message: "feat: add MediaFallback global component with gradient fallback" },
+  { hash: "b047d80", author: "Claude", date: "2026-06-12", message: "docs: add A类口播布局 usage spec to rules index" },
+  { hash: "dd9ab21", author: "Claude", date: "2026-06-12", message: "docs: add A类视频布局状态机使用规范" },
+  { hash: "b57714f", author: "Claude", date: "2026-06-12", message: "feat: add background layer to LayoutTransitionEngine" },
+];
 
 export const WorkoutIntro: React.FC = () => {
   return (
@@ -60,14 +97,37 @@ export const WorkoutIntro: React.FC = () => {
           );
         }}
       >
-        {(_, curLayout, __, currentShotId) => (
-          <ShotContent
-            currentShotId={currentShotId}
-            contentType="image"
-            contentSrc="images/demo.jpg"
-            curLayout={curLayout}
-          />
-        )}
+        {(_, curLayout, __, currentShotId) => {
+          if (currentShotId === "s9") {
+            return (
+              <ShotContent
+                currentShotId={currentShotId}
+                contentType="code_display"
+                codeContent={CODE_SAMPLE}
+                curLayout={curLayout}
+              />
+            );
+          }
+          if (currentShotId === "s10") {
+            return (
+              <ShotContent
+                currentShotId={currentShotId}
+                contentType="gitlog_display"
+                gitlogEntries={GITLOG_ENTRIES}
+                gitlogVisibleCount={5}
+                curLayout={curLayout}
+              />
+            );
+          }
+          return (
+            <ShotContent
+              currentShotId={currentShotId}
+              contentType="image"
+              contentSrc="images/demo.jpg"
+              curLayout={curLayout}
+            />
+          );
+        }}
       </LayoutTransitionEngine>
     </AbsoluteFill>
   );

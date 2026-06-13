@@ -1,11 +1,19 @@
 import { AuxiliaryContentManager } from "./AuxiliaryContentManager";
 import type { LayoutState } from "./layouts/types";
+import { CodeDisplay } from "../components/CodeDisplay";
+import { GitLogDisplay, type GitLogEntry } from "../components/GitLogDisplay";
 
 interface ShotContentProps {
   currentShotId: string;
-  contentType: "video" | "image" | "data_viz" | "text_card" | "pause_breath";
+  contentType: "video" | "image" | "data_viz" | "text_card" | "code_display" | "gitlog_display" | "pause_breath";
   contentSrc?: string;
   curLayout: LayoutState;
+  /** code_display 时传入代码字符串 */
+  codeContent?: string;
+  /** gitlog_display 时传入 entries 数组 */
+  gitlogEntries?: GitLogEntry[];
+  /** gitlog_display 时传入可见行数 */
+  gitlogVisibleCount?: number;
 }
 
 /**
@@ -22,13 +30,46 @@ export const ShotContent: React.FC<ShotContentProps> = ({
   contentType,
   contentSrc,
   curLayout,
+  codeContent,
+  gitlogEntries,
+  gitlogVisibleCount,
 }) => {
-  const needsAuxiliary = contentType !== "pause_breath" && contentSrc;
+  // code_display / gitlog_display 需要额外数据，不走 contentSrc
+  const needsAuxiliary = contentType !== "pause_breath" && (contentSrc || contentType === "code_display" || contentType === "gitlog_display");
 
   if (!needsAuxiliary) return null;
 
   // 根据 layoutId 计算辅助素材的占位区域
   const auxStyle = getAuxiliaryStyle(curLayout.id);
+
+  // code_display 和 gitlog_display 独立渲染（不走 AuxiliaryContentManager）
+  if (contentType === "code_display") {
+    return (
+      <div style={{ position: "absolute", ...auxStyle }}>
+        <CodeDisplay
+          code={codeContent ?? "// no code provided"}
+          language="typescript"
+          fontSize={22}
+          showLineNumbers
+          maxHeight={typeof auxStyle.height === "number" ? auxStyle.height * 0.9 : 400}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
+    );
+  }
+
+  if (contentType === "gitlog_display") {
+    return (
+      <div style={{ position: "absolute", ...auxStyle }}>
+        <GitLogDisplay
+          entries={gitlogEntries ?? []}
+          fontSize={22}
+          visibleCount={gitlogVisibleCount ?? 5}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
+    );
+  }
 
   return (
     <AuxiliaryContentManager
@@ -39,23 +80,19 @@ export const ShotContent: React.FC<ShotContentProps> = ({
       style={auxStyle}
     />
   );
-};
+}
 
 function getAuxiliaryStyle(layoutId: string): React.CSSProperties {
   switch (layoutId) {
     case "left_text_right_talking":
-      // 左侧 70% 放文字/素材，口播在右侧 30%
       return { left: 0, top: 0, width: 1344, height: 864 };
     case "pip_bottom_right":
     case "pip_bottom_left":
-      // 口播缩到小窗，主区域全屏显示辅助素材
       return { left: 0, top: 0, width: 1920, height: 864 };
     case "grid_2x2":
-      // 口播占左上格，其余 3 格放辅助素材
       return { left: 960, top: 0, width: 960, height: 864 };
     case "fullscreen":
     default:
-      // 全屏口播，无需辅助素材
       return { display: "none" };
   }
 }
