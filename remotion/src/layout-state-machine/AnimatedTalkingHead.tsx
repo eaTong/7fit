@@ -114,7 +114,7 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
         height: isBgMode ? CANVAS_H : squareSize,
         borderRadius: isBgMode ? 0 : finalRadius,
         overflow: "hidden",
-        border: isBgMode ? "none" : curLayout.borderWidth > 0 ? `${curLayout.borderWidth}px solid ${curLayout.borderColor}` : "none",
+        border: "none",
         boxShadow: isBgMode ? "none" : glowShadow,
         zIndex: isBgMode ? 5 : curLayout.zIndex,
         opacity,

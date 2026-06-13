@@ -24,7 +24,7 @@ export function getAllLayouts(): LayoutState[] {
   return Array.from(REGISTRY.values());
 }
 
-// ─── 内置 5 种布局（数据来源：PictureInPicture / SplitLeftRight / Grid2x2）───
+// ─── 内置 10 种布局 ──
 
 registerLayout({
   id: "fullscreen",
