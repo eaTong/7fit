@@ -5,7 +5,7 @@
 
 ---
 
-## 字幕 highlight 候选（供 [subtitle.md](../../remotion/rules/subtitle.md) 用）
+## 字幕 highlight 候选（供 [subtitle.md](../../../rules/production/subtitle.md) 用）
 
 | 词 | 原因 |
 |---|---|
@@ -22,7 +22,7 @@
 - 全文 **~230 字**（按工具 countChars 算：钩子 12 + 主体 196 + 收尾 21 = 229 字）
 - **预计朗读时长：~66 秒**（钩子 3s + 主体 57.6s + 收尾 2.6s + 段间 2.1s）—— **中速 3.4 字/秒**
 - **中速（默认）= 3.4 字/秒**（主体 196 字 / 57.6s ≈ 3.4；保持 50s 锚点 → 主体 78.4s → 放松 50s 到 57.6s）
-- 4 档速度 → 详见 [timing-sync.md](../../remotion/rules/timing-sync.md)
+- 4 档速度 → 详见 [timing-sync.md](../../../rules/planning/timing-sync.md)
 - 破折号"——"：**0 个**
 - "哎" 语气词：**0 个**
 - 段间停顿：**0.7 秒 × 3 = 2.1 秒**
@@ -82,7 +82,7 @@
 
 ---
 
-## 自检（参考 [copy.md 第 8 节](../../remotion/rules/copy.md)）
+## 自检（参考 [copy.md 第 8 节](../../../rules/planning/copy.md)）
 
 ### 文案质量
 
@@ -92,11 +92,11 @@
 - [x] 全文口语化，第一/二人称为主
 - [x] 短句优先，单句 ≤ 20 字
 - [x] 没有"我们/本产品/极致/颠覆"等广告腔
-- [x] 提到的事实能在 [resources/docs/](../SUMMARY.md) 找到原文（4 个动作来源在 [research.md §12](../../remotion/src/scenes/winged_scapula_b3/research.md)）
+- [x] 提到的事实能在 [docs/](../../docs/) 找到原文（4 个动作来源在 [research.md §12](../../hyperframe/src/scenes/winged_scapula_b3/research.md)）
 - [x] 软 CTA（评论互动）而非硬推
 - [x] 文案稿保存到 `resources/docs/copy/winged_scapula_b3.md`
 
-### 违禁词自检（[copy.md 第 4 节](../../remotion/rules/copy.md)）
+### 违禁词自检（[copy.md 第 4 节](../../../rules/planning/copy.md)）
 
 - [x] 绝对化用词 0 命中（无 最/第一/唯一/国家级/级/极/首）
 - [x] 承诺与保证 0 命中（无 100%/包/必/无效退款/稳赚）
@@ -127,7 +127,7 @@
 
 ---
 
-## 风险提示（与 [research.md §7](../../remotion/src/scenes/winged_scapula_b3/research.md) 对齐）
+## 风险提示（与 [research.md §7](../../hyperframe/src/scenes/winged_scapula_b3/research.md) 对齐）
 
 - ⚠️ 文案不提"治疗/治愈/根治"
 - ⚠️ 文案明确说"神经性翼状肩请就医"
@@ -142,10 +142,10 @@
 
 1. **录制旁白**（见下方"录音指引"）
    - 输出：`resources/audios/winged_scapula_b3.m4a`（**iPhone 语音备忘录默认格式，2026-06-05 强制**）
-2. mmx 字幕识别 → `remotion/src/scenes/winged_scapula_b3/subtitles.json`
-3. 写分镜表 → `remotion/src/scenes/winged_scapula_b3/storyboard.md`
-4. 写素材清单 → `remotion/src/scenes/winged_scapula_b3/assets.md`
-5. 跑 [checklist.md](../../remotion/rules/checklist.md) 自检
+2. mmx 字幕识别 → `hyperframe/src/scenes/winged_scapula_b3/subtitles.json`
+3. 写分镜表 → `hyperframe/src/scenes/winged_scapula_b3/storyboard.md`
+4. 写素材清单 → `hyperframe/src/scenes/winged_scapula_b3/assets.md`
+5. 跑 [checklist.md](../../../rules/delivery/checklist.md) 自检
 6. 实现 Scene 组件
 7. 启动 Studio 预览 → 等用户说"开始渲染"
 

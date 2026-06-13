@@ -1,330 +1,626 @@
-# 分镜规范（remotion）
+# 分镜规范（storyboard.md）
 
-> 阶段：分镜（storyboard / shot list）
-> 适用场景：根据字幕/音频设计镜头脚本
-> 来源：用户硬约束
-> 状态：✅ 生效
-> 上下游：上游是 `subtitle.md`（字幕文件），下游是 `script.md`（每个分镜对应一个 Scene 组件）
-> 配套产物：每次输出分镜**必须同时输出** `assets.md` 素材清单（详见 `assets.md`）
-> **视频类型**：开工前先确定属于 3 类中的哪一类（A 个人人设 / B 健身知识 / C 七练介绍），详见 `video-types.md`
-
-> ⏰ **2026-06-04 强制**：镜头时长基于字幕时长（视频镜可 1:N pack 多条字幕），**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
-> 全文时长 = 所有 shot duration 之和。改任何 shot duration → 7 个文件同步（见 timing-sync.md §3）。
+> **Phase 4 核心产物**：按字幕设计分镜，**含场景转入转出动效**，输出 `storyboard.md`（人类可读）+ `storyboard.json`（结构化）。
+>
+> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（镜头时长）+ [subtitle.md](subtitle.md)（字幕对齐）+ [script.md §7 组件模板库](script.md#7-组件模板库7-类常用组件)（每个 shot 拆组件）
+>
+> **分镜哲学**：**1 镜 = 1 个观众感知单元**。每镜必须有**主体（视频/图片/动效）+ 字幕 + 转场标注**。严禁"纯字幕镜"或"纯色块镜"（详 §3 严禁清单）。
 
 ---
 
-## 1. 分镜工作流
+## 1 · 字段定义
 
-### 1.1 触发条件
+每个分镜字段：
 
-**有字幕文件 / 音频**时，必须按字幕设计分镜。流程：
-
-```
-音频 (resources/audios/) 
-   ↓ mmx 识别
-字幕 (subtitles.json)
-   ↓ 按本规范设计
-分镜表 (storyboard.md / storyboard.json)
-   ↓ 实现
-Scene 组件 (scenes/<主题>/index.tsx)
-```
-
-### 1.2 输入
-
-- `remotion/src/scenes/<主题>/subtitles.json`（由 `subtitle.md` 生成）
-- 可选：用户在 `resources/videos/`、`resources/images/` 提供的素材
-
-### 1.3 输出位置
-
-分镜文档放在视频入口同级目录：
-
-```
-remotion/src/scenes/<视频主题>/
-├── index.tsx
-├── subtitles.json
-├── storyboard.md         # 分镜表（人类可读，方便 review）
-└── storyboard.json       # 分镜数据（结构化，可被组件消费）
-```
-
-> 两者写一份就够；`storyboard.json` 可由 `storyboard.md` 自动解析生成。
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `shot_id` | string | ✅ | 分镜 ID（snake_case）|
+| `start` | number | ✅ | 开始时间（秒）|
+| `end` | number | ✅ | 结束时间（秒）|
+| `duration` | number | ✅ | 时长（秒）= end - start |
+| `content_type` | string | ✅ | 类型：`video` / `image` / `text_card` / `pause_breath` / `broll` / `data_viz` |
+| `content_source` | string | ✅ | 素材路径（`/public/<主题>/videos/<file>.mov`）|
+| `voiceover` | string | ✅ | 该镜对应的旁白文本 |
+| `description` | string | ✅ | 画面在展示**什么**（不是文字在说什么）|
+| `transition_in` | string | ✅ | 入场转场（`fade` / `push_left` / `slide_up` / `pause_breath`）|
+| `transition_out` | string | ✅ | 出场转场（同上）|
+| `data_shot_id` | string | ✅ | DOM 属性值（snake_case）|
+| `broll_tag` | string | ❌ | B-roll 标记（`建立场景` / `平滑转场` / `增添意义`），仅 `content_type='broll'` 时填 |
+| `layout_state` | string | ❌ | **A 类专属**（2026-06-10 新增）：`talking_head`（口播态）/ `visual_support`（辅助素材态），混合类型不填 |
 
 ---
 
-## 2. 分镜表格式
+## 2 · 时长硬约束
 
-每个分镜（shot）必须包含以下字段：
-
-| 字段 | 说明 | 示例 |
+| 镜头类型 | 时长规则 | 原因 |
 |---|---|---|
-| `shot_id` | 镜头编号（从 1 开始） | `S01` |
-| `start` | 起始时间（秒，对齐字幕） | `0.0` |
-| `end` | 结束时间（秒） | `2.4` |
-| `duration` | 镜头时长（秒） | `2.4` |
-| `content_type` | 内容类型 | `video` / `image` / `animation` / `data_viz` / `code_component` |
-| `content_source` | 素材路径（`resources/...`） / `generate:<mmx_prompt>` / `<组件名 prop=...>` | `resources/videos/卧推80KG_10.mov` / `<ActionDataCard reps="12-15" sets="3" />` |
-| `voiceover` | 对齐的字幕 ID | `1`（即 `subtitles.json[0]`） |
-| `description` | 这个镜头在讲什么 | `演示用户用 3 秒一句话记录训练` |
-| `overlay_text` | 主区域叠加的少量文字（≤ 6 字，可选） | `3 秒` |
+| **视频类** | > 5s（打包多条字幕）| 视频切换太频繁观众反应不过来 |
+| **图片类** | = 字幕时长（或略长 2-5s）| 与旁白同步 |
+| **pause_breath** | 0.5-1s（用户硬约束）| 段间停顿 |
+| **text_card** | = 字幕时长 | 卡片展示完才走 |
+| **data_viz** | = 字幕时长 | 数据可视化完整呈现 |
+| **broll** | 1-5s（按功能）| 见 §10 B-roll 镜头 |
 
-### 2.1 Markdown 分镜表模板
+> **时长来源**：必须从 [timing-sync.md](../planning/timing-sync.md) 推导，不可手填。
+
+---
+
+## 3 · 严禁清单
+
+### 3.1 严禁"纯色背景 + 文字"镜头
+
+每镜必须有**实内容**：
+- 视频 / 图片
+- 动画 / 数据可视化
+- 屏幕录制 / 复合层
+
+### 3.2 严禁"纯字幕展示"镜头（2026-06-06）
+
+字幕必须有**背景素材**（视频/图片/动画/复合层），**不能**让字幕成为 shot 的唯一内容。
+
+### 3.3 严禁 pause_breath 切换其他素材
+
+`pause_breath` shot 必须延长**上一个视频**的播放时间（0.8× 慢动作 / 1.2× 加速 / 特写 / freeze frame），**禁止**：
+- 切换其他素材
+- 显示纯字幕
+- 显示装饰元素
+
+---
+
+## 4 · 转场标注硬约束
+
+> **每个 shot 边界都要标 `transition_in` / `transition_out`**。
+
+| 转场 | 时长 | 适用场景 | ease |
+|---|---|---|---|
+| `fade` | 0.4s | 通用，柔和 | `power2.inOut` |
+| `push_left` / `push_right` | 0.4s | 时间推进感 | `power2.inOut` |
+| `slide_up` / `slide_down` | 0.4s | 新段落开始 | `power2.out` |
+| `pause_breath` | 0.5-1s | 段间停顿 | 见 [script.md §5.2](script.md#52-pause_breath-4-种实现) |
+| `zoom` | 0.5s | 强调重点 | `back.out(1.7)` |
+| ❌ flip / 旋转 / 3D | — | 与"力量感"调性冲突 | — |
+
+> GSAP 实现见 [animation.md §3 转场](animation.md#3--转场动画)。
+
+### 4.1 转场选型决策树
+
+```
+新段落开始？
+├─ 是 → slide_up / slide_down（0.4s）
+├─ 否，时间推进 → push_left / push_right（0.4s）
+├─ 否，主题延续 → fade（0.4s）
+├─ 是段间停顿 → pause_breath（0.5-1s，4 选 1）
+└─ 需要强调重点 → zoom（0.5s）
+```
+
+### 4.2 A 类视频转场适配方案（v4.2 新增）
+
+> **A 类视频转场核心**：**柔和 + 双态切换**——转场风格偏柔和（fade / slide_up），加上双态切换（0.5s power2.inOut）。
+
+| 转场位置 | 转场类型 | 时长 | ease | 说明 |
+|---|---|---|---|---|
+| 钩子段 → 段1 | `fade` | 0.4s | `power2.inOut` | 柔和过渡 |
+| 段1 → 段2（双态切换）| `double_state_switch` | 0.5s | `power2.inOut` | 视频缩小+辅助内容入场 |
+| 段间停顿 | `pause_breath` | 0.5-1s | 4 选 1 | 0.8× 慢动作 / 1.2× 加速 / 特写 / freeze frame |
+| 段2 → 段3 | `fade` | 0.4s | `power2.inOut` | 柔和过渡 |
+| 收尾段 | `fade` | 1s | `power2.inOut` | 1s 沉淀 |
+
+#### 4.2.1 A 类双态切换转场（专属）
+> 详见 [animation.md §12 A 类双态切换动效](../production/animation.md#12--a-类双态切换动效2026-06-10-新增)。
+
+```js
+// 全屏态 → 左右分栏态（0.5s, power2.inOut）
+gsap.to('.talking-head', {
+  left: 0, top: 260, width: 574, height: 574,
+  duration: 0.5, ease: 'power2.inOut'
+})
+
+// 同时：辅助素材入场
+gsap.from('.visual-support__frame', {
+  x: 80, opacity: 0, scale: 0.92,
+  duration: 0.4, ease: 'power2.out'
+}, '<+=0.1')  // 视频缩小后 0.1s 辅助素材接续入场
+```
+
+### 4.3 B 类视频转场适配方案（v4.2 新增）
+
+> **B 类视频转场核心**：**紧凑 + 强调**——转场风格偏紧凑（push_left / zoom），强调重点动作。
+
+| 转场位置 | 转场类型 | 时长 | ease | 说明 |
+|---|---|---|---|---|---|
+| 钩子段 → 自测段 | `push_left` | 0.4s | `power2.inOut` | 时间推进感 |
+| 自测段 → 动作段 | `pause_breath` | 0.5-1s | 4 选 1 | 段间停顿 |
+| 动作段之间 | `zoom` | 0.5s | `back.out(1.7)` | 强调重点动作 |
+| 动作段 → 收尾段 | `push_left` | 0.4s | `power2.inOut` | 时间推进感 |
+| 收尾段 | `fade` | 1s | `power2.inOut` | 1s 沉淀 |
+
+#### 4.3.1 B 类动作段之间转场（zoom 强调）
+```js
+// 动作段之间：zoom（0.5s, back.out(1.7)）
+gsap.fromTo('.action-highlight',
+  { scale: 1 },
+  { scale: 1.3, duration: 0.5, ease: 'back.out(1.7)' }
+)
+```
+
+### 4.4 转场时长与 ease 选型规范
+
+| 转场类型 | 时长 | ease | 适用场景 |
+|---|---|---|---|
+| **通用转场**（fade / push / slide）| 0.4s | `power2.inOut` | 大部分场景 |
+| **强调转场**（zoom）| 0.5s | `back.out(1.7)` | 重点动作 / 关键数据 |
+| **段间停顿**（pause_breath）| 0.5-1s | 4 选 1 | 段间消化 |
+| **双态切换**（A 类专属）| 0.5s | `power2.inOut` | A 类双态切换 |
+| **收尾沉淀**（fade）| 1s | `power2.inOut` | 收尾段 |
+
+> **铁律**：转场时长 ≥ 0.3s，否则观众反应不过来（详 [animation.md §4.2 转场时长约束](../production/animation.md#42-转场时长约束)）。
+
+---
+
+## 5 · description 写法
+
+**描述的是画面在展示什么，不是文字在说什么。**
+
+| ❌ 错误 | ✅ 正确 |
+|---|---|
+| "讲翼状肩的危害" | "肩胛骨特写镜头，演示翼状肩形态" |
+| "说训练方法" | "靠墙天使动作演示 × 4 次" |
+| "强调 10 分钟" | "右上角卡片显示 '10 min'，配橙色 1.15× 弹跳动效" |
+
+### 5.1 description 5 要素模板
+
+每条 description 必含以下 5 类信息：
+
+| # | 要素 | 例 |
+|---|---|---|
+| 1 | **主体** | 人物特写 / 物体 / 卡片 |
+| 2 | **动作 / 状态** | 演示、旋转、滚动 |
+| 3 | **位置** | 顶部居左 / 右上角 / 中央 |
+| 4 | **辅助元素** | 卡片、字幕、装饰 |
+| 5 | **动效标注**（如有）| 1.15× 弹跳、慢动作 |
+
+**反例**（缺要素）：
+- ❌ "展示训练方法"（缺 1-5）
+- ❌ "上半身特写"（只有 1，缺其他）
+
+---
+
+## 6 · 字幕对齐关系
+
+| 镜头类型 | 字幕对应 | 说明 |
+|---|---|---|
+| **视频类** | 1 : N（一镜对多条字幕）| 视频持续时间长，旁白推进 |
+| **图片类** | 1 : 1 | 与字幕同进同出 |
+| **text_card** | 1 : 1 | 卡片文字 = 字幕 |
+| **pause_breath** | 0 : 0 | 段间停顿，无字幕 |
+| **broll** | 1 : 0 或 0 : 0 | B-roll 镜头可无字幕 |
+| **data_viz** | 1 : 1 | 数据展示 = 字幕 |
+
+> 详见 [subtitle.md §6 时长校验](subtitle.md#6--时长校验公式)。
+
+---
+
+## 7 · 每镜一组件（`components/Shot<N>_<描述>.html`）
+
+```
+components/
+├── Shot0_Hook.html              # 钩子
+├── Shot1_SelfTest_1.html        # 自测第 1 步
+├── Shot1_SelfTest_2.html        # 自测第 2 步
+├── Shot1_SelfTest_3.html        # 自测第 3 步
+├── Shot2_Action_WallAngel.html  # 动作 1：靠墙天使
+├── Shot2_Action_YTW.html        # 动作 2：俯身 Y-T-W
+├── Shot3_PauseBreath.html       # 段间停顿
+├── Shot4_Outro_CTA.html         # 收尾 CTA
+```
+
+**命名规范**：
+- PascalCase（与 `shot_id` snake_case 区分）
+- `<N>_<段主题>_<描述>.html`
+
+> 组件模板见 [script.md §7 组件模板库](script.md#7-组件模板库7-类常用组件)。
+
+---
+
+## 8 · storyboard.md 模板
 
 ```markdown
-| shot_id | 时间 (s) | 时长 (s) | 类型 | 素材 | 字幕 | 描述 |
-|---------|----------|----------|------|------|------|------|
-| S01 | 0.0-2.4 | 2.4 | video | resources/videos/卧推80KG_10.mov | 1 | 开场钩子：动作演示 |
-| S02 | 2.4-5.1 | 2.7 | image | resources/images/chat_demo.png | 2 | 演示 AI 对话界面 |
-| S03 | 5.1-10.0 | 4.9 | data_viz | generate:周报数据可视化 | 3-4 | 周报数据图表 |
+# <主题> · 分镜表
+
+> **视频类型**：A / B / C
+> **总时长**：65.4s（按 timing-sync.md）
+> **BGM**：Power Build（tech house, 105 BPM）
+> **画布**：1080×1920 竖屏
+
+## Shot 列表
+
+| # | shot_id | start | end | dur | 类型 | 素材 | 转场入 | 转场出 |
+|---|---|---|---|---|---|---|---|---|
+| 0 | hook_question | 0.0 | 3.0 | 3.0 | text_card | self_test.png | fade | push_left |
+| 1 | self_test_1 | 3.5 | 9.5 | 6.0 | video | 自测_01.mov | push_left | pause_breath |
+| 2 | pause_breath_1 | 9.0 | 9.7 | 0.7 | pause_breath | (上镜 0.8× 慢动作) | pause_breath | fade |
+| 3 | self_test_2 | 9.7 | 16.5 | 6.8 | video | 自测_02.mov | fade | push_left |
+| ... |
+
+## 详细描述
+
+### Shot 0 · hook_question
+- **画面**：纯黑底 + 大字幕 "你以为靠墙就能改翼状肩？"
+- **字幕**：highlight 全段，橙色 1.15×
+- **动效**：文字从 0 弹跳入场（back.out 1.7）
+- **BGM**：第 0s 淡入
+
+### Shot 1 · self_test_1
+- **画面**：上半身侧面特写，演示翼状肩形态
+- **字幕**：白色，底部居中
+- **转场**：左推（push_left, 0.4s）
 ```
 
-### 2.2 JSON 分镜数据模板
+---
+
+## 9 · storyboard.json 模板
 
 ```json
-[
-  {
-    "shot_id": "S01",
-    "start": 0.0,
-    "end": 2.4,
-    "duration": 2.4,
-    "content_type": "video",
-    "content_source": "resources/videos/卧推80KG_10.mov",
-    "voiceover": 1,
-    "description": "开场钩子：动作演示",
-    "overlay_text": "3 秒"
-  }
-]
+{
+  "id": "winged_scapula_b3",
+  "duration": 65.4,
+  "canvas": { "width": 1080, "height": 1920, "fps": 30 },
+  "bgm": { "type": "power_build", "volume_db": -8 },
+  "shots": [
+    {
+      "shot_id": "hook_question",
+      "data_shot_id": "hook_question",
+      "start": 0.0,
+      "end": 3.0,
+      "duration": 3.0,
+      "content_type": "text_card",
+      "content_source": "/public/winged_scapula_b3/images/self_test.png",
+      "voiceover": "你以为靠墙就能改翼状肩？",
+      "description": "纯黑底 + 大字幕",
+      "transition_in": "fade",
+      "transition_out": "push_left"
+    }
+  ]
+}
 ```
 
 ---
 
-## 3. 时长硬约束
+## 10 · B-roll 镜头（辅助镜头）
 
-### 3.1 视频类镜头
+> 2026-06-08 新增。A-roll 之外的一切辅助镜头，三大功能：
 
-**使用视频素材的镜头时长必须 > 5 秒**。
-
-- 视频类镜头把多条相邻字幕"打包"到一个长镜头里
-- 推荐覆盖 2-4 条字幕（5-12s），让视频充分发挥节奏感
-- 不足 5s 的视频段 = ❌ 镜头时长错误
-
-```markdown
-# ✅ 正确：视频镜头 7.2s，覆盖 3 条字幕
-| S03 | 5.1-12.3 | 7.2 | video | resources/videos/深蹲_100KG.mov | 3,4,5 | 深蹲训练演示 |
-# ❌ 错误：视频镜头只用了 2.4s
-| S03 | 5.1-7.5 | 2.4 | video | resources/videos/深蹲_100KG.mov | 3 | 深蹲训练演示 |
-```
-
-### 3.2 图片类镜头
-
-**图片镜头的时长根据字幕决定**：
-
-- 默认 = 对应字幕段的时长
-- 如果图片需要更多展示时间，可延长到相邻字幕的中点（不超过 1.5× 字幕时长）
-- 单张图片展示时间建议 **2-5 秒**，过短看不清楚，过长视觉疲劳
-
-```markdown
-# ✅ 正确：图片镜头 = 字幕时长
-| S02 | 2.4-5.1 | 2.7 | image | resources/images/chat_demo.png | 2 | 对话界面演示 |
-# ✅ 正确：图片略长于字幕
-| S05 | 10.0-13.5 | 3.5 | image | resources/images/profile.png | 6 | 个人中心 |
-# ❌ 错误：图片镜头 0.8s，根本看不清
-| S05 | 10.0-10.8 | 0.8 | image | resources/images/profile.png | 6 | 个人中心 |
-```
-
-### 3.3 动画 / 数据可视化
-
-- 同图片规则，根据字幕/数据复杂度决定时长
-- 复杂图表建议 4-6s
-
-### 3.4 时长一致性自检
-
-每个分镜的 `start` 必须 = 上一镜的 `end`；`end - start == duration`。整段分镜的 `end` 必须等于音频总时长。
-
----
-
-## 4. 镜头内容硬约束
-
-**每个镜头都必须有实际视觉内容展现**，**严禁出现"纯色背景 + 文字"的空镜头**。
-
-### 4.1 允许的 content_type
-
-| 类型 | 说明 | 示例 | 是否需要外部素材 |
+| 功能 | 描述 | 时长 | broll_tag |
 |---|---|---|---|
-| `video` | 实拍视频素材 | 健身动作演示、训练 vlog | ✅ 需 `resources/videos/` |
-| `image` | 图片素材/截图 | 界面截图、产品图 | ✅ 需 `resources/images/` |
-| `animation` | Remotion 内的动效组件 | 数字滚动、3D 元素入场 | ❌ 纯代码 |
-| `data_viz` | 数据可视化 | 折线图、柱状图、训练容量 | ❌ 纯代码 |
-| `screen_recording` | 屏幕录制 | 演示 AI 对话流程 | ✅ 需用户录屏 |
-| `composite` | 多层叠加 | 视频底层 + 数据前景层 | 视子层而定 |
-| **`code_component`** | **可复用数据组件** | **数据卡 / 标题 / 列表 / CTA / Badge** | **❌ 纯代码，不进 assets.md** |
+| **建立场景** | 健身房 / 公园 / 办公室等空镜 | 2-3s | `建立场景` |
+| **平滑转场** | 切主题前的过渡镜头 | 1-2s | `平滑转场` |
+| **增添意义** | 数据可视化 / 屏幕录制 / 抽象动效 | 2-5s | `增添意义` |
 
-> **`code_component` 是 2026-06-04 新增**——详见 [assets.md §1.4](assets.md#14-⚠️-可代码实现的内容不进-assetsmd强约束)。
-> 触发场景：分镜要展示"数据卡 / 数字高亮 / 章节标题 / 列表 / 按钮 / Badge"等可用代码渲染的内容。
-> `content_source` 字段写组件名 + props，例如 `<ActionDataCard name="壁虎推墙" reps="12-15" sets="3" />`。
-> **不**进 `assets.md`（不消耗 mmx / 不占 `public/` 配额）。
+**`description` 必含** `B-roll: <功能>` 标记。
 
-### 4.2 ❌ 禁止的"伪内容"
+例：
+- "健身房空镜，远景 4 秒" → B-roll: 建立场景
+- "训练数据飞入卡片" → B-roll: 增添意义
+- "街跑脚步特写" → B-roll: 平滑转场
 
-- ❌ 纯黑底 + 居中文字
-- ❌ 纯色块（橙/红/白）+ 单行标题
-- ❌ 渐变背景 + 文字，无其他视觉元素
-- ❌ 几何图形 + 文字，无信息含量
+### 10.1 B-roll 与 A-roll 的关系
 
-### 4.3 文字的角色
-
-文字**只能作为叠加层**（overlay），**不能作为唯一内容**：
-
-- ✅ 视频 + 角落数据标签（如 "80KG"）
-- ✅ 数据图表 + 关键数据高亮
-- ✅ 截图 + 红框/箭头标注
-- ❌ 黑屏 + "让健身更简单"（即使文字再大）
-
-### 4.4 强制要求
-
-每个分镜在 `description` 中必须写清楚**实际视觉内容是什么**（不是文字在说什么，而是画面在展示什么）。Reviewer 看到 `description` 就要能想象出画面。
-
-### 4.5 🆕 段间停顿 = shot 边界（2026-06-04 流程变更）
-
-> **核心**：每个段间停顿（copy.md 段落之间的 0.5-1s 静音）**在 storyboard 里必须落成 1 个独立的"段间 shot"**。
-> 这个段间 shot 的 content_type 必须是 **`transition`**（不是 video / image / animation）。
-
-| 段间 shot 的硬约束 | 规则 |
-|---|---|
-| `content_type` | `transition` |
-| `duration` | **0.5-1.0 秒**（与 copy.md 一致）|
-| `description` | 必填：「段间停顿：从 `<前段名>` 到 `<后段名>`」|
-| `subtitle_ids` | 空（**不放字幕**）|
-| 视觉 | 空镜 / 黑屏 / 浅色背景 + 章节标题 / 转场动效 |
-| 声音 | BGM 升回 -8 dB（解除 ducking）|
-
-```markdown
-# 示例：winged_scapula_b3
-| S01 | 0.0-3.0  | 3.0 | video  | 001_hook_compare.mov | 1 | 钩子对比 |
-| S02 | 3.0-3.7  | 0.7 | transition | — |   | 段间停顿：钩子 → 自测 1     ← 🆕
-| S03 | 3.7-8.7  | 5.0 | video  | 002_mirror_test.mov | 2 | 自测 1 演示 |
-| S04 | 8.7-9.4  | 0.7 | transition | — |   | 段间停顿：自测 1 → 自测 2   ← 🆕
-| S05 | 9.4-14.4 | 5.0 | video  | 003_wall_push.mov | 3,4 | 自测 2 演示 |
-| ...
-```
-
-### 4.6 🆕 每个 shot 边界必标注"转入 + 转出动效"（2026-06-04 用户硬约束）
-
-> **核心**：每个 shot 的开始和结束都必须有转入/转出动效——**不能硬切**。
-
-`description` 字段必须包含：
-
-```markdown
-| S03 | 3.7-8.7 | 5.0 | video | 002_mirror_test.mov | 2 | [转入：Crossfade 0.3s] 自测 1 演示 [转出：Slide 0.3s] |
-```
-
-> **支持的转场**（[animation.md §7](animation.md) 详述）：Crossfade / Slide / Push / 方向滑动 / Wipe。
-> **禁止**：Flip / 旋转 / 3D（与"力量感"调性冲突）。
-> **段间 transition shot** 自身也必须有转出 → 下一段的转入（首尾相接，无硬切）。
-
----
-
-## 5. 字幕对齐规则
-
-### 5.1 一一对应
-
-**默认每个分镜对应 1 条字幕**。多对一/一对多需要明确理由：
-
-| 关系 | 何时用 | 示例 |
+| 维度 | A-roll（主镜）| B-roll（辅镜）|
 |---|---|---|
-| 1 镜头 : 1 字幕 | 默认 | 单条叙述 + 配图 |
-| 1 镜头 : N 字幕 | 视频类镜头，N ≥ 1 | 演示 5s 视频，旁白说了 3 句 |
-| N 镜头 : 1 字幕 | 复杂概念，文字一次说清但视觉要拆 | 拆解产品 3 个功能 = 3 个镜头共用 1 句旁白 |
-
-### 5.2 对齐要求
-
-- `voiceover` 字段记录对齐的字幕 ID
-- 镜头 `start` / `end` 必须在所引用字幕的 `start` / `end` 范围内（或精确匹配）
-- 视频镜头（duration > 5s）跨多条字幕时，`voiceover` 写 ID 列表（如 `"voiceover": [3, 4, 5]`）
-
-### 5.3 静音段处理
-
-如果分镜的 `start-end` 区间内没有字幕（静音/纯音效），仍然需要：
-
-- 写明 `voiceover: null`
-- `description` 中写"静音段" + 视觉内容
-- 静音段时长建议 ≤ 1.5s（不要让画面空着太久）
+| 数量 | ≥ 70% | ≤ 30% |
+| 是否带旁白 | ✅ 必带 | ❌ 可不带 |
+| 时长 | 3-8s | 1-5s |
+| content_type | `video` / `image` / `text_card` | `broll` |
 
 ---
 
-## 6. 分镜 → Scene 组件的实现约定
+## 11 · 4 类段落分镜模板
 
-### 6.1 一镜一组件
+> **钩子段 / 自测段 / 动作段 / 收尾段**——4 类段落的分镜模板。
 
-每个分镜对应一个 Scene 组件（在 `scenes/<主题>/components/` 下）：
+### 11.1 钩子段（0-3s）
 
-```
-remotion/src/scenes/workout_intro/
-├── index.tsx              # Composition 入口
-├── storyboard.md
-├── storyboard.json
-├── subtitles.json
-└── components/
-    ├── Shot01_HookVideo.tsx     # S01
-    ├── Shot02_ChatDemo.tsx      # S02
-    └── Shot03_DataViz.tsx       # S03
-```
+**目标**：3 秒抓人。
 
-### 6.2 组件命名
+| 字段 | 取值 |
+|---|---|
+| content_type | `text_card` 或 `video`（短） |
+| 时长 | **固定 3s**（抖音硬约束）|
+| transition_in | `fade` |
+| transition_out | `push_left` / `slide_up`（节奏紧）|
+| description | "**纯黑底 + 大字幕** `<钩子句>`，highlight 全段 + 1.15× 弹跳" |
+| 字幕条数 | 1 条（钩子句本身）|
 
-`<Shot编号>_<分镜描述>.tsx`（PascalCase），与分镜 `description` 对应。
+**示例**：
 
-### 6.3 在 Composition 中组装
-
-```tsx
-// scenes/workout_intro/index.tsx
-import { Shot01_HookVideo } from "./components/Shot01_HookVideo";
-import { Shot02_ChatDemo } from "./components/Shot02_ChatDemo";
-
-export const WorkoutIntro = () => {
-  return (
-    <>
-      <Sequence from={0} durationInFrames={72}>      {/* S01: 0-2.4s @ 30fps = 72 帧 */}
-        <Shot01_HookVideo />
-      </Sequence>
-      <Sequence from={63} durationInFrames={81}>      {/* S02: 2.1-4.8s（含 0.3s 转场） */}
-        <Shot02_ChatDemo />
-      </Sequence>
-    </>
-  );
-};
+```json
+{
+  "shot_id": "hook_question",
+  "start": 0.0, "end": 3.0, "duration": 3.0,
+  "content_type": "text_card",
+  "content_source": "/public/winged_scapula_b3/images/hook_bg.png",
+  "voiceover": "你以为靠墙就能改翼状肩？",
+  "description": "纯黑底 + 大字幕 '你以为靠墙就能改翼状肩？'，highlight 全段 + 1.15× 弹跳",
+  "transition_in": "fade",
+  "transition_out": "push_left"
+}
 ```
 
-### 6.4 命名与 `script.md` 联动
+### 11.2 自测段（每步 5-7s）
 
-Scene 组件名反映**分镜内容**（不是 S01/S02 编号），与 `script.md` 第 1 节"场景命名必须根据内容自动命名"一致。
+**目标**：让观众跟着做。
 
-### 6.5 素材与 `assets.md` 联动
+| 字段 | 取值 |
+|---|---|
+| content_type | `video`（必须）|
+| 时长 | 5-7s/步（1 镜对多字幕 1:N）|
+| transition_in | `push_left` / `fade` |
+| transition_out | `pause_breath`（必带 0.5-1s）|
+| description | "**演示动作**（上半身 / 侧面 / 背面）"<步号>"：<动作>，<观察点>特写" |
+| 字幕条数 | 2-3 条（指令+观察）|
 
-每个分镜的 `content_source` 字段会自动成为 `assets.md` 的一行。`assets.md` 输出时：
-- 已有素材 → 自动复制到 `remotion/public/<主题>/`
-- 缺失素材 → 列在"缺失"节，配 mmx prompt
-- **视频素材必须包含"拍摄要求"**（5 维度：机位/光线/时长/动作/其他）—— 见 [assets.md 第 2.2 节](remotion/rules/assets.md)
-- 实现 Scene 组件前，先查 `assets.md` 的"已就位"列表——只有素材就位才能 import
+**示例**：
 
-详见 [remotion/rules/assets.md](remotion/rules/assets.md)。
+```json
+{
+  "shot_id": "self_test_1",
+  "start": 3.5, "end": 9.5, "duration": 6.0,
+  "content_type": "video",
+  "content_source": "/public/winged_scapula_b3/videos/自测_01.mov",
+  "voiceover": "背对镜子站好，肩膀放松手垂下来。肩胛骨内侧明显突出，就是翼状。",
+  "description": "上半身背面特写，演示自测第 1 步：自然站姿 + 肩胛骨特写镜头",
+  "transition_in": "push_left",
+  "transition_out": "pause_breath"
+}
+```
+
+### 11.3 动作段（每动作 5-8s）
+
+**目标**：让观众跟着练。
+
+| 字段 | 取值 |
+|---|---|
+| content_type | `video`（必须）|
+| 时长 | 5-8s/动作（1 镜对多字幕 1:N）|
+| transition_in | `pause_breath`（接自测）|
+| transition_out | `pause_breath`（动作间）|
+| description | "动作 <N>：<动作名>，<肌群>激活，<次数/组数>右上角卡片 + 1.15× 弹跳" |
+| 字幕条数 | 3-4 条（动作名+要点+参数）|
+
+**示例**：
+
+```json
+{
+  "shot_id": "action_wall_angel",
+  "start": 10.2, "end": 16.5, "duration": 6.3,
+  "content_type": "video",
+  "content_source": "/public/winged_scapula_b3/videos/壁虎推墙.mov",
+  "voiceover": "第一个，壁虎推墙。前臂贴墙往上滑，肩胛骨要往下沉。12 次 3 组。",
+  "description": "上半身侧面，动作 1：壁虎推墙，前锯肌激活。右上角 '12 次 × 3 组' 卡片 + 1.15× 弹跳",
+  "transition_in": "pause_breath",
+  "transition_out": "pause_breath"
+}
+```
+
+### 11.4 收尾段（最后 7s）
+
+**目标**：CTA + 行动号召。
+
+| 字段 | 取值 |
+|---|---|
+| content_type | `text_card` / `image` |
+| 时长 | 固定 7s |
+| transition_in | `fade`（1s 沉淀）|
+| transition_out | `fade`（黑屏淡出）|
+| description | "**总结 + CTA**：<核心信息> + '<CTA 句>'，配 1.15× 弹跳" |
+| 字幕条数 | 2-3 条（总结+CTA+安全提示）|
+
+**示例**：
+
+```json
+{
+  "shot_id": "outro_cta",
+  "start": 58.0, "end": 65.0, "duration": 7.0,
+  "content_type": "text_card",
+  "content_source": "/public/winged_scapula_b3/images/outro.png",
+  "voiceover": "这 4 个动作，每天 10 分钟就够。去试试，评论区交作业。",
+  "description": "黑色背景 + '去试试，评论区交作业' 大字幕 + 评论图标卡片，1.15× 弹跳",
+  "transition_in": "fade",
+  "transition_out": "fade"
+}
+```
 
 ---
 
-## 7. 速查清单（设计完一份分镜后自检——只列**本文件专属**项）
+## 12 · A/B/C 三类视频的分镜差异化
 
-> **跨文件去重原则**：通用检查见 [checklist.md](remotion/rules/checklist.md)；本节只列**分镜设计阶段**的专属项。
+| 维度 | A 人设 | B 知识 | C 产品 |
+|---|---|---|---|
+| **总镜数** | 8-12 | **12-18** | 10-15 |
+| **单镜时长** | 5-8s | 3-6s | 4-7s |
+| **视频镜占比** | 60%（口播态 50% + 辅助素材态 50%）| **80%+** | 40% |
+| **卡片镜占比** | 20% | 50% | **70%** |
+| **text_card 镜占比** | 20% | 10% | 30% |
+| **B-roll 镜占比** | ≤ 20% | ≤ 30% | ≤ 20% |
+| **转场风格** | 柔和（fade / slide_up）+ **双态切换 0.5s** | 紧凑（push_left / zoom）| 快切（fade / push）|
+| **pause_breath 位置** | 主体中段 × 2-3 | **每动作后 × 4-6** | 主体末段 × 2-4 |
+| **钩子段类型** | **talking_head**（人脸 + 大字幕）| **text_card**（大字钩子）| text_card（功能截图）|
+| **收尾段类型** | **talking_head**（人脸 + 评论图标）| text_card + 评论图标 | **text_card + 二维码** |
 
-- [ ] 输入是 `subtitles.json`（不是凭空写）
-- [ ] 输出了 `storyboard.md` + `storyboard.json`（见第 1.3 节）
-- [ ] 每个分镜字段完整：`shot_id` / `start` / `end` / `duration` / `content_type` / `content_source` / `voiceover` / `description`（见第 2 节）
-- [ ] 视频类镜头 `duration > 5s`（见第 3.1 节）
-- [ ] 图片类镜头 `duration` = 字幕时长或略长（见第 3.2 节）
-- [ ] `start` 连续无空隙；总 `end` = 音频总时长（见第 3.4 节）
-- [ ] 没有任何分镜的 `content_type` 是"纯色 + 文字"（见第 4 节）
-- [ ] `description` 描述的是**画面在展示什么**（不是文字在说什么）
-- [ ] 字幕对齐关系明确（1:1 / 1:N / N:1，见第 5 节）
-- [ ] 已配套输出 `assets.md` 素材清单（详见 [assets.md](remotion/rules/assets.md) 第 2 节）
+### 12.1 A 类分镜骨架（v3 · 2026-06-10 双态重写）
 
-**其他维度的自检**（不在本文件）：
-- 通用综合自检 → [checklist.md](remotion/rules/checklist.md) 第 2 节（master）
-- 字幕完整性 → [subtitle.md](remotion/rules/subtitle.md) 第 6 节
-- 场景命名 → [script.md](remotion/rules/script.md) 第 1 节
+> **A 类是唯一有"双态"标记的类型**——每个 shot 都必须填 `layout_state` 字段（`talking_head` 或 `visual_support`）。
+>
+> 双态 = 一段视频双用：口播态全屏，辅助素材态缩小到右下角圆头像。**主口播视频不停止播放**。
+
+```
+钩子 (3s, talking_head)        ← layout_state: talking_head（人脸全屏 + 大字幕）
+→ 段 1 (5-8s, talking_head)    ← layout_state: talking_head（人脸 + 字幕"为什么"）
+→ 段 2 (5-8s, visual_support)  ← layout_state: visual_support（圆头像右下 + 录屏飘右上）
+→ pause_breath (0.7s)          ← 上一镜 0.8× 慢动作
+→ 段 3 (5-8s, visual_support)  ← layout_state: visual_support（圆头像 + 数据卡片飘左上）
+→ 段 4 (5-8s, talking_head)    ← layout_state: talking_head（人脸 + 反思）
+→ pause_breath (0.7s)          ← 上一镜 0.8× 慢动作
+→ 段 5 (5-8s, visual_support)  ← layout_state: visual_support（圆头像 + 总结图表飘右上）
+→ 收尾 (7s, talking_head)      ← layout_state: talking_head（人脸 + CTA）
+```
+
+**示例分镜（v3 格式）**：
+
+```json
+{
+  "shot_id": "talking_head_1",
+  "data_shot_id": "talking_head_1",
+  "start": 3.5,
+  "end": 9.0,
+  "duration": 5.5,
+  "content_type": "video",
+  "content_source": "/public/a1_vibe_coding_pipeline/videos/001_talking_head.mp4",
+  "voiceover": "我一个人做出小程序 + 自动剪辑视频，靠的是 4 个 AI 工具。",
+  "description": "口播态：上半身特写，用户边说边用手势强调'4'。右下角无圆头像（主屏就是人脸）。",
+  "transition_in": "fade",
+  "transition_out": "fade",
+  "layout_state": "talking_head"
+}
+```
+
+```json
+{
+  "shot_id": "visual_support_1",
+  "data_shot_id": "visual_support_1",
+  "start": 9.0,
+  "end": 14.5,
+  "duration": 5.5,
+  "content_type": "video",
+  "content_source": "/public/a1_vibe_coding_pipeline/videos/002_cursor_screen_recording.mp4",
+  "voiceover": "看这个 Cursor，左边是 PRD，右边 Claude 直接出代码，diff 一目了然。",
+  "description": "辅助素材态：用户人脸缩到右下角 240px 圆头像（持续口型），Cursor 录屏飘在右上角 60% 宽。",
+  "transition_in": "fade",
+  "transition_out": "pause_breath",
+  "layout_state": "visual_support",
+  "pict_in_pict": {
+    "position": "bottom-right",
+    "size": 240,
+    "shape": "circle",
+    "video_source": "/public/a1_vibe_coding_pipeline/videos/001_talking_head.mp4"
+  },
+  "visual_support": {
+    "position": "top-right",
+    "type": "screen_recording",
+    "width": "60%"
+  }
+}
+```
+
+### 12.2 B 类分镜骨架
+
+```
+钩子 (3s, text_card)
+→ 自测 1-2 (5-7s, video + 字幕 1:N)
+→ 段间停顿 (zoom)
+→ 动作 1-4 (5-8s, video + 卡片 1:N)
+→ 段间停顿 (zoom) × 3
+→ 收尾 (7s, text_card + CTA)
+```
+
+### 12.3 C 类分镜骨架
+
+```
+钩子 (3s, text_card 截图)
+→ 功能 1-3 (4-7s, 卡片 + 操作视频 B-roll)
+→ 收尾 (7s, text_card + 二维码)
+```
+
+---
+
+## 13 · 5 维评分卡 + 评审 SOP
+
+> **每维 ≥ 3 分才能进入用户审阅**，总分 ≥ 18/25。
+
+### 13.1 评分卡
+
+| 维度 | 1 分（差）| 3 分（中）| 5 分（优）| 本稿得分 |
+|---|---|---|---|---|
+| **镜数合理性** | 镜数过多（>20）/ 过少（<6）| 镜数在 12-18 | 镜数合理 + 4 类段配比合适 | — |
+| **转场标注** | < 50% shot 有标注 | ≥ 80% 标注 | 100% 标注 + 转场类型多样 | — |
+| **description 准确性** | 写"讲什么" | 5 要素缺 1-2 | 5 要素齐全 + 动效标注 | — |
+| **时长匹配** | 视频 < 5s / 图片 ≠ 字幕时长 | 全部匹配 | 全部匹配 + 0.3s 余量 | — |
+| **B-roll 标记** | 没用 B-roll 标签 | B-roll 镜 < 30% | B-roll 镜 ≤ 30% + 3 类功能齐全 | — |
+
+### 13.2 评审 SOP
+
+```
+1. 自评（5 维打分）→ ≥ 18 分才能提交
+   ↓
+2. 字段完整性检查（storyboard.md + storyboard.json 字段 1:1 对应）
+   ↓
+3. 镜数核对（按 12.x 骨架）
+   ↓
+4. 启动 Studio 全屏过 3 遍（首屏 / 末屏 / 随机 5 镜）
+   ↓
+5. 用户审阅 → 通过 / 改稿
+```
+
+---
+
+## 14 · 反模式
+
+- ❌ 纯色背景 + 文字镜头（"这不叫视频，叫 PPT"）
+- ❌ 纯字幕展示镜头（字幕必须有背景素材）
+- ❌ 视频类镜头 < 5s（切换太频繁观众反应不过来）
+- ❌ 图片类镜头 ≠ 字幕时长（不同步）
+- ❌ `pause_breath` 切换其他素材（破坏消化节奏）
+- ❌ 转场没标 `transition_in` / `transition_out`（下游 scene.js 写不出来）
+- ❌ `description` 写"讲什么"而不是"展示什么"
+- ❌ 字幕对应关系错乱（视频镜 1:N 写成了 1:1）
+- ❌ components 文件用 snake_case（应 PascalCase）
+- ❌ `data_shot_id` 用 PascalCase（应 snake_case，与 DOM 选择器友好）
+- ❌ 不用 B-roll 标签，scene.js 不知道这是辅助镜头
+- ❌ **description 缺 5 要素**（主体/动作/位置/辅元素/动效）
+- ❌ **video 镜 1:1 配字幕**（视频镜必须 1:N，对应多条字幕）
+- ❌ **text_card 镜时长 ≠ 字幕时长**（卡片没看完就走）
+- ❌ **跳过 5 维评分卡直接给用户**
+- ❌ **镜数 > 20 镜**（切换疲劳，详 §12 A/B/C 对照表）
+- ❌ **钩子段 > 3s**（违反抖音硬约束）
+- ❌ **收尾段 < 5s**（CTA 没时间消化）
+- ❌ **B-roll 镜占比 > 30%**（喧宾夺主）
+- ❌ **混合类型（A+B）不区分主体镜/辅助镜**（详 video-types.md §混合类型）
+
+---
+
+## 附录 A · 速查索引
+
+| 我想... | 看... |
+|---|---|
+| 写一个分镜字段 | [§1 字段定义](#1-字段定义) |
+| 控制时长 | [§2 时长硬约束](#2-时长硬约束) |
+| 选转场 | [§4 转场标注硬约束](#4-转场标注硬约束) |
+| 写 description | [§5 description 写法](#5-description-写法) |
+| 套模板 | [§8 storyboard.md 模板](#8-storyboardmd-模板) / [§9 storyboard.json 模板](#9-storyboardjson-模板) |
+| 写 B-roll | [§10 B-roll 镜头](#10-b-roll-镜头辅助镜头) |
+| 按段落分镜 | [§11 4 类段落分镜模板](#11-4-类段落分镜模板) |
+| 按视频类型差异化 | [§12 A/B/C 三类视频的分镜差异化](#12-abc-三类视频的分镜差异化) |
+| 跑 5 维评分 | [§13 5 维评分卡 + 评审 SOP](#13-5-维评分卡--评审-sop) |
+
+---
+
+## 附录 B · 变更日志
+
+### v2（2026-06-09）— 深化拓展
+
+- **新增 §4.1 转场选型决策树**：5 类场景→转场映射
+- **新增 §5.1 description 5 要素模板**：主体/动作/位置/辅元素/动效
+- **新增 §10.1 B-roll 与 A-roll 关系表**：数量/旁白/时长/类型 4 维对照
+- **新增 §11 4 类段落分镜模板**：钩子段/自测段/动作段/收尾段——每类含字段表 + JSON 示例
+- **新增 §12 A/B/C 三类视频的分镜差异化**：5 维对照表 + 3 类分镜骨架
+- **新增 §13 5 维评分卡 + 评审 SOP**：总分 ≥ 18 才能进用户审阅
+- **新增附录 A 速查索引** + **附录 B 变更日志**
+- **§1 字段表新增 `broll_tag` 字段**
+- **§14 反模式从 12 条扩到 19 条**
+- **保留不变**：§1 字段定义 + §2 时长硬约束 + §3 严禁清单 + §6 字幕对齐 + §7 每镜一组件 + §8/9 模板 + §10 B-roll + §11 description
+
+### v1（2026-06-08）— 初版
+
+- 字段定义 + 时长硬约束 + 严禁清单 + 转场标注 + description + 字幕对齐
+- 每镜一组件 + md/json 模板 + B-roll 镜头
+- 由 winged_scapula_b3 实战沉淀

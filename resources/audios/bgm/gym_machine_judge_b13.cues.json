@@ -1,0 +1,50 @@
+{
+  "topic": "gym_machine_judge_b13",
+  "duration": 70,
+  "preset": "power_build",
+  "style": "tech house, energetic, gym",
+  "bpm": 105,
+  "key": "Dm minor",
+  "sections": [
+    {
+      "name": "钩子",
+      "title": "钩子",
+      "start": 0,
+      "end": 3.44,
+      "dur": 3.44,
+      "mood": "urgent buildup with risers and tension (3 seconds, hook attention)"
+    },
+    {
+      "name": "段 1",
+      "title": "段 1",
+      "start": 4.14,
+      "end": 31.52,
+      "dur": 27.38,
+      "mood": "rhythmic synth pulse, educational mood, building energy"
+    },
+    {
+      "name": "段 2",
+      "title": "段 2",
+      "start": 31.52,
+      "end": 43.69,
+      "dur": 12.169999999999998,
+      "mood": "energetic peak, hard-hitting drums, action feel"
+    },
+    {
+      "name": "段 3",
+      "title": "段 3",
+      "start": 43.69,
+      "end": 57.04,
+      "dur": 13.350000000000001,
+      "mood": "peak continues, heavier bass, stronger drop"
+    },
+    {
+      "name": "收尾",
+      "title": "收尾",
+      "start": 57.04,
+      "end": 62.33,
+      "dur": 5.289999999999999,
+      "mood": "resolve with descending melody, gentle fade out (closure)"
+    }
+  ]
+}

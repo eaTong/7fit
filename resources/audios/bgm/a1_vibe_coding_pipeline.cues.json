@@ -1,0 +1,58 @@
+{
+  "topic": "a1_vibe_coding_pipeline",
+  "duration": 108,
+  "preset": "quiet_think",
+  "style": "ambient, contemplative, minimal",
+  "bpm": 80,
+  "key": "C major",
+  "sections": [
+    {
+      "name": "钩子",
+      "title": "钩子",
+      "start": 0,
+      "end": 5.3,
+      "dur": 5.3,
+      "mood": "urgent buildup with risers and tension (3 seconds, hook attention)"
+    },
+    {
+      "name": "段 0",
+      "title": "段 0",
+      "start": 5.3,
+      "end": 9.3,
+      "dur": 4.000000000000001,
+      "mood": ""
+    },
+    {
+      "name": "段 1",
+      "title": "段 1",
+      "start": 9.3,
+      "end": 43.3,
+      "dur": 34,
+      "mood": "rhythmic synth pulse, educational mood, building energy"
+    },
+    {
+      "name": "段 2",
+      "title": "段 2",
+      "start": 43.3,
+      "end": 77.3,
+      "dur": 34,
+      "mood": "energetic peak, hard-hitting drums, action feel"
+    },
+    {
+      "name": "段 3",
+      "title": "段 3",
+      "start": 77.3,
+      "end": 98.5,
+      "dur": 21.200000000000003,
+      "mood": "peak continues, heavier bass, stronger drop"
+    },
+    {
+      "name": "收尾",
+      "title": "收尾",
+      "start": 98.5,
+      "end": 105.5,
+      "dur": 7,
+      "mood": "resolve with descending melody, gentle fade out (closure)"
+    }
+  ]
+}

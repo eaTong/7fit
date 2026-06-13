@@ -1,456 +1,834 @@
-# 脚本生成规范（remotion）
+# 脚本生成规范（script.md）
 
-> 阶段：脚本 / 分镜
-> 来源：用户硬约束 + 项目品牌锁版
-> 状态：✅ 生效
-> **视频类型**：开工前先确定属于 3 类中的哪一类（A 个人人设 / B 健身知识 / C 七练介绍），详见 `video-types.md`
-
-> ⏰ **2026-06-04 强制**：Composition `durationInFrames` = 全文时长 × fps，**必须**遵循 [timing-sync.md](./timing-sync.md) §0。
-> 当前 winged_scapula_b3：durationInFrames = **1860** (62s × 30fps，含 2.1s 段间停顿)。改时长 → 7 个文件同步（见 timing-sync.md §3）。
+> **Phase 2 入口**：文案确认后，按本规范实现 Scene 组件 → 写 components/ → 写 scene.js 编排。
 >
-> **2026-06-04 流程变更**：脚本阶段归 **Phase 2**（用户文案确认门通过后）。详见 [CLAUDE.md 视频制作总流程](../CLAUDE.md#视频制作总流程6-阶段--后期)。
+> **必须遵循**：[timing-sync.md](../planning/timing-sync.md)（时间字段锚点）+ [copy.md §15 下游接口](../planning/copy.md#15-下游接口说明)（文案稿字段→下游流向）
+>
+> **7fit 动效哲学**：**快进 + 留白 + 强调**——3 类基本节奏（详 §4.1）。所有动效都围绕"3 秒抓人 + 1 秒消化"展开。
 
 ---
 
-## 1. 入口与场景命名
+## 1 · 速查：Remotion → Hyperframes API 映射
 
-**每个脚本一个单独的入口**，不允许把多个视频塞到同一个 Composition 里。
+> **背景**：2026-06-05 框架迁移，原 Remotion（React + TS）→ Hyperframes（HTML + CSS + GSAP）。
 
-- 入口文件命名：`<主题>.tsx`（如 `workout_intro.tsx`、`weekly_review.tsx`）
-- 入口位置：`remotion/src/scenes/`
-- 每个入口文件负责一个完整视频的 Composition 定义
-- 在 `remotion/src/Root.tsx` 中按主题注册
-
-**场景（Scene / Sequence）命名必须根据脚本内容自动命名**，禁止使用 `Scene1/Scene2` 或 `intro/body/outro` 这种通用占位名。命名应反映**该段在讲什么**：
-
-```tsx
-// ✅ 正确
-<Sequence from={0} durationInFrames={90}>
-  <HookQuestion />     {/* 钩子问题 */}
-</Sequence>
-<Sequence from={90} durationInFrames={120}>
-  <ThreeSecRecord />   {/* 3秒记录演示 */}
-</Sequence>
-<Sequence from={210} durationInFrames={60}>
-  <WeeklySummaryCTA /> {/* 周报CTA */}
-</Sequence>
-
-// ❌ 错误
-<Sequence from={0} durationInFrames={90}>
-  <Scene1 />
-</Sequence>
-<Sequence from={90} durationInFrames={120}>
-  <Scene2 />
-</Sequence>
-```
-
----
-
-## 2. 视觉遮挡禁令
-
-**禁止使用大面积纯色块遮挡**画面（例如满屏黑底+居中文字、满屏色块+单行白字）。
-
-- 字幕/标题的背景只能是**细长条/胶囊/半透明渐变**，绝不能是覆盖整个画面宽度的大色块
-- 如果画面本身是实拍视频/图片素材，禁止叠全屏色块去"美化"
-- 需要分区时使用**轻微的渐变、阴影、模糊或细描边**来区分层次
-
-```tsx
-// ✅ 字幕条：底部细长半透明胶囊
-<div className="absolute bottom-12 left-12 right-12 bg-black/60 backdrop-blur-sm rounded-2xl px-6 py-3">
-  <span className="text-white">3 秒记录，一次搞定</span>
-</div>
-
-// ❌ 禁止
-<div className="absolute inset-0 bg-black">
-  <span className="text-white text-3xl">3 秒记录，一次搞定</span>
-</div>
-```
-
-### 1.6 🆕 段间停顿 Sequence（2026-06-04 用户硬约束）
-
-> **核心**：每个段间停顿（copy.md 段落之间的 0.5-1s 静音）在脚本里必须落成 1 个独立的 `<Sequence>`，**`durationInFrames` = 段间秒数 × fps**。
-
-```tsx
-// ✅ winged_scapula_b3 主体段间停顿示例（默认 0.7s = 21 帧 @ 30fps）
-<Sequence from={90} durationInFrames={21}>
-  <SegmentPause from="自测 1" to="自测 2" />   {/* 段间停顿组件 */}
-</Sequence>
-
-// ❌ 错误：把段间停顿塞进主 Sequence 里
-<Sequence from={90} durationInFrames={150}>
-  <SelfTestTwo />    {/* 50% 时间是段间停顿，浪费 */}
-</Sequence>
-```
-
-> 段间停顿 Sequence 的 content：空镜 / 黑屏 + 章节标题 + 转入/转出动效（详见 [storyboard.md §4.5-4.6](storyboard.md)）。
-
----
-
-## 3. 字幕安全区
-
-字幕需要留出足够的安全区（适配不同手机/平台 UI 遮挡）：
-
-| 方向 | 最小安全区 | 推荐值 |
+| 概念 | Remotion（旧） | Hyperframes（新） |
 |---|---|---|
-| 左边 | ≥ 64px | 96px |
-| 右边 | ≥ 64px | 96px |
-| 下面 | ≥ 80px | 120px（避开点赞/进度条） |
-
-- 字幕文本宽度 = 画布宽度 − 左边距 − 右边距
-- 字幕应**单行优先**，超出宽度才换行；最多 2 行
-- 字体大小：18-28px（1080×1920 画布），行高 1.4-1.6
-- 默认在视频底部 1/3 区域内，不允许贴着画面边缘
-
----
-
-## 4. 顶部标题与"摄像头安全区"
-
-视频**顶部必须有标题**，标题区需要留出足够安全区——这部分画布在某些平台（尤其手机摄像头拍摄/AR 场景）会被遮挡。
-
-- 顶部安全区：≥ 120px（推荐 160px）
-- 标题位于安全区**下方**，不要把标题压在顶部 120px 内
-- 标题字号：32-48px（1080×1920 画布）
-- 标题字重：bold / 700+
-- 标题**居左对齐**（中文阅读习惯），距离左边 64-96px
-- 标题区与画面主体之间留 ≥ 24px 间距
-
-```tsx
-// ✅ 正确
-<div className="absolute top-[160px] left-[96px] right-[96px]">
-  <h1 className="text-white text-4xl font-bold">让健身更简单</h1>
-</div>
-
-// ❌ 错误
-<div className="absolute top-4 left-4 right-4">
-  <h1 className="text-white text-4xl font-bold">让健身更简单</h1>
-</div>
-```
+| 视频描述 | `<Composition>` (React) | `<div class="clip" data-start="..." data-duration="...">`（HTML）|
+| 时间容器 | `<Sequence from={n}>` | `gsap.timeline()` + `addLabel('shotB', 2.85)` |
+| 帧号 | `useCurrentFrame()` | `gsap timeline.time()` / `window.__hfTime` |
+| 插值 | `interpolate(frame, [0, 30], [0, 1])` | `gsap.fromTo(el, {y: 0}, {y: 100, duration: 1})` |
+| 弹簧 | `spring({frame, fps, config})` | `gsap.from(el, {y: 100, ease: 'back.out(1.7)'})` |
+| 视频元素 | `<Video src={...} />` | `<video muted playsinline>` + 分离 `<audio>` |
+| 字幕 | `<Sequence from={start}>` + 文本 | `<div class="subtitle" data-start="..." data-duration="...">` + GSAP |
+| 静态资源 | `staticFile()` | `fetch` + blob URL（避免相对路径错位）|
+| 渲染触发 | `npx remotion render` | `npm run render -- <SceneId> out/<name>.mp4` |
 
 ---
 
-## 5. 配色：使用小程序主色
+## 2 · 入口与目录结构
 
-所有元素设计以**小程序配色**为主色（不要自己造一套新色）：
+### 2.1 入口文件
 
-| 用途 | 色值 | Tailwind |
+| 文件 | 位置 | 作用 |
 |---|---|---|
-| 画布背景（页面/Scene 底层） | `#0A0A0A`（深黑）| `bg-[#0A0A0A]` |
-| 强调色 1 | `#FF4500`（烈焰橙）| `text-[#FF4500]` / `bg-[#FF4500]` |
-| 强调色 2 | `#DC143C`（电红）| `text-[#DC143C]` / `bg-[#DC143C]` |
-| 文字主色 | `#FFFFFF`（纯白）| `text-white` |
-| 文字次色 | `#888888` | `text-[#888888]` |
-| 边框色 | `#333333` | `border-[#333333]` |
+| **root.html** | `hyperframe/src/root.html` | 视频 Composition 注册入口（HTML 挂载），`<main id="stage" data-scene="<主题>">` |
+| **index.js** | `hyperframe/src/index.js` | 入口脚本，按 `data-scene` switch 初始化场景 |
+| **index.css** | `hyperframe/src/index.css` | Tailwind/全局样式 + 7fit 色板 CSS 变量 |
 
-> ⚠️ 旧的"背景次色 `#1A1A1A` / 背景三级 `#252525`"**已废弃**——不要在元素背景上使用纯色暗灰/纯白，详见第 5.1 节。
+### 2.2 每个视频一个独立 scene 目录
 
-**规则补充**：
-
-- **标题使用纯白色**（`#FFFFFF`），不要给标题加渐变/描边/阴影
-- 强调色只用于**关键数据、CTA 按钮、关键动作词**，不能大面积铺
-- 文字默认纯白
-- 不允许引入与小程序色板冲突的新颜色
-
-### 5.1 元素背景：半透明 + 彩色（硬约束）
-
-**所有"非画布"的元素背景**（卡片、面板、chip、tag、toast、按钮、素材框、装饰块等）**禁止使用纯色填充**，必须满足：
-
-1. **半透明**——用 Tailwind 透明度语法（`/10` `/15` `/20` `/30` 等）
-2. **彩色**——色相要鲜明（不是灰、不是黑、不是白）
-3. **色源限定**——只能用**强调色 1 `#FF4500`** 或 **强调色 2 `#DC143C`** 叠加透明度（**不能**用 `#1A1A1A`/`#252525`/`#FFFFFF` 等中性色做元素背景）
-
-```tsx
-// ✅ 元素背景：半透明彩色（橙系 / 红系）
-<div className="bg-[#FF4500]/15 border border-[#FF4500]/40">     {/* 橙色调强调态 */}
-  <p className="text-white">3 秒记录</p>
-</div>
-
-<div className="bg-[#DC143C]/20 border border-[#DC143C]/50">     {/* 红色调警示态 */}
-  <p className="text-white">疲劳预警</p>
-</div>
-
-<div className="bg-[#FF4500]/10 border border-[#FF4500]/30">     {/* 浅橙 弱强调 */}
-  <p className="text-white">动作提示</p>
-</div>
-
-// ❌ 元素背景：纯色暗灰（已废弃）
-<div className="bg-[#1A1A1A] border border-[#333333]">
-
-// ❌ 元素背景：纯色白（也禁用）
-<div className="bg-white">
-
-// ❌ 元素背景：纯色暗（任意色都禁用纯色填充）
-<div className="bg-[#252525]">
+```
+hyperframe/src/scenes/<主题>/
+├── scene.html         # 场景结构
+├── scene.js           # GSAP timeline + 动效
+├── subtitles.json     # 自动生成的字幕
+├── storyboard.md      # 分镜表
+├── storyboard.json    # 分镜数据
+├── assets.md          # 素材清单
+├── research.md        # 主题调研
+├── shoot-checklist.md # 拍摄清单
+└── components/        # 每镜一组件（Shot<N>_<描述>.html）
 ```
 
-**透明度档位**（按视觉权重选择）：
+> **强制门**：写 `scene.html` / `scene.js` 之前，§11 的 5 项必查全部 ✅。
 
-| 用途 | 推荐透明度 | 视觉 |
+---
+
+## 3 · 安全区硬约束（防遮挡）
+
+| 区域 | 最小留白 | 原因 |
 |---|---|---|
-| 弱装饰/背景层 | `/5` `/10` | 极淡，几近不可见，只起"色温"作用 |
-| 普通 chip/tag | `/15` `/20` | 能感知到色相，不抢戏 |
-| 强调态/CTA | `/25` `/30` | 明显的色块，焦点引导 |
-| 警示态/错误态 | `/30` `/40` | 强烈的色彩信号 |
+| **顶部** | ≥ 120px | 适配手机摄像头 / 平台 UI |
+| **左/右** | ≥ 64px | 适配手机圆角 / 异形屏 |
+| **底部** | ≥ 80px | 给字幕留位 |
 
-**典型元素背景组合**：
+> **可视化对照**（1080×1920 画布）：
 
-| 元素 | 推荐组合 |
-|---|---|
-| 普通卡片 | `bg-[#FF4500]/10` + `border-[#FF4500]/30` |
-| 强调数据卡 | `bg-[#FF4500]/20` + `border-[#FF4500]/50` + `shadow` |
-| 警示/错误 | `bg-[#DC143C]/25` + `border-[#DC143C]/50` |
-| 装饰底纹 | `bg-[#FF4500]/5`（仅色温） |
-| 按钮（默认） | `bg-[#FF4500]/85` + `text-white`（接近实色，但允许少量透明） |
-| 按钮（次要） | `bg-[#FF4500]/15` + `border-[#FF4500]/40` + `text-[#FF4500]` |
-
-> 唯一允许"接近实色"的元素是**主 CTA 按钮**（`/85` 左右）——因为可点击性需要视觉锚定。其余所有元素保持半透明。
-
-### 5.2 文字/边框的色源不受影响
-
-- 文字仍可纯白 `#FFFFFF`
-- 边框可用纯色（`#FF4500` / `#DC143C` / `#333333`），不需要叠加透明度
-- 阴影可使用色相 + 透明度（如 `shadow-[0_0_24px_rgba(255,69,0,0.4)]`）
-
----
-
-## 6. 速查清单（写完一个脚本后自检——只列**本文件专属**项）
-
-> **跨文件去重原则**：通用检查（音频/字幕/分镜/素材/自检）见 [checklist.md](remotion/rules/checklist.md)；本节只列**脚本实现阶段**的专属项。
-
-- [ ] 每个脚本一个独立入口文件（见第 1 节）
-- [ ] Sequence/Scene 名字反映内容，不是 Scene1/2/3（见第 1 节）
-- [ ] 没有任何全屏纯色块遮挡（见第 2 节）
-- [ ] 顶部标题区有 ≥120px 顶部安全区（见第 4 节）
-- [ ] 元素具备科技感 + 力量感（见第 7 节）
-- [ ] 场景之间有 ≥0.3s 转场，缓动 Standard（见第 8 节）
-- [ ] 元素背景 = 半透明彩色（橙/红 + 透明度），不用纯色暗灰/纯白（见第 5.1 节）
-- [ ] 素材框 = 半透明彩色 + 同色系边框（见第 9 节）
-
-**其他维度的自检**（不在本文件）：
-- 字幕完整性 → [subtitle.md](remotion/rules/subtitle.md) 第 8 节
-- 分镜约束 → [storyboard.md](remotion/rules/storyboard.md) 第 7 节
-- 素材清单 → [assets.md](remotion/rules/assets.md) 第 7 节
-- 综合自检 → [checklist.md](remotion/rules/checklist.md) 第 2 节（master）
-
----
-
-## 7. 元素设计风格：科技感 + 力量感
-
-所有 UI 元素（按钮、卡片、图表、装饰、图标）需要传达**科技感 + 力量感**——这是七练面向"中级健身者"的人格化品牌调性。
-
-### 7.1 科技感（Sci-tech / Cyber）
-
-- 几何线条：直角、细描边、网格底纹、数据点阵、扫描线
-- 单色高对比：黑底 + 荧光色描边/数字
-- 数字优先：把"kg/次/组/周"等关键数据放大、数字化
-- 轻微发光：使用 `drop-shadow` / `box-shadow` 模拟霓虹/LED 效果（克制使用）
-- 等宽数字：关键数字用 `font-variant-numeric: tabular-nums` 或等宽字体
-
-### 7.2 力量感（Power / Strength）
-
-- **粗描边**：边框 2-4px（不要 1px 细线），传达"结实、扛得住"
-- **硬朗几何**：避免圆润到 50% 的圆角（圆角最大 8-12px）
-- **大字号数据**：训练重量、次数用大号字（≥ 64px），形成视觉冲击
-- **倾斜/破折元素**：训练动作图标、数据曲线可加倾斜或破折处理
-- **金属/暗色质感**：避免可爱/柔和配色
-
-### 7.3 ✅ / ❌ 对比
-
-```tsx
-// ✅ 科技感 + 力量感
-<div className="border-2 border-[#FF4500] rounded-lg p-6 shadow-[0_0_24px_rgba(255,69,0,0.4)]">
-  <div className="text-[#FF4500] text-7xl font-bold tabular-nums">80</div>
-  <div className="text-white text-lg mt-2">KG × 10</div>
-</div>
-
-// ❌ 偏柔：圆角过大、无描边、无数据冲击
-<div className="rounded-3xl p-6 bg-[#252525]">
-  <div className="text-white text-2xl">80kg 10次</div>
-</div>
-
-// ❌ 偏柔：纯色暗背景（违反第 5.1 半透明彩色硬约束）
-<div className="rounded-3xl p-6 bg-[#1A1A1A]">
-  <div className="text-white text-2xl">80kg 10次</div>
-</div>
+```
+┌──────────────────┐  ← 0px
+│  顶部安全区 120px │  ⚠️ 不放标题/CTA
+├──────────────────┤
+│                  │
+│   可用区          │
+│   (1700×952)     │
+│                  │
+├──────────────────┤
+│  底部字幕区 80px  │  字幕位置
+└──────────────────┘  ← 1920px
 ```
 
-### 7.4 动效中的科技感
-
-- **数字滚动**：重量/次数用 `interpolate` 滚动到位
-- **扫描线 / 数据流**：进入/退出场景时加 1-2 道扫光
-- **网格背景**：可加 1-2px 的低透明度网格（≤ 10%）做底纹
-- **粒子/数据点**：关键 KPI 周围加 4-8 个浮动数据点（克制）
-
 ---
 
-## 8. 转场
+## 4 · 设计风格硬约束
 
-**每个视频必须有转场**——Sequence 之间不能直接硬切。
+### 4.1 段落标题（2026-06-06）
 
-### 8.1 时长
+每个脚本段落必须有独立标题，**顶部居左**：
+- 位置：≥ 120px top, ≥ 64px left
+- 样式：48-64px / 纯白 `#FFFFFF` / bold
 
-- **最低 0.3s**（30fps 视频 = 9 帧）
-- 推荐 0.4-0.6s（12-18 帧）
-- 转场总时长不能盖过内容时长；一段 3s 的小段配 0.5s 转场已足够
+### 4.2 卡片位置（2026-06-06）
 
-### 8.2 推荐转场类型（与品牌调性匹配）
+信息卡片（数据/CTA/动作说明/计时器）统一显示在**右上角**：
+- 位置：≥ 120px top, ≥ 64px right
+- 同一时刻只 1 张
 
-| 类型 | 适用场景 | 注意 |
+### 4.3 段间停顿（2026-06-06）
+
+见 [timing-sync.md §段间停顿](../planning/timing-sync.md#段间停顿规范-05-1s用户硬约束)。禁止切换其他素材 / 纯字幕 / 装饰卡片。
+
+### 4.4 配色（7fit 色板）
+
+| 用途 | 色值 | 备注 |
 |---|---|---|
-| **淡入淡出（Crossfade）** | 默认值/通用场景 | 黑场过渡 0.3-0.5s |
-| **推进/拉远（Push/Pull）** | 同主题前后段（如：动作演示 → 数据复盘） | 用 `transform: scale()` 模拟 |
-| **方向滑动** | 步骤递进（如：步骤 1 → 步骤 2 → 步骤 3） | 单方向（左/上）|
-| **数字滚动接续** | 数字到数字的过渡 | 用 `interpolate` 让数字滚动到位 |
-| ❌ 旋转 / 翻转 / 3D 翻页 | — | 与品牌调性不符，禁用 |
+| 画布背景 | `#0A0A0A` | **唯一允许的"实色背景"**，仅用于页面/Scene 底层 |
+| 强调色 1 | `#FF4500` | 烈焰橙（CTA / 关键数据 / **元素半透明背景色源**）|
+| 强调色 2 | `#DC143C` | 电红（动作/警示 / **元素半透明背景色源**）|
+| 文字主色 | `#FFFFFF` | **标题/正文都用纯白** |
+| 文字次色 | `#888888` | 辅助说明 |
+| 边框色 | `#333333` | — |
 
-### 8.3 实现约定
+### 4.5 元素背景（强调色 + 透明度）
 
-- 转场通过 `Sequence` 的 `from` 帧重叠实现（前后段各占一半转场时长）
-- 缓动函数优先用 `Easing.bezier(0.4, 0, 0.2, 1)`（Material 标准），避免线性插值
-- 转场中**禁止出现大面积纯色块遮挡**（与第 2 节联动）
+- ⚠️ **元素背景禁止使用实色**（`#1A1A1A` / `#252525` / `#FFFFFF` 等已废弃做元素背景）
+- ✅ 必须用强调色 1/2 叠加透明度：
+  - `rgba(255, 69, 0, 0.10)` — 橙色 10%（卡片背景）
+  - `rgba(220, 20, 60, 0.15)` — 红色 15%（警示背景）
 
-```tsx
-// ✅ 正确的转场：两段 Sequence 帧重叠 + ease 缓动
-<Sequence from={0} durationInFrames={90}>
-  <HookQuestion />          {/* 0-90 帧 */}
-</Sequence>
-<Sequence from={81} durationInFrames={120}>   {/* 81 帧开始，重叠 9 帧 = 0.3s */}
-  <ThreeSecRecord />
-</Sequence>
-```
+### 4.6 设计调性
+
+- **科技感 + 力量感**（粗描边、几何、霓虹、数据冲击、硬朗圆角）
+- **转场**：每个视频必须有转场，时长 **≥ 0.3s**，优先 Crossfade / Push / 方向滑动
+- **素材框**：半透明彩色 + 同色系（橙/红）边框/背景，禁用纯白/纯灰做素材框背景
 
 ---
 
-## 9. 素材框设计
+## 5 · 转场规范
 
-视频中展示图片/视频/数据卡片时，**统一使用半透明彩色素材框**。
+### 5.1 5 类转场速查
 
-### 9.1 三个硬约束
-
-1. **优先透明**：素材框不要实心填充，能透就透，露出底图/视频
-2. **边框与背景同色系**：边框色 = 背景色（同色系统一），视觉上不打架
-3. **背景半透明 + 彩色**：用强调色 1 `#FF4500` 或强调色 2 `#DC143C` 叠加透明度（参考第 5.1 节）。**禁用纯白 `#FFFFFF` / 纯灰 `#1A1A1A` / 纯灰 `#252525` 做素材框背景**
-
-### 9.2 推荐做法
-
-```tsx
-// ✅ 半透明彩色素材框：橙色细描边 + 半透明橙底
-<div className="border-2 border-[#FF4500]/60 bg-[#FF4500]/10 rounded-lg p-4">
-  <img src={staticFile("卧推80KG_10.png")} className="w-full" />
-</div>
-
-// ✅ 强调态素材框：实色描边 + 较深半透明橙底
-<div className="border-2 border-[#FF4500] bg-[#FF4500]/20 rounded-lg p-4">
-  <video src={staticFile("深蹲_100KG.mov")} className="w-full" />
-</div>
-
-// ✅ 警示态素材框：红色
-<div className="border-2 border-[#DC143C] bg-[#DC143C]/15 rounded-lg p-4">
-  <img src={staticFile("疲劳信号.png")} className="w-full" />
-</div>
-
-// ❌ 错误：实心灰底 + 灰色描边（违反半透明 + 彩色硬约束）
-<div className="border-2 border-[#333333] bg-[#252525] rounded-lg p-4">
-
-// ❌ 错误：纯白底 + 纯白描边（旧规则，已被新规则替代）
-<div className="border-2 border-white bg-white/10 rounded-lg p-4">
-```
-
-### 9.3 同色系组合参考
-
-边框与背景必须在同一色系（透明度可以不同，但色相要一致）：
-
-| 边框色 | 背景色（同色系） | 视觉效果 | 适用 |
+| 类型 | 时长 | 适用场景 | ease |
 |---|---|---|---|
-| `border-[#FF4500]` | `bg-[#FF4500]/10` | 橙框极淡（普通态）| 默认素材框 |
-| `border-[#FF4500]` | `bg-[#FF4500]/20` | 橙框柔透（强调态）| 关键数据/CTA |
-| `border-[#FF4500]/60` | `bg-[#FF4500]/10` | 橙框淡描边（次要）| 装饰性 |
-| `border-[#DC143C]` | `bg-[#DC143C]/15` | 红框柔透（警示态）| 疲劳/风险信号 |
+| `fade` | 0.4s | 通用，柔和 | `power2.inOut` |
+| `push_left` / `push_right` | 0.4s | 时间推进感 | `power2.inOut` |
+| `slide_up` / `slide_down` | 0.4s | 新段落开始 | `power2.out` |
+| `pause_breath` | 0.5-1s | 段间停顿（必用 0.8× 慢动作 / 1.2× 加速 / 特写）| 见 [§5.2](#52-pause_breath-4-种实现) |
+| `zoom` | 0.5s | 强调重点 | `back.out(1.7)` |
+| ❌ flip / 旋转 / 3D | — | 与"力量感"调性冲突，禁用 | — |
 
-> ❌ 已禁用：`border-white + bg-white/*`、`border-[#333333] + bg-[#252525]` 等中性色组合。
+### 5.2 pause_breath 4 种实现
 
-### 9.4 圆角与描边
+> **铁律**：pause_breath 必须**延长上一个视频**，禁止切换其他素材 / 纯字幕 / 装饰卡片。
 
-- 描边 2-3px（与第 7 节"力量感"的粗描边一致）
-- 圆角 6-12px（避免过圆）
-- 内边距 12-24px（给素材留呼吸）
+```js
+// 0.8× 慢动作
+videoEl.playbackRate = 0.8
+// 1.2× 加速
+videoEl.playbackRate = 1.2
+// 特写（zoom in 1.2×）
+gsap.to(videoEl, { scale: 1.2, duration: 0.7, ease: 'power2.out' })
+// freeze frame（定格）
+videoEl.pause()
+```
+
+### 5.3 转场选型决策树
+
+```
+新段落开始？
+├─ 是 → slide_up / slide_down（0.4s）
+├─ 否，时间推进 → push_left / push_right（0.4s）
+├─ 否，主题延续 → fade（0.4s）
+├─ 是段间停顿 → pause_breath（0.5-1s，4 选 1）
+└─ 需要强调重点 → zoom（0.5s）
+```
 
 ---
 
-## 10. 可复用数据组件库（强约束——配合 [assets.md §1.4](assets.md#14-⚠️-可代码实现的内容不进-assetsmd强约束)）
+## 6 · 静态资源加载（推荐 `fetch` + blob URL）
 
-> **触发规则**：分镜的 `content_type` 是 `code_component` 时（数据卡 / 标题 / 列表 / CTA / Badge / 进度条），
-> **必须**用本节列出的标准组件实现，不允许每个视频现场造轮子。组件统一放在
-> `remotion/src/components/`（跨视频复用）或 `remotion/src/scenes/<主题>/components/`（视频专属）。
-
-### 10.1 必备组件清单（先建这 7 个，新视频按需扩展）
-
-| 组件 | 用途 | 典型 props | 配套分镜场景 |
-|---|---|---|---|
-| `<ActionDataCard>` | 动作参数卡（"X 次 × Y 组"）| `name` / `reps` / `sets` / `rpe?` / `rest?` | 4 个动作演示 |
-| `<StatOverlay>` | 数字高亮（"PR 80KG" / "7 天"）| `label` / `value` / `unit?` / `color?` | 关键数据/钩子 |
-| `<SectionTitle>` | 章节标题（"4 个动作" / "自测 1"）| `title` / `subtitle?` / `number?` | 段落开场 |
-| `<BulletList>` | 列表/要点（"3 个误区"）| `items: string[]` / `numbered?` | 知识罗列 |
-| `<PrimaryCTA>` | 主 CTA 按钮（"立即开始"）| `text` / `onClick?` / `href?` | 视频结尾 |
-| `<Badge>` | 标签（"B 类知识" / "POWER BUILD"）| `text` / `color?` / `icon?` | 视频角落/分类 |
-| `<ProgressBar>` | 进度条 | `value` / `max` / `color?` / `label?` | 训练计划/容量 |
-
-### 10.2 组件设计硬约束（与现有 rules 对齐）
-
-- **半透明彩色背景**：参考第 5.1 节 + 9.2 节——`bg-[#FF4500]/10-20` + `border-[#FF4500]/30-50`
-- **纯白标题**：`#FFFFFF` + 700 字重 + 适度字号（动作名 ≥ 36px，数字 ≥ 64px）
-- **spring 入场**：参考 [animation.md](animation.md) 第 3.2 节——`{ damping: 8, stiffness: 200, mass: 0.5 }`
-- **数字滚动**（`StatOverlay` 内部）：用 `interpolate` + `Math.round` 计数，禁止用 CSS 动画
-- **描述 + 关键词**：`ActionDataCard` 等组件**结构稳定**（永远是"动作名 / reps / sets"），但**内容可变**（用 props 传）——这样换数据不用改组件源码
-
-### 10.3 实现示例（`<ActionDataCard>` 骨架）
-
-```tsx
-// remotion/src/components/ActionDataCard.tsx
-import { spring, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
-
-export const ActionDataCard: React.FC<{
-  name: string;      // 动作名："壁虎推墙"
-  reps: string;      // 次数："12-15"
-  sets: string;      // 组数："3"
-  rpe?: string;      // 可选：强度
-  rest?: string;     // 可选：休息
-  delay?: number;    // 入场延迟（帧）
-}> = ({ name, reps, sets, rpe, rest, delay = 0 }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const entrance = spring({
-    frame: frame - delay,
-    fps,
-    config: { damping: 8, stiffness: 200, mass: 0.5 },
-  });
-
-  return (
-    <div
-      className="bg-[#FF4500]/20 border-2 border-[#FF4500]/50 rounded-lg p-6"
-      style={{ transform: `scale(${interpolate(entrance, [0, 1], [0.85, 1])})`, opacity: entrance }}
-    >
-      <div className="text-white text-4xl font-bold">{name}</div>
-      <div className="mt-3 flex gap-6 text-white">
-        <div><span className="text-[#FF4500] text-5xl font-bold">{reps}</span> 次</div>
-        <div><span className="text-[#FF4500] text-5xl font-bold">{sets}</span> 组</div>
-        {rpe && <div>RPE <span className="text-[#FF4500]">{rpe}</span></div>}
-        {rest && <div>休息 <span className="text-[#FF4500]">{rest}</span></div>}
-      </div>
-    </div>
-  );
-};
+```html
+<div class="bg-video" data-asset="videos/卧推80KG_10.mov"></div>
 ```
 
-### 10.4 在分镜里怎么引用
+```js
+// 视频：直接 muted + playsinline，不带音轨
+const bgVideo = document.querySelector('.bg-video')
+bgVideo.src = '/<主题>/videos/卧推80KG_10.mov'  // 相对路径
+bgVideo.muted = true
+bgVideo.playsinline = true
 
-```json
-{
-  "shot_id": "S05",
-  "content_type": "code_component",
-  "content_source": "<ActionDataCard name=\"壁虎推墙\" reps=\"12-15\" sets=\"3\" rpe=\"7\" />",
-  "description": "动作 1 数据卡：橙底数据卡 + spring 弹入"
+// 图片：fetch + blob URL（避免相对路径错位）
+fetch('/<主题>/images/翼状肩胛自测.png')
+  .then(r => r.blob())
+  .then(blob => {
+    const url = URL.createObjectURL(blob)
+    document.querySelector('.hero-img').src = url
+  })
+```
+
+---
+
+## 7 · 组件模板库（7 类常用组件）
+
+> **铁律**：**每个 shot 拆成独立组件**（`components/Shot<N>_<描述>.html`），不要在 `scene.html` 写满全部内容。
+>
+> 原因：组件化 → 复用 + 单测 + 调试效率。
+
+### 7.1 标题组件（`<h2 class="segment-title">`）
+
+```html
+<!-- components/Shot0_Hook_Title.html -->
+<div class="hook-text" data-shot-id="hook_question">
+  <h2 class="segment-title">你以为靠墙就能改翼状肩？</h2>
+</div>
+```
+
+```js
+// 入场（默认）
+gsap.from('.segment-title', {
+  y: 30, opacity: 0, duration: 0.5, ease: 'power2.out'
+})
+// 出场
+gsap.to('.segment-title', {
+  y: -20, opacity: 0, duration: 0.3, ease: 'power2.in'
+})
+```
+
+### 7.2 卡片组件（信息卡 / 数据卡 / CTA 卡）
+
+```html
+<!-- components/Shot2_Action_CountCard.html -->
+<div class="action-card" data-shot-id="action_wall_angel">
+  <div class="card__count">12</div>
+  <div class="card__unit">次 × 3 组</div>
+</div>
+```
+
+```js
+// 卡片入场（右上角，缩放 + 弹跳）
+gsap.from('.action-card', {
+  x: 50, opacity: 0, scale: 0.9, duration: 0.4, ease: 'back.out(1.4)'
+})
+// 数字滚动
+gsap.to(cardCount, { val: 12, duration: 0.5, snap: { val: 1 },
+  onUpdate: () => cardCount.innerText = Math.round(cardCount.val)
+})
+```
+
+### 7.3 视频组件
+
+```html
+<!-- components/Shot1_SelfTest_Video.html -->
+<video class="action-video" data-shot-id="self_test_1"
+       muted playsinline preload="auto">
+  <source src="/<主题>/videos/自测_01.mov" type="video/mp4">
+</video>
+```
+
+```js
+const video = document.querySelector('.action-video')
+video.muted = true
+video.playsinline = true
+// 入场
+gsap.from(video, { scale: 0.95, opacity: 0, duration: 0.5, ease: 'power2.out' })
+```
+
+### 7.4 字幕组件
+
+```html
+<div class="subtitle" data-shot-id="self_test_1" data-start="3.5" data-duration="6.0">
+  <span class="subtitle__text">背对镜子站好，肩膀放松手垂下来</span>
+  <span class="subtitle__highlight">肩胛骨内侧明显突出</span>
+</div>
+```
+
+```js
+// highlight 强制强调（1.15× 弹跳）
+gsap.fromTo('.subtitle__highlight',
+  { scale: 1 }, { scale: 1.15, duration: 0.25, yoyo: true, repeat: 1, ease: 'back.out(1.7)' }
+)
+```
+
+### 7.5 装饰元素（数据可视化 / 进度条 / 时间轴）
+
+```html
+<div class="data-viz" data-shot-id="self_test_2">
+  <div class="progress-bar" data-progress="0.6"></div>
+</div>
+```
+
+```js
+// 进度条
+gsap.to('.progress-bar', { width: '60%', duration: 1.0, ease: 'power3.inOut' })
+```
+
+### 7.6 段间停顿组件（pause_breath）
+
+```html
+<!-- 强制延长上一个 video，不引入新元素 -->
+<!-- scene.js 中用 GSAP 触发动效 -->
+```
+
+```js
+// 4 选 1（参考 §5.2）
+videoEl.playbackRate = 0.8  // 慢动作
+```
+
+### 7.7 CTA 组件（收尾 + 行动号召）
+
+```html
+<!-- components/Shot4_Outro_CTA.html -->
+<div class="cta-card" data-shot-id="outro_cta">
+  <h2 class="cta-card__title">去试试，评论区交作业</h2>
+  <div class="cta-card__icon">💬</div>
+</div>
+```
+
+### 7.8 A 类口播态组件（talking head，v4 锁版 · 2026-06-12）
+
+> **A 类专属（v4）**。人物口播时的主屏组件。**主口播视频同一份素材双用**——全屏态正方形居中铺满，左右分栏态正方形缩到左侧 <30%。
+>
+> **v4 更新（2026-06-12）**：v3 圆形 PIP 已废弃 → v4 左右分栏。
+
+```html
+<!-- components/Shot1_TalkingHead.html -->
+<div class="talking-head" data-shot-id="talking_head_1">
+  <video class="talking-head__video"
+         data-shot-id="talking_head_1"
+         muted playsinline preload="auto"
+         style="object-fit: cover; width: 100%; height: 100%;">
+    <source src="/<主题>/videos/001_talking_head.mp4" type="video/mp4">
+  </video>
+</div>
+```
+
+```css
+/* 主口播视频：正方形容器，GSAP 控制大小/位置 */
+/* Full Screen（默认）：1080×1080 正方形居中 */
+.talking-head {
+  position: absolute;
+  top: 0; left: 420px;
+  width: 1080px; height: 1080px;
+  border-radius: 24px;
+  overflow: hidden;
+  /* 羽化描边（全屏态专用，Split 态关闭）*/
+  box-shadow: inset 0 0 30px 8px rgba(10,10,10,0.5),
+              0 0 80px 40px rgba(10,10,10,0.4);
+  mask-image: radial-gradient(circle 80% 80% at 50% 50%, black 10%, transparent 100%);
+}
+.talking-head__video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: none;  /* ❌ CSS transition 禁用，全部交给 GSAP */
+}
+/* Split 态：574×574 正方形居左，feathering 关闭 */
+.talking-head--split {
+  left: 0; top: 260px;
+  width: 574px; height: 574px;
+  box-shadow: none;
+  mask-image: none;
 }
 ```
 
-> **不要**在分镜里写 `content_source: "resources/images/param_1.png"` 然后让 mmx 生成静态图——那就是本规则的**反例**。
+```js
+// 双态切换：全屏态 → 左右分栏态（0.5s）
+gsap.to('.talking-head', {
+  left: 0, top: 260, width: 574, height: 574,
+  duration: 0.5, ease: 'power2.inOut'
+})
+// 同时加 split class（用于关闭 feathering）
+document.querySelector('.talking-head').classList.add('talking-head--split')
+
+// 左右分栏态 → 全屏态（0.5s，反向）
+gsap.to('.talking-head', {
+  left: 420, top: 0, width: 1080, height: 1080,
+  duration: 0.5, ease: 'power2.inOut'
+})
+document.querySelector('.talking-head').classList.remove('talking-head--split')
+```
+
+> **关键技术**：**不要 pause 视频**。双态切换 = 只改 CSS 位置/大小，**视频不停止播放**。这样视频里"嘴在动"的进度 = 主旁白进度 = 字幕进度，**三同步**。
+>
+> 详见 [video-types.md §3.2 A 类双态布局 + §3.2.6 四条布局硬约束](../planning/video-types.md#32-a-类双态布局新锁版--2026-06-10)
+
+### 7.9 A 类辅助素材组件（visual support，2026-06-10 新增）
+
+> **A 类专属**。当文案提及"看这个""用这个工具"时，辅助素材按"飘浮规则"展示。
+
+```html
+<!-- components/Shot2_VisualSupport.html -->
+<div class="visual-support" data-shot-id="visual_support_1">
+  <div class="visual-support__frame" data-position="top-right">
+    <img class="visual-support__image"
+         src="/<主题>/images/100_code_screenshot.png"
+         alt="Cursor 代码截图">
+    <div class="visual-support__label">Cursor + Claude</div>
+  </div>
+</div>
+```
+
+```css
+/* 飘在右上角：半透明彩色边框 + backdrop blur */
+.visual-support__frame[data-position="top-right"] {
+  position: absolute;
+  top: 140px; right: 64px;
+  width: 60%; max-width: 600px;
+  background: rgba(255, 69, 0, 0.10);
+  border: 2px solid rgba(255, 69, 0, 0.5);
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
+  padding: 12px;
+  z-index: 10;
+}
+```
+
+```js
+// 入场：从右滑入 + 缩放
+gsap.from('.visual-support__frame', {
+  x: 100, opacity: 0, scale: 0.9,
+  duration: 0.4, ease: 'power2.out'
+})
+```
+
+> **飘浮规则**详 [video-types.md §3.2.3](../planning/video-types.md#323-辅助素材的飘浮规则)
+
+---
+
+## 8 · Scene.js 编排模板（完整 timeline）
+
+> **8 节标准结构**：开场 → 钩子 → 主体（自测/动作 × N）→ 段间停顿 × (N-1) → 收尾 → CTA。
+
+### 8.1 完整 timeline 模板
+
+```js
+// scene.js —— 标准 8 节结构
+const tl = gsap.timeline({ paused: true })
+
+// 1. 开场（0-0.3s）—— 标题 / 主题元素入场
+tl.from('.brand-mark', { opacity: 0, duration: 0.3 }, 0)
+
+// 2. 钩子（0.3-3.3s）
+tl.from('.hook-text', { y: 50, opacity: 0, duration: 0.4, ease: 'power2.out' }, 0.3)
+  .to('.hook-text', { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.3)
+
+// 3. 主体段 1（3.5-9.5s）—— 自测 / 动作 1
+tl.addLabel('segment-1', 3.5)
+  .from('.segment-1', { opacity: 0, duration: 0.3 }, 'segment-1')
+  .to('.segment-1', { opacity: 1, duration: 0.3 }, 'segment-1+=0.3')
+
+// 4. 段间停顿（9.5-10.2s）—— pause_breath
+tl.addLabel('pause-1', 9.0)
+  .to('.segment-1 video', { playbackRate: 0.8, duration: 0.7 }, 'pause-1')
+
+// 5. 主体段 2-N（10.2-...）—— 重复段 1 结构
+// ...
+
+// 6. 主体结束（X-Y s）—— 主体收尾
+tl.to('.segment-N', { opacity: 0, duration: 0.3 }, 'main-end')
+
+// 7. 收尾（Y-Z s）—— 1s 留白 + fade
+tl.addLabel('outro', 'main-end+=0.3')
+  .from('.outro-cta', { y: 30, opacity: 0, duration: 0.5, ease: 'power2.out' }, 'outro')
+
+// 8. 末段停顿（Z-...）—— BGM fade out
+tl.addLabel('fade-out', 'outro+=4')
+  .to('.bgm', { volume: 0, duration: 3 }, 'fade-out')
+
+// 必须：锁住首帧 + 注册全局
+tl.progress(0).render(0)
+window.__timelines = window.__timelines || {}
+window.__timelines['scene_id'] = tl
+```
+
+### 8.2 timeline 标注速查
+
+| 标注 | 含义 | 用法 |
+|---|---|---|
+| **绝对时间** | `addLabel('foo', 3.5)` | 在 3.5s 标注 foo |
+| **相对时间** | `'foo+=0.3'` | 距 foo 0.3s 后 |
+| **重叠转场** | `'shot2-in'`（shot1 出场后立刻开始）| 防硬切 |
+
+---
+
+## 9 · A/B/C 三类视频的脚本实现差异化
+
+| 维度 | A 人设 | B 知识 | C 产品 |
+|---|---|---|---|
+| **每镜时长** | 5-8s（带情绪）| 3-6s（带动作）| 4-7s（带信息密度）|
+| **镜数（60s 视频）** | 8-12 镜 | 12-18 镜 | 10-15 镜 |
+| **转场风格** | 柔和（fade / slide_up）+ **双态切换 0.5s** | 紧凑（push_left / zoom）| 快切（fade / push）|
+| **卡片占比** | 30%（数据/动作 overlay）| 50%（次数/组数/RPE）| 70%（功能截图/操作）|
+| **入场动效侧重** | 慢（power2.out, 0.5-0.6s）| 中（power2.out, 0.4s）| 快（power2.out, 0.3-0.4s）|
+| **highlight 频次** | 低（每镜 0-1 个）| 高（每镜 1-3 个）| 中（每镜 1-2 个）|
+| **pause_breath 数** | 2-3 个 | 4-6 个 | 2-4 个 |
+| **典型错误** | 入场太慢 / **人脸消失 / 辅助素材全屏替代人脸** | 镜数太多（切换疲劳）| 卡片堆砌（信息过载）|
+
+### 9.1 A 类脚本骨架（v3 · 2026-06-10 改写双态版）
+
+> **A 类核心是"双态"**：钩子 + 收尾用**口播态**（人脸主屏），主体段用**辅助素材态**（人脸缩右下角圆头像 + 辅助素材飘角落/全屏弱化）。
+
+```
+钩子 (3s, 口播态)        ← 人脸主屏 + 钩子句大字幕
+→ 段 1 (5-8s, 口播态)     ← 人脸主屏 + 字幕（讲"为什么"）
+→ 段 2 (5-8s, 辅助素材态) ← 圆头像右下 + 工具/代码/录屏飘右上
+→ pause_breath (0.7s)    ← 上一镜 0.8× 慢动作
+→ 段 3 (5-8s, 辅助素材态) ← 圆头像右下 + 数据/对比卡片飘左上
+→ 段 4 (5-8s, 口播态)     ← 人脸主屏 + 反思
+→ pause_breath (0.7s)    ← 上一镜 0.8× 慢动作
+→ 段 5 (5-8s, 辅助素材态) ← 圆头像右下 + 总结图表飘右上
+→ 收尾 (7-8s, 口播态)     ← 人脸主屏 + CTA + 评论图标
+```
+
+**双态切换次数经验值**（60s A 类视频）：
+- 口播态：3-4 段（钩子 + 反思/方法论 + 收尾）
+- 辅助素材态：4-5 段（工具/数据/案例/总结）
+- 总切换：8-10 次（每次 0.5s = 4-5s 用于切换 ≈ 总时长 7%）
+
+### 9.2 B 类脚本骨架
+
+```
+钩子 (3s) → 自测 1-2 (快切) → 段间停顿 (zoom) → 动作 1-4 (紧) → 收尾 (7s)
+```
+
+### 9.3 C 类脚本骨架
+
+```
+钩子 (3s) → 功能 1 卡片 (截图 + 弹跳) → 功能 2 → 功能 3 → CTA 卡片
+```
+
+---
+
+## 10 · 性能与可维护性约束
+
+### 10.1 性能铁律
+
+| 维度 | 上限 | 原因 |
+|---|---|---|
+| **同时动画元素数** | ≤ 8 个 | 移动端 GPU 瓶颈 |
+| **优先 transform/opacity** | ✅ 强制 | 走合成层，不触发重排 |
+| **避免 layout 触发属性** | 禁用 width/height/top/left 动画 | 必重排，必卡 |
+| **视频同时播放数** | ≤ 2 个 | 移动端解码瓶颈 |
+| **单镜 DOM 节点数** | ≤ 50 个 | 防止首帧渲染慢 |
+| **图片大小** | ≤ 2MB（单张）/ ≤ 500KB（卡片）| 加载时长 ≤ 1s |
+
+### 10.2 可维护性铁律
+
+| 维度 | 上限 |
+|---|---|
+| **scene.js 行数** | ≤ 300 行（超了拆 modules/）|
+| **scene.html 行数** | ≤ 200 行（不含 components/）|
+| **单文件嵌套深度** | ≤ 3 层 |
+| **shot 组件复用次数** | ≥ 2 次（一次性的塞 scene.html）|
+
+---
+
+## 11 · 实现 Scene 组件前必查
+
+1. **assets.md "已就位"列表**——只有素材就位才能 import
+2. **timing-sync.md**——确认时长锚点
+3. **storyboard.md**——确认 shot 划分
+4. **subtitles.json**——确认每条字幕时长
+5. **checklist.md §F 实现准备**——5 项检查全部 ✅
+
+---
+
+## 12 · 5 维评分卡 + 评审 SOP
+
+> **每维 ≥ 3 分才能进入用户审阅**，总分 ≥ 18/25。
+
+### 12.1 评分卡
+
+| 维度 | 1 分（差）| 3 分（中）| 5 分（优）| 本稿得分 |
+|---|---|---|---|---|
+| **安全区** | 标题/CTA 压 120px | 全在安全区内 | 全在安全区 + 留 ≥ 20px 余量 | — |
+| **配色** | 用实色背景 / 纯白框 | 用半透明强调色 | 半透明 + 强对比 + 3 处呼应 | — |
+| **动效** | 用 CSS transition / RAF | 全用 GSAP | 全用 GSAP + ease 选型合理 | — |
+| **转场** | < 0.3s / 用 flip | ≥ 0.3s + 5 类之一 | ≥ 0.3s + 决策树选型 + 标注完整 | — |
+| **性能** | > 8 个同时动画 / 触发 layout | ≤ 8 个 + 全 transform | ≤ 6 个 + 单镜 ≤ 50 DOM | — |
+
+### 12.1 无素材预览工作流（素材未就绪时）
+
+**设计原则**：素材未就绪也能预览剪辑节奏和图形动画，聚焦"剪得好不好"而非"素材拍没拍"。
+
+**预览能看的（无需素材）**：
+- ✅ GSAP timeline 动画（字幕淡入淡出、数字卡翻转、callout 滑入）
+- ✅ 图形界面（hook 数字卡、callout 面板、CTA 卡片）
+- ✅ 字幕文字显示和切换节奏
+- ✅ 双态布局切换（PIP ↔ Split Left）
+- ✅ 工具快切节奏（label 切换动画）
+
+**预览看不到的（缺失素材时黑屏）**：
+- ❌ 视频区 → 显示 `⚠️ 文件缺失` 占位符
+- ❌ 工具录屏区 → 显示 `⚠️ 工具录屏缺失` 占位符
+- ❌ 旁白 `.m4a` → 无声（不影响图形预览）
+- ❌ BGM `.mp3` → 无声（不影响图形预览）
+
+**fallback 机制**（自动触发）：
+- 视频 `<video>` 加 `onerror` → 隐藏 video → 显示 `.video-missing` 占位符
+- 素材路径填正确的文件名，显示在占位符中方便定位
+
+**预览命令（素材未就绪时）**：
+```bash
+cd hyperframe
+# B 类（B13 等）：直接预览
+npm run dev -- --scene=gym_machine_judge_b13
+
+# A 类（A2 等）：用 ?scene= 参数指定
+npm run dev -- --scene=a2_one_person_50_videos
+```
+
+> 注意：A2 在 scene.html 里已补全 `onerror` fallback；gen-scene.js 通用模板（B/C 类）内置了 `renderVideoShot()` 的 video-missing fallback。新增 A 类场景时，确保 scene.html 的 `<video>` 标签也加了 `onerror` fallback。
+
+---
+
+### 12.2 评审 SOP
+
+```
+1. 自评（5 维打分）→ ≥ 18 分才能提交
+   ↓
+2. 启动 npm run dev（用 run_in_background:true）
+   ↓
+3. 全屏过 3 遍（首屏 / 末屏 / 随机 5 镜）
+   ↓
+4. 异常打勾到 checklist.md §G 渲染前
+   ↓
+5. 用户审阅 → 通过 / 改稿
+```
+
+---
+
+## 13 · 调试与排错 SOP
+
+### 13.1 黑屏 / 首帧空白
+
+**症状**：Studio 打开后首帧黑屏。
+
+**排查顺序**：
+1. timeline 是否 `paused: true` + `.progress(0).render(0)` ？
+2. 元素 CSS `opacity: 0` 没补 `.to(..., { opacity: 1 })` ？
+3. 视频 `preload="auto"` 缺失？加 `await videoEl.play()` ？
+4. 图片 `fetch` 失败？看 Network 面板
+
+**修法模板**：
+
+```js
+// ✅ 修法：所有 from/to 配对 + 首帧锁
+const tl = gsap.timeline({ paused: true })
+tl.from('.text', { y: 30, opacity: 0, duration: 0.4 }, 0)
+  .to('.text', { y: 0, opacity: 1, duration: 0.4 }, 0)  // ← 必须有 to
+tl.progress(0).render(0)  // ← 锁首帧
+```
+
+### 13.2 卡帧 / 元素卡住不动
+
+**症状**：某镜切换时元素没动到位。
+
+**排查**：
+1. 转场时长 < 0.3s？
+2. 入场用 `from` 没补 `to` ？
+3. transform 与 CSS `transform: translate(-50%, -50%)` 冲突？改 `xPercent: -50, yPercent: -50`
+
+### 13.3 音画不同步
+
+**症状**：BGM 跟字幕/动作对不上。
+
+**排查**：
+1. 视频用了自带音轨？（必须分离 → muted video + 独立 audio）
+2. BGM 元素没接 timeline？（`<audio>` 元素是独立的，用 `currentTime` 同步）
+
+**修法**：
+
+```js
+// BGM 与 timeline 同步
+const bgm = document.querySelector('.bgm')
+bgm.currentTime = 0
+tl.eventCallback('onStart', () => bgm.play())
+tl.eventCallback('onComplete', () => bgm.pause())
+```
+
+### 13.4 性能差 / 帧率掉
+
+**排查**：
+1. 同时动画元素数 > 8？减少
+2. 触发 layout 属性？看 Chrome DevTools Performance 面板的 Layout Shift
+3. 视频同时播放 > 2？改用图片或预渲染
+
+### 13.5 元素位置错位
+
+**症状**：标题/卡片位置不对。
+
+**排查**：
+1. 安全区 ≥ 120px top / ≥ 64px left/right？
+2. 用 CSS `transform: translate(-50%, -50%)` 居中？改 `xPercent: -50, yPercent: -50`
+3. 视频 `object-fit: cover` 缺失？容器变形
+
+---
+
+## 14 · 反模式
+
+- ❌ 大面积纯色块遮挡画面
+- ❌ 顶部标题压在 120px 安全区
+- ❌ 卡片同屏出现 2 张
+- ❌ 段间停顿用切换素材 / 纯字幕 / 装饰卡片
+- ❌ 元素背景用实色暗灰 / 纯白
+- ❌ 标题用渐变 / 描边 / 阴影（破坏纯白原则）
+- ❌ 转场用 flip / 旋转 / 3D（与力量感冲突）
+- ❌ 素材框用纯白 / 纯灰背景
+- ❌ 配字幕时主体区域放长文字
+- ❌ 跳过 components/ 直接在 scene.html 写满全部内容
+- ❌ 用 CSS transition/animation / Tailwind 动画类（hyperframes 按帧渲染时不按帧推进）
+- ❌ 用 `requestAnimationFrame` / `Date.now()` / `performance.now()` 算动画进度
+- ❌ **video 自带音轨**（必须分离：muted video + 独立 audio）
+- ❌ **timeline 没 `paused: true` + `.progress(0).render(0)`**（首帧黑屏）
+- ❌ **单文件 > 300 行**（超了必拆 modules/）
+- ❌ **跳过 5 维评分卡直接给用户**（容易漏项）
+- ❌ **用 `setInterval` 算数字滚动**（不同步 timeline）
+- ❌ **同时动画 > 8 个元素**（移动端必卡）
+- ❌ **不跑自检就 npm run render**（违反 [render.md](render.md) 触发规则）
+
+### 14.1 A 类专属反模式（v4 · 2026-06-12 新增）
+
+> 与 [video-types.md §12.1](../planning/video-types.md#121-a-类专属反模式v3-新增--2026-06-10) 同步。
+
+- ❌ A 类视频没有真人口播视频
+- ❌ 辅助素材态时人脸完全消失（视频必须在左侧可见）
+- ❌ 视频缩小使用圆形 PIP（v3 旧布局）——v4 改为左右分栏矩形视频
+- ❌ 左右分栏时视频尺寸或位置不符合规范（不是正方形或 x ≠ 0 或 width > 576px）
+- ❌ 双态切换时主口播视频 pause 了（视频里"嘴不动"了，破坏三同步）
+- ❌ 辅助素材当主体（不飘角落也不弱化，直接全屏替代人脸）
+- ❌ 双态切换 < 0.3s（生硬）或 > 1s（节奏拖）
+- ❌ 用 CSS `transition` 做双态切换（hyperframes 引擎不按帧推进 → 卡帧）
+- ❌ **口播视频未裁切为正方形**（竖屏素材直接居中两侧黑边）
+- ❌ **Split 态视频宽度 ≥ 576px**（占比 ≥ 30%）
+- ❌ **全片单一背景图**（A 类应有 per-scene 场景化背景）
+- ❌ **Split 态视频列保留羽化描边/box-shadow 效果**
+
+---
+
+## 15 · 音频分离铁律（video muted + 独立 audio）
+
+> **铁律（2026-06-11 立）**：所有 `<video>` 元素**必须**带 `muted playsinline` 属性，**视频文件自身的音轨不进入最终输出**。声音一律走**独立的 `<audio>` 元素**。
+>
+> **反面教训**：[gym_machine_judge_b13 修复](https://github.com/heygen-com/hyperframes/issues)（2026-06-11）—— 没有这条铁律导致 B 类视频普遍踩坑：视频音轨 + 独立音频双重播放，runtime 报警告 / 数据不对齐。
+
+### 15.1 为什么必须
+
+1. **framework 自动检测**：`muted` → `data-has-audio="false"` → render 阶段 `extractVideosStage` **不会**把视频音轨加到 `composition.audios` 数组。最终输出只含 1 个音轨（独立 `<audio>` 处理结果），不会有视频自带音轨。
+2. **避免音轨冲突**：视频自带音轨 + 独立音频同时存在 → 双重播放 → 观众听两遍，且音量不可独立控。
+3. **音量控制统一**：声音全走 `<audio>` 元素，`data-volume` / `gsap.to(audio, { volume })` 单独可控（fade-in / fade-out / 段间停顿静音都靠它）。
+4. **后期可换**：换 BGM / 调音量 / 加段间停顿不需要重录视频。
+
+### 15.2 模式
+
+```html
+<!-- 视频：只画面，音轨静音 -->
+<video id="v-shot_1" class="clip" data-start="3.5" data-duration="6.0" data-track-index="2"
+       src="../../../assets/videos/<topic>/<file>.mov"
+       muted playsinline preload="metadata"></video>
+
+<!-- 声音：独立 <audio>，按需：voiceover / BGM / sfx -->
+<audio id="voiceover" src="../../../assets/audios/<topic>/<file>.m4a"
+       data-start="0" data-duration="62.33" data-track-index="0" preload="auto"></audio>
+<audio id="bgm"       src="../../../assets/audios/bgm/<topic>.mp3"
+       data-start="0" data-duration="62.33" data-track-index="1" preload="auto"></audio>
+```
+
+### 15.3 自检 checklist（写完 scene.html 后）
+
+```bash
+# 1. 所有 <video> 都有 muted
+grep -c '<video' compositions/<topic>.html        # 视频总数
+grep -c 'muted' compositions/<topic>.html         # muted 总数
+# 上面两行输出必须相等
+
+# 2. 没有任何 <video> 标记 data-has-audio="true"
+grep 'data-has-audio="true"' compositions/<topic>.html
+# 期望：无输出
+
+# 3. 声音元素全在 <audio> 里
+grep '<audio' compositions/<topic>.html
+# 至少包含 voiceover + BGM（如有）
+```
+
+### 15.4 反例
+
+- ❌ `<video src="...mp4" data-has-audio="true">`（不静音 → 视频自带音轨进 render）
+- ❌ `<video src="...mp4">` 不写 `muted`（默认有声 → framework 走"双音轨"路径，runtime 报警告）
+- ❌ 视频自带 BGM（"录的时候顺便加了个 BGM" → BGM 没法独立控音量，段间停顿做不到）
+- ❌ 配音轨通过 video 的 `volume` 属性（video 应全程 muted，音量全在 `<audio>` 上）
+
+### 15.5 三个 track-index 的语义
+
+| track | 用途 | 例子 |
+|---|---|---|
+| `data-track-index="0"` | voiceover / 旁白 | `<audio id="voiceover">` |
+| `data-track-index="1"` | BGM / 背景音乐 | `<audio id="bgm">` |
+| `data-track-index="2"` | 视频 / 视觉元素 | `<video>`, `<div class="shot">` |
+
+> 数字大小只代表轨道编号（不表视觉层级），框架对所有 track 一视同仁。  
+> 同一 track 上的元素**不重叠时间**，不同 track 任意重叠——这是 voiceover + BGM 混音的基础。
+
+---
+
+## 附录 A · 速查索引
+
+| 我想... | 看... |
+|---|---|
+| 写一个 Shot 组件 | [§7 组件模板库](#7-组件模板库7-类常用组件) |
+| 编排完整 timeline | [§8 Scene.js 编排模板](#8-scenejs-编排模板完整-timeline) |
+| 按视频类型差异化 | [§9 A/B/C 三类视频的脚本实现差异化](#9-abc-三类视频的脚本实现差异化) |
+| 修首帧黑屏 | [§13.1 黑屏 / 首帧空白](#131-黑屏--首帧空白) |
+| 跑 5 维评分 | [§12 5 维评分卡 + 评审 SOP](#12-5-维评分卡--评审-sop) |
+| 写代码前必查 | [§11 实现 Scene 组件前必查](#11-实现-scene-组件前必查) |
+| **video 必带 muted / 声音分离** | **[§15 音频分离铁律](#15--音频分离铁律video-muted--独立-audio)** |
+
+---
+
+## 附录 B · 变更日志
+
+### v3（2026-06-11）— 音频分离铁律
+
+- **新增 §15 音频分离铁律**："`<video>` 必带 `muted playsinline` + 声音走独立 `<audio>`" 立为铁律，附 4 条理由 + 模式模板 + 3 步自检 grep + 4 类反例 + 3 个 track-index 语义表
+- 触发：gym_machine_judge_b13 修复时发现 hyperframes 0.6.72 在多 audio 元素场景下的语音丢失 bug；为避免下次再因"video 自带音轨 + 独立 audio"导致双重播放 / 静默丢音，把音轨分离硬约束写进规范
+- 附录 A 速查索引新增 §15 入口
+- §14 反模式已有"❌ video 自带音轨"条目，与 §15 互为引用
+
+### v2（2026-06-09）— 深化拓展
+
+- **新增 §7 组件模板库**：7 类常用组件（标题/卡片/视频/字幕/装饰/pause_breath/CTA），含 HTML + GSAP 代码
+- **新增 §8 Scene.js 编排模板**：8 节标准结构（开场→钩子→主体→段间→收尾→CTA）+ timeline 标注速查
+- **新增 §9 A/B/C 三类视频的脚本实现差异化**：每镜时长/镜数/转场/卡片占比/入场动效 5 维对照 + 3 类脚本骨架
+- **新增 §10 性能与可维护性约束**：6 项性能铁律 + 4 项可维护性铁律
+- **新增 §12 5 维评分卡 + 评审 SOP**：每维 ≥ 3 分 + 总分 ≥ 18 才能进用户审阅
+- **新增 §13 调试与排错 SOP**：5 大症状（黑屏/卡帧/音画不同步/性能/位置错位）+ 排查顺序 + 修法模板
+- **新增附录 A 速查索引** + **附录 B 变更日志**
+- **§5 转场规范扩 5.3 决策树**
+- **§14 反模式从 12 条扩到 21 条**
+- **保留不变**：§1 API 映射 + §2 目录结构 + §3 安全区 + §4 设计风格 + §6 静态资源加载 + §11 实现前必查
+
+### v1（2026-06-06）— 初版
+
+- Remotion → Hyperframes API 映射
+- 安全区 + 配色 + 转场 + 资源加载
+- 由 winged_scapula_b3 实战沉淀

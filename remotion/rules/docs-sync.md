@@ -1,223 +1,296 @@
-# 外部文档同步规范（docs-sync）
+# 文档同步（docs-sync.md）
 
-> 阶段：内容创作前的**信息准备**（external docs → internal SUMMARY）
-> 适用场景：写文案稿 / 拍视频前——**先**把外部仓库的相关文档增量同步到 `resources/docs/`
-> 来源：用户硬约束（CLAUDE.md "文档同步工作流" 段）
-> 状态：✅ 生效
-> 上下游：上游 = `/Users/eatong/eaTong_projects/fit_lc`（产品）+ `/Users/eatong/eaTong_projects/7fit_opc`（品牌）；下游 = `copy.md`（写文案）+ `video-types.md`（判类型）
-
----
-
-## 0. 为什么这一步是"必做"
-
-> **核心规则**：**视频脚本作者不应当假设自己记得外部仓库的细节**——每条引用都要可追溯到 `resources/docs/` 下的某个文件。
-
-反模式（**禁止**）：
-- ❌ "七练有个 X 功能" → 直接写在文案里，但 `resources/docs/` 没有原文
-- ❌ "我们最新定价 Y" → 没有同步到内部文档，写错了就被打脸
-- ❌ "创始人说 Z" → 没有 OPC 文档的来源
-
-正模式（**强制**）：
-- ✅ 写文案前**先**扫外部仓库的最近变更
-- ✅ 把相关文档**复制**到 `resources/docs/`
-- ✅ 写 `SUMMARY.md` 列出"哪些文档已同步 / 各自关键信息 / 视频脚本可用的事实清单"
-- ✅ 写文案时**只引用** `resources/docs/` 里的内容，**不**直接读外部仓库
+> **Phase 1 强制**：写视频脚本前，必须**先把两个外部仓库的文档增量同步**到 `docs/`，并生成项目级 `SUMMARY.md`。
+>
+> 没有同步就不要写脚本 —— 视频中提到的事实必须有 `docs/` 里的源文档可追溯。
+>
+> **同步哲学**：**事实可追溯 = 不重复造轮子 + 不臆造**——2 个外部仓库（fit_lc + 7fit_opc）是事实唯一来源。3 要素：**增量同步**（不复制整个仓库）+ **路径规范**（`docs/fit_lc/` + `docs/opc/`）+ **SUMMARY.md 索引**（写脚本时直接读）。
 
 ---
 
-## 1. 同步工作流
+## 1 · 4 个文档源
 
-### 1.1 触发条件
+| 仓库 | 路径 | 同步什么 |
+|---|---|---|
+| **7fit 产品本体** | `/Users/eatong/eaTong_projects/fit_lc` | 产品代码、后端、PRD、功能细节 |
+| **7fit 品牌** | `/Users/eatong/eaTong_projects/7fit_opc` | 北极星、利基、Headline、转化漏斗 |
+| **视频脚本稿**（产物，非同步）| `resources/docs/copy/<主题>.md` | 这次视频的文案（用户手写或 AI 起草） |
+| **本仓库同步清单** | `docs/SUMMARY.md` | 三个源的索引 + 视频脚本可引用的事实清单 |
 
-| 场景 | 是否触发 |
+> **目录分工**：
+> - `docs/` = 外部同步文档（fit_lc + 7fit_opc 的快照）
+> - `resources/docs/copy/` = 视频脚本稿（每视频一份 .md）
+> - `resources/docs/` = 旧位置（已废弃，新文件不再放这里）
+
+### 1.1 目录结构
+
+```
+docs/
+├── README.md                       # 目录说明
+├── SUMMARY.md                      # 同步索引 + 视频脚本事实清单
+├── fit_lc/                         # 7fit 产品本体（PRD/架构/数据模型）
+│   ├── prd.md                      # 主 PRD
+│   ├── prd-planning.md             # PRD 计划
+│   ├── prd-details/                # 6 大类功能详情
+│   └── architecture/               # 后端架构 + 数据模型
+└── opc/                            # 7fit 品牌（北极星/利基/Headline）
+    ├── north-star.md
+    ├── niche-statement-v4.md
+    ├── headline-candidates.md
+    ├── founders-note.md
+    └── landing-page-skeleton.md
+```
+
+---
+
+## 2 · 同步流程
+
+```
+1. 扫描 fit_lc/docs/ 找出与视频主题相关的新增/修改
+2. 扫描 7fit_opc/outputs/ 找出相关新增/修改
+3. 把与视频主题相关的文档复制到 docs/{fit_lc|opc}/ 下（用子目录分类）
+4. 生成或更新 docs/SUMMARY.md（模板见下）
+5. 后续所有视频脚本都基于 SUMMARY.md + 实际复制到的文档撰写
+```
+
+### 2.1 同步 SOP（5 步详解）
+
+| 步骤 | 动作 | 工具 |
+|---|---|---|
+| **1. 扫描 fit_lc** | 找主题相关章节 | `ls fit_lc/docs/` + grep |
+| **2. 扫描 7fit_opc** | 找主题相关章节 | `ls 7fit_opc/outputs/` + grep |
+| **3. 复制到 docs/** | 用 `cp -r` + 分类目录 | 终端 / Finder |
+| **4. 更新 SUMMARY.md** | 写索引 + 引用清单 | Markdown |
+| **5. 验证** | 检查路径 + 引用对 | `grep -r` |
+
+### 2.2 同步时机
+
+| 时机 | 频率 |
 |---|---|
-| 用户说"出 X 视频" | ✅ **必触发**（写文案前的第 0 步）|
-| 用户说"改 X 视频" | ✅ 触发（确保改完还基于最新事实）|
-| 用户说"加一个新功能视频" | ✅ 触发（新功能必然有 PRD 变更）|
-| 用户说"重发同款文案" | ❌ 不用（已经同步过）|
-
-### 1.2 流程
-
-```
-0. 拿到视频主题关键词
-       ↓
-1. 扫描 2 个外部仓库的最近 7 天变更
-   - /Users/eatong/eaTong_projects/fit_lc
-   - /Users/eatong/eaTong_projects/7fit_opc
-       ↓
-2. 筛选与本视频主题相关的文档
-       ↓
-3. 复制到 resources/docs/  （按子目录或主题命名）
-       ↓
-4. 写 resources/docs/SUMMARY.md  （本文件 §2 模板）
-       ↓
-5. 写文案时，只引用 resources/docs/ 里的内容
-```
-
-### 1.3 同步检查（写文案前 5 分钟）
-
-- [ ] 外部 2 个仓库都扫了最近 7 天变更
-- [ ] 与本视频主题相关的文档**全部**复制到 `resources/docs/`
-- [ ] `SUMMARY.md` 已更新
-- [ ] 写文案时**没有**直接读外部仓库（只读 `resources/docs/`）
+| **每个新视频开工前** | 必跑（详 §2）|
+| **每周一次全量复核** | 周末集中（详 §6）|
+| **外部仓库有更新时** | 增量同步 |
 
 ---
 
-## 2. SUMMARY.md 模板
+## 3 · `docs/SUMMARY.md` 模板
 
-`resources/docs/SUMMARY.md` 必须按以下结构写（视频脚本作者要一眼能找到"我需要的事实"）：
+详见 [docs/SUMMARY.md](../../docs/SUMMARY.md)（已建好模板）。
 
 ```markdown
-# 视频项目文档总览
+# 视频脚本源文档清单
 
-**最后更新**：<YYYY-MM-DD>
-**当前视频主题**：<主题>
-**当前视频类型**：<A/B/C>（详见 video-types.md）
-**外部仓库扫描范围**：最近 7 天
+> **用途**：AI Agent 写视频脚本时的事实查询起点。
+> **更新日期**：YYYY-MM-DD
+> **本次视频主题**：<主题，如 winged_scapula_b3>
 
----
+## 已同步文档
 
-## 1. 已同步的文档清单
-
-| 文件 | 来源仓库 | 同步日期 | 用途（视频脚本要引用什么）|
+| 源 | 路径 | 同步日期 | 关键内容 |
 |---|---|---|---|
-| `prd.md` | fit_lc | 2026-06-04 | 产品功能 / 卖点 / 数据 |
-| `prd-details/auth.md` | fit_lc | 2026-06-04 | 登录 / 注册 / 第三方登录相关 |
-| `opc-niche.md` | 7fit_opc | 2026-06-04 | 利基定位 / 用户画像 / 痛点 |
-| `opc-headline.md` | 7fit_opc | 2026-06-04 | 钩子句 / 标题候选 |
-| `opc-founders-note.md` | 7fit_opc | 2026-06-04 | 创始人故事 / 价值观 |
-| ... | | | |
+| fit_lc/docs/PRD.md | docs/fit_lc/prd.md | YYYY-MM-DD | 7fit 小程序主要功能列表 |
+| fit_lc/docs/architecture/ | docs/fit_lc/architecture/ | YYYY-MM-DD | 后端架构图 + 数据模型 |
+| 7fit_opc/outputs/02-niche-statement.md | docs/opc/niche-statement.md | YYYY-MM-DD | 利基 + 钩子句 + 北极星 |
+| 7fit_opc/outputs/03-value-proposition/ | docs/opc/headline-candidates.md | YYYY-MM-DD | Headline 候选 + 落地页 |
 
----
+## 视频脚本引用清单（本次视频可用的事实）
 
-## 2. 视频脚本可用的事实清单（按主题分类）
+- "翼状肩胛 3 步自测 + 4 个动作" → 来自 `docs/opc/headline-candidates.md` §落地页
+- "靠墙天使 / 俯身 Y-T-W / 弹力带外旋 / 死虫式" → 来自 `docs/opc/niche-statement.md` §动作清单
+- "神经性翼状肩请就医" → 来自 `docs/fit_lc/prd.md` §安全提示
+- ...
 
-> 这一节是"事实速查"——写文案时直接挑用。
+## 未同步/缺失
 
-### 2.1 产品功能 / 数据
-- 训练计划自动生成（基于 7 练的 RPE 算法）—— `prd.md §3.2`
-- 智能补全动作名（OCR + 动作库）—— `prd.md §4.1`
-- PR 突破自动识别（重量 × 次数 × RPE）—— `prd.md §5.3`
-- 7 练有 4 大模块：训练 / 记录 / AI 教练 / 社区 —— `prd.md §2`
-
-### 2.2 用户痛点（从 OPC 文档提炼）
-- 中级健身者最痛的不是"不会练"，是"练了不知道练得对不对" —— `opc-niche.md §3.2`
-- 70% 健身者有体态问题但不自知 —— `opc-niche.md §4.1`
-
-### 2.3 钩子句候选（来自 OPC）
-- "让健身更简单。" —— `opc-headline.md §1.1`（品牌主推）
-- "用产品思维去健身，用健身改造产品。" —— `opc-niche.md §1`（北极星）
-- "你以为的挺胸其实是翼状肩胛" —— `opc-headline.md §3.5`（反常识型）
-
-### 2.4 创始人故事（仅 A 类视频用）
-- 创始人做了 5 年产品经理，从 0 健身到 PR 100KG —— `opc-founders-note.md §2`
-- 七练不是"产品"是"实验"——每改一版看用户反馈 —— `opc-founders-note.md §3`
-
-### 2.5 定价 / 商业模式（仅 C 类视频用）
-- 免费版 + Pro 版（¥39/月）—— `prd.md §6.1`
-
----
-
-## 3. 视频脚本的"红线"（这些不能写）
-
-- ❌ 不能承诺"X 天见效"——产品没承诺过 → `prd.md §6.5` 商业化边界
-- ❌ 不能用"最 / 第一 / 唯一"等绝对化词 —— `opc-niche.md §5.1` 品牌调性
-- ❌ 不能用创始人真名 / 公司真名 —— 涉及隐私
-
----
-
-## 4. 待补充（同步过程中发现但没抄的）
-
-- [ ] `prd-details/onboarding.md` —— 还没抄，但可能与"新手引导"视频相关
-- [ ] `7fit_opc/outputs/05-pricing/` —— 还没抄，但 C 类视频可能用
+- [ ] 训练视频素材（4 个动作真人拍摄）— 等用户自录
+- [ ] BGM（4 类候选）— 等用户选定
 ```
 
-### 2.1 模板使用说明
-
-- §1 表格**必须**列出"每个文件 + 来源 + 同步日期 + 用途"——4 列缺一不可
-- §2 事实清单**按主题分类**——不是为了好看，是为了写文案时**快速找**
-- §3 红线**是 OPC / PRD 中明文禁止的**——写文案时**最后**过一遍
-- §4 待补充**保留**——下个视频可能用
-
 ---
 
-## 3. 外部仓库扫描方法
+## 4 · 增量同步原则
 
-### 3.1 用 git 看最近变更（推荐）
+- **不复制整个仓库**：只复制与本次视频主题相关的章节
+- **不修改源文档**：复制到 `docs/` 后保留原文，避免污染外部仓库
+- **同步后必须更新 SUMMARY**：否则下次视频脚本找不到引用
+- **每周一次全量复核**：用户工作日时间有限，周末集中同步
+- **按子目录分类**：`docs/fit_lc/` 放产品文档，`docs/opc/` 放品牌文档
 
-```bash
-# fit_lc 最近 7 天变更
-cd /Users/eatong/eaTong_projects/fit_lc
-git log --since="7 days ago" --name-only --pretty=format:"%h %s" | head -50
+### 4.1 增量同步决策表
 
-# 7fit_opc 最近 7 天变更
-cd /Users/eatong/eaTong_projects/7fit_opc
-git log --since="7 days ago" --name-only --pretty=format:"%h %s" | head -50
-```
+| 情况 | 是否同步 | 处理 |
+|---|---|---|
+| **本次视频主题相关** | ✅ 必同步 | 复制到 docs/ |
+| **未来可能用** | 🟡 标注 | 写进 SUMMARY.md "未同步"区 |
+| **与本项目无关** | ❌ 不同步 | 不复制 |
 
-### 3.2 按主题关键词找
+### 4.2 同步边界
 
-```bash
-# 找所有提到"翼状肩胛"的文档
-grep -r "翼状肩胛" /Users/eatong/eaTong_projects/fit_lc/docs/ 2>/dev/null
-grep -r "翼状肩胛" /Users/eatong/eaTong_projects/7fit_opc/outputs/ 2>/dev/null
-```
-
-### 3.3 优先级：哪些文档必同步
-
-| 视频类型 | 必同步的文档 |
+| 同步项 | 边界 |
 |---|---|
-| **A 个人人设** | `opc-niche.md` + `opc-founders-note.md` + `north-star.md`（北极星）|
-| **B 健身知识** | 外部医学 / 解剖参考（如果引用了）+ OPC 痛点文档 |
-| **C 七练介绍** | `prd.md` + `prd-details/`（与本视频相关的）+ `prd.md §6` 定价 |
+| **PRD** | 只同步主题相关功能模块 |
+| **架构** | 只同步视频可能引用的数据模型 |
+| **北极星 / 利基** | **必同步**（每视频都要引用）|
+| **Headline** | 必同步（直接进 copy.md）|
 
 ---
 
-## 4. resources/docs/ 目录结构
+## 5 · 优先级引用（写脚本时直接读）
+
+| 主题 | 优先读取 |
+|---|---|
+| 产品功能与卖点 | `docs/fit_lc/prd.md`、`docs/fit_lc/prd-planning.md`、`docs/fit_lc/prd-details/` |
+| 数据模型 / API | `fit_lc/backend/prisma/schema.prisma`、`fit_lc/backend/src/routes/` |
+| 品牌灵魂 / 北极星 | `docs/opc/north-star.md` |
+| 利基与钩子句 | `docs/opc/niche-statement-v4.md` |
+| Headline 候选 | `docs/opc/headline-candidates.md` |
+| 创始人故事 | `docs/opc/founders-note.md` |
+| 落地页骨架 | `docs/opc/landing-page-skeleton.md` |
+| 转化漏斗 | `7fit_opc/outputs/07-conversion-loop/02-conversion-funnel.md` |
+| 触达策略 | `7fit_opc/outputs/07-conversion-loop/01-reach-strategy.md` |
+
+### 5.1 引用优先级排序
 
 ```
-resources/docs/
-├── SUMMARY.md              # ← 总览（本文件 §2 模板）
-├── prd.md                  # 产品主文档
-├── prd-details/            # 产品子模块
-│   ├── auth.md
-│   ├── training-plan.md
-│   └── ...
-├── opc-niche.md            # 利基 / 用户画像
-├── opc-headline.md         # 钩子句候选
-├── opc-founders-note.md    # 创始人故事
-├── research/               # 调研材料
-│   ├── winged_scapula.md   # 翼状肩胛医学参考（B 类视频用）
-│   └── ...
-└── copy/                   # 文案稿（由 copy.md §1.3 落地）
-    ├── workout_intro.md
-    ├── winged_scapula_b3.md
-    └── ...
+🔴 必读（每视频）：
+- docs/opc/north-star.md
+- docs/opc/niche-statement-v4.md
+- docs/opc/headline-candidates.md
+
+🟡 按视频类型：
+- A 类 → docs/opc/founders-note.md
+- B 类 → docs/fit_lc/prd.md §动作清单
+- C 类 → docs/fit_lc/prd-details/ + 落地页骨架
 ```
 
 ---
 
-## 5. 速查清单（同步前 + 写文案前——只列**本文件专属**项）
+## 6 · 周复核 SOP
 
-> **跨文件去重原则**：通用自检（视频内容/违禁词）见 [checklist.md](checklist.md)；本节只列**文档同步**专属项。
+> **每周末一次**（用户工作日时间有限，周末集中同步）。
 
-**同步前**
+```
+1. 跑 §2 同步流程（1-5 步）
+2. 对比上周发布视频引用的 fact，验证 SUMMARY.md 是否全
+3. 更新 SUMMARY.md
+4. 跑 §5 引用优先级，验证路径都对
+5. 记录到日历（[calendar.md §4 月度复盘](../delivery/calendar.md)）
+```
 
-- [ ] 拿到视频主题关键词
-- [ ] 外部 2 个仓库都扫了最近 7 天变更（git log）
-- [ ] 用主题关键词 grep 找相关文档
-- [ ] 与本视频主题相关的文档**全部**复制到 `resources/docs/`
+### 6.1 周复核 checklist
 
-**写 SUMMARY.md 时**
+- [ ] 跑 §2 同步流程 5 步
+- [ ] 验证上周发布视频引用的事实都有源
+- [ ] 更新 SUMMARY.md（同步日期）
+- [ ] 检查 `docs/fit_lc/` + `docs/opc/` 路径都对
+- [ ] 标注未同步项（未来可能用）
 
-- [ ] §1 表格 4 列齐全：文件 + 来源 + 同步日期 + 用途
-- [ ] §2 事实清单按主题分类（功能 / 痛点 / 钩子 / 故事 / 定价）
-- [ ] §3 红线明确（不能写什么）
-- [ ] §4 待补充保留
+---
 
-**写文案前**
+## 7 · 写脚本时的引用 SOP
 
-- [ ] `resources/docs/SUMMARY.md` 已存在
-- [ ] 文案里所有事实都能在 `resources/docs/` 找到原文
-- [ ] 写文案时**没有**直接读外部仓库（只读 `resources/docs/`）
-- [ ] 文案完成后跑一次 [copy.md §8 违禁词自检](copy.md)
+```
+1. 用户说"做 X 视频"（[video-types.md §判定](../planning/video-types.md#判定流程必须问用户)）
+   ↓
+2. 跑 §2 同步流程（确保主题相关文档已同步）
+   ↓
+3. 读 docs/SUMMARY.md（看本次主题相关的事实在哪）
+   ↓
+4. 写 [research.md](../production/research.md)（从评论/平台/竞品/事实 4 维）
+   ↓
+5. 写 copy.md，每条事实标 [来源: <docs 路径> §<章节>]
+   ↓
+6. 跑 [copy.md §3.6 事实可追溯](../planning/copy.md#36-事实可追溯) 自检
+```
+
+---
+
+## 8 · 异常处理
+
+### 8.1 常见异常 + 修法
+
+| 异常 | 现象 | 修法 |
+|---|---|---|
+| **外部仓库路径变了** | 引用失败 | 更新路径 + 写进 §3 SUMMARY |
+| **同步后源文档被改** | 引用过期 | 增量同步 + 标日期 |
+| **SUMMARY.md 漏更新** | 下次找不到引用 | 强制门控（详 §2.2）|
+| **`docs/` 文件太多** | 工作区污染 | 增量同步（详 §4.1）|
+| **跨仓库冲突** | 两个源说不同事 | 标注冲突 + 用户决策 |
+
+### 8.2 异常决策表
+
+| 异常 | 修法 | 影响范围 |
+|---|---|---|
+| **小问题**（1 处路径）| 改路径 | 单个视频 |
+| **大问题**（仓库搬迁）| 全量重新同步 | 所有视频 |
+| **冲突**（多源矛盾）| 用户决策 | 单条事实 |
+
+---
+
+## 9 · 5 维评分卡（同步质量）
+
+> **每维 ≥ 3 分才能进 Phase 1（写 copy）**，总分 ≥ 15/25。
+
+| 维度 | 1 分（差）| 3 分（中）| 5 分（优）| 本次得分 |
+|---|---|---|---|---|
+| **覆盖度** | 主题相关 < 50% | 主题相关 80% | 主题相关 100% + 未来可能用也同步 | — |
+| **路径规范** | 直接放 docs/ 根 | 部分按子目录分类 | `docs/fit_lc/` + `docs/opc/` 全分类 | — |
+| **SUMMARY.md 完整** | 不更新 | 更新了 | 更新 + 引用清单全 | — |
+| **不污染源** | 改了源文档 | 复制后未改 | 复制后保留原文 + 标日期 | — |
+| **引用闭环** | copy.md 无来源 | 50% 引用 docs/ | 100% 引用 docs/ + 双源 | — |
+
+---
+
+## 10 · 反模式
+
+- ❌ 写脚本时不引用任何文档，凭"印象"编内容
+- ❌ 复制整个仓库到 `docs/`（污染工作区）
+- ❌ 改了源文档后忘记同步（导致视频说陈旧功能）
+- ❌ 同步后不更新 SUMMARY.md（下次视频脚本找不到引用）
+- ❌ 假设视频脚本作者记得外部仓库的细节（每条引用都要可追溯到 `docs/` 下的某个文件）
+- ❌ 把视频脚本稿（`copy/`）放进 `docs/` —— `docs/` 只放外部同步
+- ❌ 把项目内部规范（`rules/`）放进 `docs/` —— `docs/` 只放外部同步
+- ❌ **不在 SUMMARY.md 写同步日期**（无法判断过期）
+- ❌ **不区分 fit_lc/ 和 opc/ 子目录**（混在一起）
+- ❌ **周不复核**（同步滞后）
+- ❌ **跳过 5 维评分卡直接写 copy**
+
+---
+
+## 附录 A · 速查索引
+
+| 我想... | 看... |
+|---|---|
+| 跑同步 | [§2 同步流程](#2-同步流程) |
+| 套 SUMMARY 模板 | [§3 docs/SUMMARY.md 模板](#3-docssummarymd-模板) |
+| 决策同步什么 | [§4 增量同步原则](#4-增量同步原则) |
+| 查引用 | [§5 优先级引用](#5-优先级引用写脚本时直接读) |
+| 周末复核 | [§6 周复核 SOP](#6-周复核-sop) |
+| 修异常 | [§8 异常处理](#8-异常处理) |
+| 跑评分 | [§9 5 维评分卡](#9-5-维评分卡同步质量) |
+
+---
+
+## 附录 B · 变更日志
+
+### v2（2026-06-09）— 深化拓展
+
+- **新增 §1.1 目录结构图**：6 子目录树状图
+- **新增 §2.1 同步 SOP（5 步详解）**：每步动作+工具
+- **新增 §2.2 同步时机**：3 时机决策
+- **新增 §4.1 增量同步决策表**：3 情况→处理
+- **新增 §4.2 同步边界**：4 同步项边界
+- **新增 §5.1 引用优先级排序**：🔴 必读 + 🟡 按类型
+- **新增 §6 周复核 SOP**：5 步流程
+- **新增 §6.1 周复核 checklist**：5 项必走
+- **新增 §7 写脚本时的引用 SOP**：6 步流程
+- **新增 §8 异常处理**：5 类异常 + 决策表
+- **新增 §9 5 维评分卡（同步质量）**：总分 ≥ 15 才能进 Phase 1
+- **新增附录 A 速查索引** + **附录 B 变更日志**
+- **§10 反模式从 7 条扩到 11 条**
+- **保留不变**：§1 4 文档源 + §2 同步流程（基础 5 步）+ §3 SUMMARY 模板 + §4 增量同步原则（基础 5 原则）+ §5 优先级引用（基础 9 主题）+ §7 反模式（基础 7 条）
+
+### v1（2026-06-04）— 初版
+
+- 4 文档源 + 同步流程 + SUMMARY 模板 + 增量原则 + 优先级引用 + 反模式
+- 由 winged_scapula_b3 实战沉淀
