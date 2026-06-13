@@ -1,9 +1,8 @@
 // remotion/src/scenes/AuxiliaryContentManager.tsx
 
 import { useCurrentFrame, interpolate, Easing } from "remotion";
-import { Img, OffthreadVideo } from "remotion";
-import { staticFile } from "remotion";
 import { useRef } from "react";
+import { MediaFallback } from "../components/MediaFallback";
 
 const ENTER_FRAMES = 8;
 const EXIT_FRAMES = 8;
@@ -65,11 +64,11 @@ export const AuxiliaryContentManager: React.FC<AuxiliaryContentManagerProps> = (
 
   return (
     <div style={{ position: "absolute", width: "100%", height: "100%", opacity: Math.max(0, Math.min(1, finalOpacity)), ...style }}>
-      {contentType === "video" && contentSrc && (
-        <OffthreadVideo src={staticFile(contentSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      {contentType === "video" && (
+        <MediaFallback src={contentSrc} type="video" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       )}
-      {contentType === "image" && contentSrc && (
-        <Img src={staticFile(contentSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      {contentType === "image" && (
+        <MediaFallback src={contentSrc} type="image" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       )}
       {contentType === "data_viz" && children}
       {contentType === "text_card" && children}

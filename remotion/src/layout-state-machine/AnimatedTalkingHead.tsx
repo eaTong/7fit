@@ -1,8 +1,8 @@
 // remotion/src/scenes/AnimatedTalkingHead.tsx
 
-import { OffthreadVideo, useCurrentFrame, interpolate, Easing } from "remotion";
-import { staticFile } from "remotion";
+import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { LayoutState, TransitionEasing } from "./layouts/types";
+import { MediaFallback } from "../components/MediaFallback";
 
 const TRANSITION_FRAMES = 30; // 30fps × 1s 过渡动画
 
@@ -51,8 +51,9 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
       boxShadow: curLayout.shadow === "none" ? undefined : curLayout.shadow,
       zIndex: curLayout.zIndex,
     }}>
-      <OffthreadVideo
-        src={staticFile(videoSrc)}
+      <MediaFallback
+        src={videoSrc}
+        type="video"
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </div>

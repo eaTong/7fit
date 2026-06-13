@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { AbsoluteFill, useCurrentFrame, Img, OffthreadVideo } from "remotion";
-import { staticFile } from "remotion";
+import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { AnimatedTalkingHead } from "./AnimatedTalkingHead";
+import { MediaFallback } from "../components/MediaFallback";
 import { getLayout } from "./layouts";
 import type { LayoutState, ShotEntry } from "./layouts/types";
 
@@ -61,14 +61,10 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
       return renderBackground(currentShot, curLayout);
     }
     if (backgroundSrc) {
-      return backgroundType === "video" ? (
-        <OffthreadVideo
-          src={staticFile(backgroundSrc)}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      ) : (
-        <Img
-          src={staticFile(backgroundSrc)}
+      return (
+        <MediaFallback
+          src={backgroundSrc}
+          type={backgroundType}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       );
