@@ -1,7 +1,7 @@
 import { AbsoluteFill } from "remotion";
-import { LayoutTransitionEngine } from "../LayoutTransitionEngine";
-import { ShotContent } from "../ShotContent";
-import type { ShotEntry } from "../layouts/types";
+import { LayoutTransitionEngine } from "../../layout-state-machine/LayoutTransitionEngine";
+import { ShotContent } from "../../layout-state-machine/ShotContent";
+import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 
 // TODO: 素材路径占位符，替换为真实素材后再渲染
 // - videoSrc: videos/talking_head.mov → 替换为实际口播视频

@@ -12,13 +12,16 @@ const EASING_MAP: Record<string, (t: number) => number> = {
   "ease-in-out":     Easing.inOut(Easing.cubic),
   "crisp":           Easing.bezier(0.16, 1, 0.3, 1),
   "standard":        Easing.bezier(0.4, 0, 0.2, 1),
+  "slide-left":      Easing.out(Easing.cubic),
+  "zoom":            Easing.out(Easing.cubic),
+  "fade":            Easing.out(Easing.cubic),
 };
 
 interface AnimatedTalkingHeadProps {
   videoSrc: string;
   prevLayout: LayoutState;
   curLayout: LayoutState;
-  transitionType: keyof typeof EASING_MAP;
+  transitionType: TransitionEasing;
 }
 
 export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({

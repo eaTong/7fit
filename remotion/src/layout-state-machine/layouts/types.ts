@@ -26,7 +26,10 @@ export type TransitionEasing =
   | "ease-out"
   | "ease-in-out"
   | "crisp"
-  | "standard";
+  | "standard"
+  | "slide-left"
+  | "zoom"
+  | "fade";
 
 export interface ShotEntry {
   shotId: string;
