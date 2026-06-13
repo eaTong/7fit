@@ -1,6 +1,7 @@
 import "./index.css";
 import { Composition } from "remotion";
 import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
+import { B14PushDay } from "./scenes/b14_push_day";
 
 /**
  * A/B/C 三类视频的画布尺寸规范：
@@ -24,6 +25,15 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
 
+      <Composition
+        id="b14-push-day"
+        component={B14PushDay}
+        durationInFrames={960}  // 32s × 30fps
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
       {/* === A 类示例：1920×1080 横屏（16:9）===
       // 未来 A 类视频在此注册，示例：
       <Composition
@@ -36,7 +46,7 @@ export const RemotionRoot: React.FC = () => {
       />
       */}
 
-      {/* === C 类：1080×1920 竖屏（9:16）===
+      {/* === C 类示例：1080×1920 竖屏（9:16）===
       // 未来 C 类视频在此注册，示例：
       <Composition
         id="c1-product-intro"
