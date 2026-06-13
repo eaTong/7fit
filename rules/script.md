@@ -713,6 +713,94 @@ const ShotRenderer: React.FC<{ shot: Shot; isLast: boolean }> = ({ shot, isLast 
 | **pause_breath 数** | 2-3 个 | 4-6 个 | 2-4 个 |
 | **典型错误** | 入场太慢 / **人脸消失 / 辅助素材全屏替代人脸** | 镜数太多（切换疲劳）| 卡片堆砌（信息过载）|
 
+---
+
+## 7.10 · 布局组件规范（2026-06-13）
+
+> **核心原则**：每种布局方式**必须封装为独立组件**，放在 `src/components/` 下，禁止在 Scene 内联实现。
+
+### 7.10.1 为什么需要独立布局组件
+
+1. **复用**：多个视频可能用相同的布局（如 2×2 网格）
+2. **可维护**：布局逻辑与内容分离，修改布局不影响 shot 内容
+3. **可测试**：独立组件可以单独抽检帧
+4. **跨 Scene 共享**：`src/components/` 下的组件可在所有 Scene 间共享
+
+### 7.10.2 布局组件 vs 内容组件
+
+| 类型 | 位置 | 职责 | 示例 |
+|---|---|---|---|
+| **布局组件** | `src/components/` | 负责**空间排版**，不关心具体内容 | `Grid2x2`、`ThreeQuarters`、`Sidebar` |
+| **内容组件** | `scenes/<主题>/components/` | 负责**内容渲染**，依赖布局组件 | `Shot1_Title`、`ActionDataCard` |
+| **Scene** | `scenes/<主题>/index.tsx` | 编排 shot + 转场，不直接渲染元素 | — |
+
+### 7.10.3 当前已封装的布局组件
+
+| 组件 | 文件 | 布局描述 |
+|---|---|---|
+| `Grid2x2` | `src/components/Grid2x2.tsx` | 2×2 网格同屏 4 个视频 |
+| `VoiceoverText` | `src/components/VoiceoverText.tsx` | 底部字幕文字 |
+| `ActionDataCard` | `src/components/ActionDataCard.tsx` | 右上角动作参数卡 |
+| `CTAButton` | `src/components/CTAButton.tsx` | 底部 CTA 按钮 |
+
+### 7.10.4 新增布局组件的标准
+
+当需要实现以下模式之一时，**必须**新建布局组件：
+
+| 布局模式 | 组件名建议 | 说明 |
+|---|---|---|
+| 上下分栏 | `VerticalSplit` | 上 A / 下 B |
+| 左右分栏 | `HorizontalSplit` | 左 A / 右 B |
+| 三分屏 | `TripleSplit` | 三区域同屏 |
+| 全屏 + 覆盖层 | `Overlay` | 底部字幕 overlay |
+| 画中画 | `PictureInPicture` | 小窗在大窗角落 |
+| 轮播 | `Carousel` | 多内容轮切 |
+
+### 7.10.5 布局组件规范
+
+```tsx
+// ✅ 正确：布局组件只接收简单 props，不依赖 storyboard
+interface Grid2x2Props {
+  sources: [string, string, string, string];  // 4 个资源
+  type?: "video" | "image";
+  basePath?: string;
+  cellSize?: number;
+  gap?: number;
+}
+
+// ❌ 错误：布局组件直接依赖 Shot 类型（耦合 storyboard）
+interface BadGridProps {
+  grid_cells: Array<{ position: string; source: string }>;  // 依赖 Shot 类型
+  shot: Shot;  // 布局组件不应该知道 Shot
+}
+```
+
+### 7.10.6 调用方式
+
+```tsx
+// Scene 内
+<Grid2x2 
+  sources={[a, b, c, d]} 
+  type="video" 
+  basePath="b14_push_day/videos" 
+/>
+
+// 不允许在 Scene 内直接写布局逻辑
+// ❌
+<div style={{ position: "absolute", left: offsetX, top: offsetY }}>...</div>
+```
+
+### 7.10.7 速查清单
+
+- [ ] 新布局需求出现 → 先问"是否已有对应布局组件"
+- [ ] 如果没有 → 在 `src/components/` 新建布局组件
+- [ ] 布局组件**不依赖** `Shot` 类型
+- [ ] Scene 只负责编排，不写布局逻辑
+
+---
+
+## 8 · Scene 编排模板（完整 timeline）
+
 ### 9.1 A 类脚本骨架（v3 · 2026-06-10 改写双态版）
 
 > **A 类核心是"双态"**：钩子 + 收尾用**口播态**（人脸主屏），主体段用**辅助素材态**（人脸缩右下角圆头像 + 辅助素材飘角落/全屏弱化）。
