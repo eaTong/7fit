@@ -4,6 +4,7 @@
  * 视频时长：32s（12 shots = 8 动作镜 + 4 freeze frame）
  * 画布：1080×1920 竖屏（9:16）
  * BGM：gym_beat_b14.mp3（120 BPM，prominent kick drum）
+ * ⚠️ 默认静音（bgmVolume=0），传参开启
  *
  * 分镜来源：[storyboard.json](storyboard.json)
  * 关联文案：[copy.md](../../../docs/copy/b14_push_day.md)
@@ -117,7 +118,7 @@ export const B14PushDay: React.FC<{
   bgmVolume?: number;
   enableFadeIn?: boolean;
   enableTransitions?: boolean;
-}> = ({ bgmVolume = 0.25, enableFadeIn = true }) => {
+}> = ({ bgmVolume = 0, enableFadeIn = true }) => {
   const shots = storyboard.shots as Shot[];
 
   // ✅ 统一转场逻辑：过滤 pause_breath shots，让视频镜 crossfade 衔接
