@@ -67,3 +67,37 @@ registerLayout({
   borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
   shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
 });
+
+// ── 新增 4 种辅助内容多元素布局 ──
+
+// 口播小窗放右下角，辅助内容占左侧全高
+registerLayout({
+  id: "bottom_right_talking",
+  left: 1440, top: 384, width: 480, height: 480,
+  borderRadius: 240, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
+});
+
+// 口播放左下角，辅助内容占右侧全高
+registerLayout({
+  id: "bottom_left_talking",
+  left: 0, top: 384, width: 480, height: 480,
+  borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
+});
+
+// 口播放顶部中央，辅助内容占下方
+registerLayout({
+  id: "top_center_talking",
+  left: 720, top: 0, width: 480, height: 360,
+  borderRadius: 20, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 4px 24px rgba(0,0,0,0.6)", zIndex: 10,
+});
+
+// 口播放左上角小窗叠加（zIndex=20 在辅助内容之上），辅助内容全屏
+registerLayout({
+  id: "overlay_talking_head",
+  left: 50, top: 50, width: 360, height: 360,
+  borderRadius: 180, borderWidth: 2, borderColor: "rgba(255,255,255,0.8)",
+  shadow: "0 0 20px rgba(255,255,255,0.3)", zIndex: 20,
+});

@@ -88,6 +88,18 @@ function getAuxiliaryStyle(layoutId: string): React.CSSProperties {
       return { left: 50, top: 50, width: 1340, height: 864 };
     case "left_text_right_talking_50pct":
       return { left: 0, top: 0, width: 910, height: 864 };
+    case "bottom_right_talking":
+      // 口播在右下角小窗，辅助内容占左侧全高
+      return { left: 0, top: 0, width: 1440, height: 864 };
+    case "bottom_left_talking":
+      // 口播在左下角小窗，辅助内容占右侧全高
+      return { left: 480, top: 0, width: 1440, height: 864 };
+    case "top_center_talking":
+      // 口播在顶部中央，辅助内容占下方
+      return { left: 0, top: 360, width: 1920, height: 504 };
+    case "overlay_talking_head":
+      // 口播在左上角小窗叠加（zIndex=20），辅助内容全屏
+      return { left: 0, top: 0, width: 1920, height: 864 };
     case "pip_bottom_right":
     case "pip_bottom_left":
       return { left: 0, top: 0, width: 1920, height: 864 };
