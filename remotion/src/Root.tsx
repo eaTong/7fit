@@ -2,6 +2,7 @@ import "./index.css";
 import { Composition } from "remotion";
 import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
 import { B14PushDay } from "./scenes/b14_push_day";
+import { WorkoutIntro } from "./scenes/workout_intro";
 
 /**
  * A/B/C 三类视频的画布尺寸规范：
@@ -38,17 +39,15 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      {/* === A 类示例：1920×1080 横屏（16:9）===
-      // 未来 A 类视频在此注册，示例：
+      {/* === A 类：1920×1080 横屏（16:9）=== */}
       <Composition
-        id="a2-one-person"
-        component={A2OnePerson}
-        durationInFrames={3315}  // 110.5s × 30fps
+        id="workout-intro"
+        component={WorkoutIntro}
+        durationInFrames={540}  // 18s × 30fps
         fps={30}
         width={1920}
         height={1080}
       />
-      */}
 
       {/* === C 类示例：1080×1920 竖屏（9:16）===
       // 未来 C 类视频在此注册，示例：
