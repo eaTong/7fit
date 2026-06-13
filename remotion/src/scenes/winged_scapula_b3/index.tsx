@@ -38,13 +38,12 @@ import {
   OffthreadVideo,
   Sequence,
   staticFile,
-  useCurrentFrame,
-  interpolate,
-  Easing,
 } from "remotion";
 import storyboard from "./storyboard.json";
 import { ActionDataCard } from "../../components/ActionDataCard";
 import { CTAButton } from "../../components/CTAButton";
+import { ShotRenderer } from "../../components/ShotRenderer";
+import { BGMWithDucking } from "../../components/BGMWithDucking";
 
 /* === 配置 === */
 const FPS = 30;
@@ -75,7 +74,9 @@ const audio = (name: string) => `${BASE}/audios/${name}`;
 const video = (name: string) => `${BASE}/videos/${name}`;
 const image = (name: string) => `${BASE}/images/${name}`;
 
-/* === Shot 类型定义 === */
+/* === Shot 类型定义（winged_scapula_b3 专用）===
+ * 注意：此 Scene 的 voiceover 是 number[]（字幕时间戳数组），
+ * 与共享 Shot 接口的 string | string[] 不同，故保留本地定义 */
 interface Shot {
   shot_id: string;
   start: number;
@@ -96,9 +97,7 @@ interface Shot {
 const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
   // === 段间停顿 transition shot：纯黑屏 ===
   if (shot.content_type === "transition") {
-    return (
-      <AbsoluteFill style={{ background: "#0A0A0A" }} />
-    );
+    return <AbsoluteFill style={{ background: "#0A0A0A" }} />;
   }
 
   // === Image 类（钩子背景 / 过渡卡）===
@@ -123,9 +122,6 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
     if (!shot.content_source) {
       return <PlaceholderShot shotId={shot.shot_id} reason="video file missing" />;
     }
-    // ✅ 核心修复：动态 playbackRate 让视频铺满整个 shot 时长
-    // 视频 < shot → 慢放（playbackRate < 1），修复 S03/S04/S10 末段黑屏
-    // 视频 > shot → 快进（playbackRate > 1），让 S06-S09 不超出 shot 范围
     const videoDur = VIDEO_DURATIONS[shot.content_source];
     const playbackRate = videoDur ? videoDur / shot.duration : 1;
     return (
@@ -139,7 +135,6 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             objectFit: "cover",
           }}
         />
-        {/* video+code 子型：叠加代码组件 */}
         {shot.code_component === "ActionDataCard" && shot.code_props && (
           <ActionDataCard
             name={shot.code_props.name}
@@ -156,7 +151,6 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
     if (shot.code_component === "CTAButton" && shot.code_props) {
       return (
         <AbsoluteFill>
-          {/* code+video 子型：背景视频 + CTA 卡（playbackRate 防止 0.275s 缺口黑屏） */}
           {shot.content_source && (
             <OffthreadVideo
               src={staticFile(video(shot.content_source))}
@@ -168,10 +162,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           )}
-          <CTAButton
-            text={shot.code_props.text}
-            subtext={shot.code_props.subtext}
-          />
+          <CTAButton text={shot.code_props.text} subtext={shot.code_props.subtext} />
         </AbsoluteFill>
       );
     }
@@ -185,157 +176,31 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
 const PlaceholderShot: React.FC<{ shotId: string; reason: string }> = ({
   shotId,
   reason,
-}) => {
-  return (
-    <AbsoluteFill
-      style={{
-        background: "#1A0A0A",
-        justifyContent: "center",
-        alignItems: "center",
-        color: "#FF4500",
-        fontFamily: "-apple-system, sans-serif",
-        fontSize: 24,
-        textAlign: "center",
-        padding: 40,
-      }}
-    >
-      <div>
-        <div style={{ fontSize: 36, fontWeight: 700, marginBottom: 12 }}>
-          ⚠️ {shotId}
-        </div>
-        <div style={{ fontSize: 18, color: "#888888" }}>{reason}</div>
-        <div style={{ fontSize: 14, color: "#666666", marginTop: 12 }}>
-          跑 [mmx_prompts.md](../../../docs/copy/winged_scapula_b3.mmx_prompts.md) 生成
-        </div>
+}) => (
+  <AbsoluteFill
+    style={{
+      background: "#1A0A0A",
+      justifyContent: "center",
+      alignItems: "center",
+      color: "#FF4500",
+      fontFamily: "-apple-system, sans-serif",
+      fontSize: 24,
+      textAlign: "center",
+      padding: 40,
+    }}
+  >
+    <div>
+      <div style={{ fontSize: 36, fontWeight: 700, marginBottom: 12 }}>⚠️ {shotId}</div>
+      <div style={{ fontSize: 18, color: "#888888" }}>{reason}</div>
+      <div style={{ fontSize: 14, color: "#666666", marginTop: 12 }}>
+        跑 [mmx_prompts.md](../../../docs/copy/winged_scapula_b3.mmx_prompts.md) 生成
       </div>
-    </AbsoluteFill>
-  );
-};
-
-/* === Shot 包装（处理转入/转出动画 + sfx）=== */
-const ShotRenderer: React.FC<{
-  shot: Shot;
-  isFirst?: boolean;       // 第一镜不 enter fade（保持首帧饱满）
-  isLast?: boolean;        // 末镜不 exit fade（不渐出到黑）
-  paddedDuration?: number; // Sequence 实际 duration（含 crossfade padding）
-}> = ({ shot, isFirst = false, isLast = false, paddedDuration }) => {
-  const frame = useCurrentFrame(); // local frame (in v4, relative to Sequence)
-  const durationFrames = Math.round(shot.duration * FPS);
-  // paddedDuration = 实际 Sequence 长度（含 crossfade padding），用于计算 exit fade 窗口
-  const exitWindowEnd = paddedDuration ?? durationFrames;
-
-  // 转入动画：opacity 0 → 1（首镜跳过）
-  const enterOpacity = isFirst
-    ? 1
-    : interpolate(frame, [0, TRANSITION_FRAMES], [0, 1], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: Easing.out(Easing.cubic),
-      });
-
-  // 转出动画：opacity 1 → 0（末镜跳过）
-  const exitOpacity = isLast
-    ? 1
-    : interpolate(
-        frame,
-        [exitWindowEnd - TRANSITION_FRAMES, exitWindowEnd],
-        [1, 0],
-        {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: Easing.in(Easing.cubic),
-        },
-      );
-
-  // 转入位移（slide-left/slide-up 类型：进入时位移）
-  let enterTranslateX = 0;
-  if (shot.transition_in === "slide-left" || shot.transition_out === "slide-left") {
-    enterTranslateX = interpolate(frame, [0, TRANSITION_FRAMES], [50, 0], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    });
-  } else if (shot.transition_in === "slide-up" || shot.transition_out === "slide-up") {
-    enterTranslateX = 0;
-  }
-
-  // 转出位移
-  let exitTranslateX = 0;
-  if (shot.transition_out === "slide-left") {
-    exitTranslateX = interpolate(
-      frame,
-      [exitWindowEnd - TRANSITION_FRAMES, exitWindowEnd],
-      [0, -50],
-      {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      },
-    );
-  } else if (shot.transition_out === "slide-up") {
-    exitTranslateX = interpolate(
-      frame,
-      [exitWindowEnd - TRANSITION_FRAMES, exitWindowEnd],
-      [0, -50],
-      {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      },
-    );
-  }
-
-  const opacity = Math.min(enterOpacity, exitOpacity);
-  const translateX = enterTranslateX !== 0 ? enterTranslateX : exitTranslateX;
-
-  return (
-    <AbsoluteFill
-      style={{
-        opacity,
-        transform: `translateX(${translateX}px)`,
-      }}
-    >
-      <ShotContent shot={shot} />
-    </AbsoluteFill>
-  );
-};
-
-/* === BGM + Ducking === */
-const BGMWithDucking: React.FC = () => {
-  // ✅ 2026-06-05 调整：用户反馈 BGM 盖过人声 → 压到更激进的 -16dB / -12dB
-  // -16dB ≈ 0.158, -12dB ≈ 0.251
-  const DUCK_VOL = 0.15;     // 旁白期间：约 -16dB（更安静，让位给口播）
-  const NORMAL_VOL = 0.25;   // 无旁白：约 -12dB
-  const FADE_OUT_FRAMES = 75; // 末 2.5s 渐出
-
-  return (
-    <Audio
-      src={staticFile(audio("bgm/power_build.mp3"))}
-      volume={(f) => {
-        let v = NORMAL_VOL;
-        if (f < 30) {
-          // Fade in 0-1s
-          v = NORMAL_VOL * (f / 30);
-        } else if (f < VOICEOVER_END_FRAME) {
-          // Voiceover 期间：ducking（-16dB）
-          v = DUCK_VOL;
-        } else {
-          // Voiceover 结束后：解除 ducking（-12dB）
-          v = NORMAL_VOL;
-        }
-        // 末 2.5s fade out（防止突止）
-        const fadeOut = interpolate(
-          f,
-          [COMPOSITION_FRAMES - FADE_OUT_FRAMES, COMPOSITION_FRAMES],
-          [1, 0],
-          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-        );
-        return Math.max(0, v * fadeOut);
-      }}
-    />
-  );
-};
+    </div>
+  </AbsoluteFill>
+);
 
 /* === SFX 组件（按 shot 时间戳）=== */
 const SFXLayer: React.FC = () => {
-  // 从 storyboard 提取所有 sfx，按 start 排序
   const sfxEvents = (storyboard as Shot[])
     .filter((s) => !!s.sfx)
     .map((s) => ({
@@ -360,7 +225,15 @@ export const WingedScapulaB3: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
       {/* BGM with ducking */}
-      <BGMWithDucking />
+      <BGMWithDucking
+        src={staticFile(audio("bgm/power_build.mp3"))}
+        compositionFrames={COMPOSITION_FRAMES}
+        voiceoverEndFrame={VOICEOVER_END_FRAME}
+        normalVolume={0.25}
+        duckVolume={0.15}
+        fadeInFrames={30}
+        fadeOutFrames={75}
+      />
 
       {/* 旁白（m4a）*/}
       <Audio src={staticFile(audio("winged_scapula_b3.m4a"))} volume={1.0} />
@@ -368,26 +241,20 @@ export const WingedScapulaB3: React.FC = () => {
       {/* 3 个 sfx（在指定时间播放）*/}
       <SFXLayer />
 
-      {/* ✅ 2026-06-05 v2：彻底重写转场逻辑
-          - **过滤掉所有 transition 黑屏 shot**（TR01-TR10），不渲染
-          - 每个**视频镜的 Sequence 末扩"到下一镜的距离 + 9 帧 crossfade"**
-          - 效果：前一个视频会"撑"到下一个视频 fade in 完才离开（中间的 TR 段间停顿位置继续显示前一个视频）
-          - 用户看到：S02 全程 → S02 fade out + S03 fade in（9 帧重叠）→ S03 全程 */}
-      {((storyboard as Shot[]).filter((s) => s.content_type !== "transition")).map(
-        (shot, idx, arr) => {
+      {/* ✅ 2026-06-05 v2：过滤 transition shots + crossfade padding */}
+      {(storyboard as Shot[])
+        .filter((s) => s.content_type !== "transition")
+        .map((shot, idx, arr) => {
           const isFirst = idx === 0;
           const isLast = idx === arr.length - 1;
           const startFrame = Math.round(shot.start * FPS);
           const durationFrames = Math.round(shot.duration * FPS);
 
-          // 计算到下一个视频镜的距离（包含中间的 TR 段间停顿时长）
-          // 让本镜 Sequence 延伸到下一镜 startFrame 后再 +9 帧 crossfade
           let exitExtend = 0;
           if (!isLast) {
             const nextShot = arr[idx + 1];
             const nextStartFrame = Math.round(nextShot.start * FPS);
             const myEndFrame = startFrame + durationFrames;
-            // gap = TR 段间停顿时长，crossfade = TRANSITION_FRAMES
             const gapToNext = Math.max(0, nextStartFrame - myEndFrame);
             exitExtend = gapToNext + TRANSITION_FRAMES;
           }
@@ -400,15 +267,17 @@ export const WingedScapulaB3: React.FC = () => {
               durationInFrames={paddedDuration}
             >
               <ShotRenderer
-                shot={shot}
+                transitionIn={shot.transition_in}
+                transitionOut={shot.transition_out}
                 isFirst={isFirst}
                 isLast={isLast}
                 paddedDuration={paddedDuration}
-              />
+              >
+                <ShotContent shot={shot} />
+              </ShotRenderer>
             </Sequence>
           );
-        },
-      )}
+        })}
     </AbsoluteFill>
   );
 };
