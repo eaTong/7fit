@@ -423,6 +423,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 - **来源优先级**：mmx 生成 > 用户提供 > 第三方平台（Epidemic Sound/Artlist）
 - **存放位置**：`resources/audios/bgm/`（与旁白分开）
 - **集成**：用 `<Audio>` 组件 + `useCurrentFrame` 动态音量实现 ducking
+- **⚠️ 默认静音**：`bgmVolume` 默认为 `0`，组件默认静音，渲染时按需传参开启
 
 **素材清单核心硬约束速览**（详见 `rules/assets.md`）：
 
