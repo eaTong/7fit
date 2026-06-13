@@ -49,7 +49,7 @@ export const ShotContent: React.FC<ShotContentProps> = ({
         <CodeDisplay
           code={codeContent ?? "// no code provided"}
           language="typescript"
-          fontSize={22}
+          fontSize={28}
           showLineNumbers
           maxHeight={typeof auxStyle.height === "number" ? auxStyle.height * 0.9 : 400}
           style={{ width: "100%", height: "100%" }}
@@ -63,7 +63,7 @@ export const ShotContent: React.FC<ShotContentProps> = ({
       <div style={{ position: "absolute", ...auxStyle }}>
         <GitLogDisplay
           entries={gitlogEntries ?? []}
-          fontSize={22}
+          fontSize={28}
           visibleCount={gitlogVisibleCount ?? 5}
           style={{ width: "100%", height: "100%" }}
         />

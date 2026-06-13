@@ -27,7 +27,7 @@ interface GitLogDisplayProps {
 
 export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
   entries,
-  fontSize = 24,
+  fontSize = 28,
   visibleCount = 5,
   scrollSpeed = 1,
   highlightColor = "#FF4500",
@@ -130,7 +130,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
               {/* Hash */}
               <span
                 style={{
-                  fontSize: fontSize * 0.8,
+                  fontSize: 24,
                   color: isCenter ? highlightColor : "#00CCFF",
                   fontWeight: isCenter ? 700 : 400,
                   minWidth: fontSize * 5,
@@ -143,7 +143,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
               {/* Author */}
               <span
                 style={{
-                  fontSize: fontSize * 0.75,
+                  fontSize: 24,
                   color: isCenter ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)",
                   marginLeft: fontSize,
                   minWidth: fontSize * 4,
@@ -156,7 +156,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
               {/* Date */}
               <span
                 style={{
-                  fontSize: fontSize * 0.7,
+                  fontSize: 24,
                   color: "rgba(255,255,255,0.3)",
                   marginLeft: fontSize * 0.5,
                   flexShrink: 0,

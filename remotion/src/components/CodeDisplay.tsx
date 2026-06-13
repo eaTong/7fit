@@ -113,7 +113,7 @@ const TOKEN_COLORS: Record<TokenType, string> = {
 export const CodeDisplay: React.FC<CodeDisplayProps> = ({
   code,
   language = "typescript",
-  fontSize = 24,
+  fontSize = 28,
   showLineNumbers = true,
   maxHeight = 400,
   style,
@@ -151,7 +151,7 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
         </div>
         <span
           style={{
-            fontSize: fontSize * 0.7,
+            fontSize: 24,
             color: "rgba(0, 200, 255, 0.6)",
             fontFamily: "monospace",
             marginLeft: 8,
@@ -187,7 +187,7 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
                   paddingRight: fontSize * 0.5,
                   textAlign: "right",
                   color: "#444466",
-                  fontSize: fontSize * 0.8,
+                  fontSize: fontSize * 0.9,
                   background: "rgba(0,0,0,0.2)",
                   paddingTop: fontSize * 0.1,
                   userSelect: "none",
