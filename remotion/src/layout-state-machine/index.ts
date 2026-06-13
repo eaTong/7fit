@@ -1,17 +1,136 @@
 /**
- * A 类视频口播布局状态机 — 统一导出
+ * A 类视频口播布局状态机 — 统一导出 + 布局规范文档
  *
- * 使用方式：
- * import { LayoutTransitionEngine, ShotContent } from "../layout-state-machine";
- * import { getLayout, registerLayout } from "../layout-state-machine/layouts";
- * import type { LayoutState, ShotEntry, TransitionEasing } from "../layout-state-machine/layouts";
+ * ══════════════════════════════════════════════════════════════════════════════
+ * 📐 10 种布局速查（横屏 1920×1080，字幕区高 216px）
+ * ══════════════════════════════════════════════════════════════════════════════
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │  1. fullscreen                                                  │
+ * │     口播全屏，无辅助内容                                            │
+ * │     口播区: 全画布 (0,0,1920,864) zIndex=10                       │
+ * │     辅助区: 无                                                    │
+ * │     适用: Hook / CTA / Brand 收尾                                │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ┌────────────────────────────┬──────────────────┐
+ * │  2. left_text_right_talking│                  │
+ * │     左文右口播            │    口播区        │
+ * │     口播区: (1440,0,480,864) 右侧1/4   │    (1440,0,480,864) │
+ * │     辅助区: (50,50,1340,864) 左 70%     │    zIndex=10        │
+ * │     辅助区右侧留50px空白，不贴口播边缘     └──────────────────┘
+ * │     适用: Pain / Demo / Deep Dive 讲解
+ * └─────────────────────────────────────────────────────────────────┘
+ *
+ * ┌─────────────────────────────────────────┐  ┌──────┐
+ * │  3. pip_bottom_right                   │  │小窗  │
+ * │     右下角色口播，辅助内容全屏            │  │(右下) │
+ * │     口播区: (1284,567,540,303)         │  └──────┘
+ * │     辅助区: 全屏 (0,0,1920,864)        │
+ * │     适用: 背景视频展示 + 角标口播       │
+ * └─────────────────────────────────────────┘
+ *
+ * ┌──────┐  ┌─────────────────────────────────────────┐
+ * │小窗  │  │  4. pip_bottom_left                    │
+ * │(左下)│  │     左下角色口播，辅助内容全屏           │
+ * └──────┘  │     口播区: (96,567,540,303)          │
+ *            │     辅助区: 全屏 (0,0,1920,864)        │
+ *            └─────────────────────────────────────────┘
+ *
+ * ┌─────────────────┬─────────────────┐
+ * │                 │                 │
+ * │  5. grid_2x2                  │
+ * │     2×2 网格，口播占左上格      │
+ * │     口播区: (0,0,960,432)      │
+ * │     辅助区: (960,0,960,864)   │
+ * │     适用: 多数据并列展示        │
+ * └─────────────────┴─────────────────┘
+ *
+ * ┌─────────────────┬─────────────────┐
+ * │     辅助区       │     口播区       │
+ * │  6. left_text_right_talking_50pct │
+ * │     50%等分左文右口播              │
+ * │     口播区: (960,0,960,864) 右半   │
+ * │     辅助区: (50,0,910,864) 左半    │
+ * └─────────────────┴─────────────────┘
+ *
+ * ┌──────────┬─────────────────────────────┐
+ * │          │                             │
+ * │  口播    │  7. bottom_right_talking   │
+ * │  (右下角) │     右下角色口播（宽幅）     │
+ * │ 480×480  │     口播区: (1440,384,480,480)│
+ * │          │     辅助区: (0,0,1440,864)  │
+ * └──────────┴─────────────────────────────┘
+ *
+ * ┌─────────────────────────────┬──────────┐
+ * │  8. bottom_left_talking    │          │
+ * │     左下角色口播             │   口播   │
+ * │     口播区: (0,384,480,480)│  (左下)  │
+ * │     辅助区: (480,0,1440,864)│  480×480 │
+ * └─────────────────────────────┴──────────┘
+ *
+ * ┌─────────────────────────────┐
+ * │         口播 (顶部居中)       │
+ * │  9. top_center_talking     │
+ * │     口播区: (720,0,480,360) │
+ * │     辅助区: (0,360,1920,504)│
+ * └─────────────────────────────┘
+ *
+ * ┌─────────────────────────────┐
+ * │ 口播│                      │
+ * │(左上)│  10. overlay_talking_head │
+ * │360²  │     口播叠加在辅助内容上方   │
+ * │ z=20 │     口播区: (50,50,360,360)│
+ * └──────┘     辅助区: 全屏 zIndex=10  │
+ *
+ * 11. centered_fullscreen_bg
+ *     口播视频全屏铺底（opacity=1），内容居中叠加
+ *     口播区: 全画布 zIndex=5
+ *     内容区: (560,190,800,700) 居中
+ *     适用: 口播作为环境背景，内容聚焦展示
+ *
+ * ┌──────────┬──────────┬──────────┐
+ * │ 辅助左   │   口播   │ 辅助右   │
+ * │ 400×864 │ (居中)   │ 400×864 │
+ * │ 12. center_dual_aux              │
+ * │     口播居中(528,108,864,864)    │
+ * │     左辅助: (50,50,400,864)       │
+ * │     右辅助: (1470,50,400,864)    │
+ * └──────────┴──────────┴──────────┘
+ *
+ *       ┌──── 环绕视频 ┐
+ *     ↺ │    口播圆形  │ ↺
+ *   环绕  │  (居中360²) │ 环绕
+ *       └──── 环绕视频 ┘
+ *  13. orbiting_center
+ *      口播: (780,270,360,360) 居中圆形 zIndex=15
+ *      环绕: 4个视频沿轨道旋转 zIndex=10
+ *      适用: 多视角环绕展示
+ *
+ * ══════════════════════════════════════════════════════════════════════════════
+ * 🎨 共同设计规范
+ * ══════════════════════════════════════════════════════════════════════════════
+ *
+ * 1. 口播视频: 正方形渲染 (width=height=MIN)，居中于布局区域
+ * 2. 所有布局口播均有 50px edge mask 渐隐效果
+ * 3. 口播视频无边框，保留 glow 阴影
+ * 4. 辅助内容区右侧留白 50px（不贴口播边缘）
+ * 5. 字号: 辅助内容文字 ≥ 24px
+ * 6. 颜色: 半透明彩色背景 + 小程序强调色 (#FF4500 / #DC143C)
+ *
+ * ══════════════════════════════════════════════════════════════════════════════
+ * 📦 导出
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 
-export { LayoutTransitionEngine } from "./LayoutTransitionEngine";
-export { AnimatedTalkingHead } from "./AnimatedTalkingHead";
-export { ShotContent } from "./ShotContent";
-export { AuxiliaryContentManager } from "./AuxiliaryContentManager";
-export { MediaFallback } from "../components/media/MediaFallback";
+import { LayoutTransitionEngine } from "./LayoutTransitionEngine";
+import { AnimatedTalkingHead } from "./AnimatedTalkingHead";
+import { ShotContent } from "./ShotContent";
+import { AuxiliaryContentManager } from "./AuxiliaryContentManager";
+import { MediaFallback } from "../components/media/MediaFallback";
+import { registerLayout, getLayout, getAllLayouts } from "./layouts";
+import type { LayoutState, ShotEntry, TransitionEasing } from "./layouts/types";
 
-export { registerLayout, getLayout, getAllLayouts } from "./layouts";
-export type { LayoutState, ShotEntry, TransitionEasing } from "./layouts";
+export { LayoutTransitionEngine, AnimatedTalkingHead, ShotContent, AuxiliaryContentManager, MediaFallback };
+export { registerLayout, getLayout, getAllLayouts };
+export type { LayoutState, ShotEntry, TransitionEasing };
