@@ -55,6 +55,9 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
     [prevShot, curLayout]
   );
 
+  // 当前 shot 的起始帧（用于计算相对帧驱动 morphing）
+  const shotStartFrame = currentShot.startFrame;
+
   // 渲染背景层（优先级：renderBackground > backgroundSrc > 无背景）
   const renderBackgroundLayer = () => {
     if (renderBackground) {
@@ -81,6 +84,7 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
           videoSrc={videoSrc}
           prevLayout={fallbackLayout}
           curLayout={fallbackLayout}
+          shotStartFrame={0}
           transitionType="ease-out"
         />
         {children(fallbackLayout, fallbackLayout, "ease-out", "")}
@@ -98,6 +102,7 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
         videoSrc={videoSrc}
         prevLayout={prevLayout}
         curLayout={curLayout}
+        shotStartFrame={shotStartFrame}
         transitionType={currentShot.transitionType}
       />
 
