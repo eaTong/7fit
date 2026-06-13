@@ -341,6 +341,7 @@ Phase 1          Phase 2         Phase 3      Phase 4         Phase 5    Phase 6
 | 脚本 | `rules/script.md` | 入口命名、场景命名、字幕/标题安全区、配色、风格、转场、素材框 + §10 可复用数据组件库 |
 | 字幕 | `rules/subtitle.md` | 音频 → 字幕自动转写、字幕样式、弹跳动效、主体区域让位 |
 | 分镜 | `rules/storyboard.md` | 按字幕设计分镜、时长约束（视频 > 5s）、每镜必有实内容 + `code_component` 类型 |
+| **A 类口播布局** | `docs/superpowers/specs/...-usage.md` | **A 类视频专用**：shotSequence 规范 / 布局语义选择 / 过渡曲线 / 背景层 / 脚本设计流程 / 快速检查清单 |
 | 动效 | `rules/animation.md` | interpolate/spring/easing/sequence/transitions/light-leaks/音频可视化/3D/Lottie |
 | BGM | `rules/bgm.md` | 4 类情绪 × 4 种用途、synthwave/tech-house/ambient/glitch-hop、BPM 75-115、ducking |
 | 素材清单 | `rules/assets.md` | 脚本/分镜生成时配套输出，列出每个素材 + 自动复制已有素材到 `public/<主题>/` + §1.4 可代码实现内容不进 assets.md + §4.4 批量 prompt + 验收 |
