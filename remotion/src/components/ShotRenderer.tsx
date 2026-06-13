@@ -24,12 +24,14 @@ interface ShotRendererProps {
   transitionIn: string;
   /** 转场类型：转出 */
   transitionOut: string;
-  /** 是否是第一镜（跳过 enter fade）*/
+  /** 是否是第一镜（跳过 enter）*/
   isFirst?: boolean;
-  /** 是否是最后一镜（跳过 exit fade）*/
+  /** 是否是最后一镜（跳过 exit）*/
   isLast?: boolean;
-  /** Sequence 实际帧数（含 crossfade padding）*/
+  /** Sequence 实际帧数 */
   paddedDuration: number;
+  /** 转场帧数，默认 9 */
+  transitionFrames?: number;
   /** 子组件内容 */
   children: React.ReactNode;
 }
@@ -40,21 +42,31 @@ export const ShotRenderer: React.FC<ShotRendererProps> = ({
   isFirst = false,
   isLast = false,
   paddedDuration,
+  transitionFrames = 9,
   children,
 }) => {
   const frame = useCurrentFrame();
 
-  // 转入效果
+  // 计算 enter/exit 效果（传 frame=0 获取静态值）
   const enter = getTransitionEffect(transitionIn, frame, paddedDuration, true);
-  // 转出效果
   const exit = getTransitionEffect(transitionOut, frame, paddedDuration, false);
 
-  // 合并：enter 渐入 + exit 渐出
-  // 首镜跳过 enter fade，末镜跳过 exit fade
-  const opacity = isFirst || isLast ? 1 : Math.min(enter.opacity, exit.opacity);
-  const translateX = enter.translateX !== 0 ? enter.translateX : -exit.translateX;
-  const translateY = enter.translateY !== 0 ? enter.translateY : -exit.translateY;
-  const scale = enter.scale !== 1 ? enter.scale : exit.scale;
+  // enter 区间：[0, transitionFrames)，opacity 从 0→1
+  // exit 区间：[paddedDuration - transitionFrames, paddedDuration)，opacity 从 1→0
+  // 中间区域：opacity = 1
+
+  const isInEnter = !isFirst && frame < transitionFrames;
+  const isInExit = !isLast && frame >= paddedDuration - transitionFrames;
+
+  // opacity：enter 和 exit 不重叠，各自区域各自生效
+  const enterOpacity = isFirst ? 1 : (isInEnter ? enter.opacity : 1);
+  const exitOpacity = isLast ? 1 : (isInExit ? exit.opacity : 1);
+  const opacity = enterOpacity * exitOpacity;
+
+  // translateX/Y：只在对应区间生效
+  const translateX = isInEnter ? enter.translateX : (isInExit ? -exit.translateX : 0);
+  const translateY = isInEnter ? enter.translateY : (isInExit ? -exit.translateY : 0);
+  const scale = isInEnter ? enter.scale : (isInExit ? exit.scale : 1);
 
   return (
     <AbsoluteFill

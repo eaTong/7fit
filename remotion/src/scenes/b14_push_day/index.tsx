@@ -67,7 +67,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
     ];
     return (
       <AbsoluteFill>
-        <Grid2x2 sources={sources} type="video" basePath={`${BASE}/videos`} />
+        <Grid2x2 sources={sources} type="video" basePath={`${BASE}/videos`} showGridLines={false} />
         {shot.voiceover && <VoiceoverText text={shot.voiceover} />}
       </AbsoluteFill>
     );
@@ -80,6 +80,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
       <AbsoluteFill>
         <OffthreadVideo
           src={staticFile(video(src))}
+          startFrom={0}
           playbackRate={0}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
@@ -95,6 +96,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
       <AbsoluteFill>
         <OffthreadVideo
           src={staticFile(video(shot.content_source))}
+          startFrom={0}
           playbackRate={playbackRate}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
@@ -111,7 +113,11 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
 };
 
 /* === 主 Scene === */
-export const B14PushDay: React.FC = () => {
+export const B14PushDay: React.FC<{
+  bgmVolume?: number;
+  enableFadeIn?: boolean;
+  enableTransitions?: boolean;
+}> = ({ bgmVolume = 0.25, enableFadeIn = true }) => {
   const shots = storyboard.shots as Shot[];
 
   // ✅ 统一转场逻辑：过滤 pause_breath shots，让视频镜 crossfade 衔接
@@ -125,6 +131,8 @@ export const B14PushDay: React.FC = () => {
       <BGMWithDucking
         src={staticFile(audio("bgm/gym_beat_b14.mp3"))}
         compositionFrames={compositionFrames}
+        normalVolume={bgmVolume}
+        fadeInFrames={enableFadeIn ? 30 : 0}
       />
       {videoShots.map((shot, idx, arr) => {
         const isFirst = idx === 0;
@@ -132,7 +140,9 @@ export const B14PushDay: React.FC = () => {
         const startFrame = Math.round(shot.start * FPS);
         const durationFrames = Math.round(shot.duration * FPS);
 
-        // ✅ 计算到下一镜的距离，让本镜延伸到下一镜 start + crossfade
+        // ✅ 正确的 crossfade padding：填满 gap + 加 crossfade
+        // exitExtend = gap 到下一镜的距离 + 固定 9 帧 crossfade
+        // 这样 Sequence 时长严格等于"填满 gap + crossfade"，视频刚好播完
         let exitExtend = 0;
         if (!isLast) {
           const nextStartFrame = Math.round(arr[idx + 1].start * FPS);

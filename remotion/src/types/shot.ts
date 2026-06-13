@@ -15,7 +15,8 @@ export interface Shot {
   duration: number;
   content_type: string;
   content_source: string | null;
-  voiceover: string | string[];  // B类：string（字幕文本）/ B类旁白：string[]
+  /** 字幕内容：string | string[]（多行）| SubtitleSegment[]（含高亮）*/
+  voiceover: string | string[] | SubtitleSegment[];
   description: string;
   transition_in: string;
   transition_out: string;
@@ -23,6 +24,12 @@ export interface Shot {
   code_component?: string;
   code_props?: Record<string, string>;
   sfx?: string;
+}
+
+/** 字幕段落（含高亮）*/
+export interface SubtitleSegment {
+  text: string;
+  highlight?: boolean; // 高亮显示：橙底白字
 }
 
 /** 转场类型枚举 */

@@ -14,8 +14,12 @@
       "duration": 3.0,
       "content_type": "video_grid",
       "content_source": "push_lying.mp4, push_seated.mp4, push_overhead.mp4, push_front.mp4",
-      "voiceover": "健身计划没那么难——第一天你就推。",
-      "description": "2×2 网格同屏 4 个动作（躺着推/靠着推/向上推/向前推），每格 480×480px，白线 2px 分割，object-fit: cover",
+      "voiceover": [
+        { "text": "健身计划没那么难——", "highlight": false },
+        { "text": "第一天", "highlight": true },
+        { "text": "你就推。", "highlight": false }
+      ],
+      "description": "2×2 网格同屏 4 个动作（躺着推/靠着推/向上推/向前推），每格 540×960px，白线分割",
       "transition_in": "fade",
       "transition_out": "push_left",
       "layout": "2x2_grid",
@@ -34,7 +38,9 @@
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_lying.mp4",
-      "voiceover": "躺着推——",
+      "voiceover": [
+        { "text": "躺着推", "highlight": true }
+      ],
       "description": "仰卧推演示，全屏动作视频，底部字幕",
       "transition_in": "push_left",
       "transition_out": "push_left"
@@ -60,14 +66,16 @@
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_seated.mp4",
-      "voiceover": "靠着推——",
+      "voiceover": [
+        { "text": "靠着推", "highlight": true }
+      ],
       "description": "坐姿器械推胸演示，全屏动作视频",
       "transition_in": "fade",
       "transition_out": "push_left"
     },
     {
       "shot_id": "pause_breath_2",
-      "data_shot_id": "pause_breath_2",
+      "data_shit_id": "pause_breath_2",
       "start": 9.5,
       "end": 10.0,
       "duration": 0.5,
@@ -86,7 +94,9 @@
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_overhead.mp4",
-      "voiceover": "向上推——",
+      "voiceover": [
+        { "text": "向上推", "highlight": true }
+      ],
       "description": "哑铃推肩演示，全屏动作视频",
       "transition_in": "fade",
       "transition_out": "push_left"
@@ -112,7 +122,9 @@
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_front.mp4",
-      "voiceover": "向前推——",
+      "voiceover": [
+        { "text": "向前推", "highlight": true }
+      ],
       "description": "地雷管前推演示，全屏动作视频",
       "transition_in": "fade",
       "transition_out": "push_left"
@@ -138,7 +150,9 @@
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_reverse.mp4",
-      "voiceover": "反着推——",
+      "voiceover": [
+        { "text": "反着推", "highlight": true }
+      ],
       "description": "窄距反手推演示，全屏动作视频",
       "transition_in": "fade",
       "transition_out": "push_left"
@@ -151,7 +165,16 @@
       "duration": 5.0,
       "content_type": "video",
       "content_source": "key_tips.mp4",
-      "voiceover": "推的时候胸挺起来。从轻的重量开始。加到 12 次力竭。做 5 组。",
+      "voiceover": [
+        { "text": "推的时候胸挺起来。", "highlight": false },
+        { "text": "从轻的重量开始。", "highlight": false },
+        { "text": "加到 ", "highlight": false },
+        { "text": "12", "highlight": true },
+        { "text": " 次力竭。", "highlight": false },
+        { "text": "做 ", "highlight": false },
+        { "text": "5", "highlight": true },
+        { "text": " 组。", "highlight": false }
+      ],
       "description": "用户演示挺胸持杠，4 条 TTS 字幕 + 右上角 12次/5组 橙色参数卡",
       "transition_in": "push_left",
       "transition_out": "push_left"
@@ -164,7 +187,15 @@
       "duration": 7.0,
       "content_type": "video",
       "content_source": "outro.mp4",
-      "voiceover": "推力日计划，5 个动作 + 12 次 × 5 组。评论告诉我——你推了几个？",
+      "voiceover": [
+        { "text": "推力日计划，", "highlight": false },
+        { "text": "5", "highlight": true },
+        { "text": " 个动作 + ", "highlight": false },
+        { "text": "12", "highlight": true },
+        { "text": " 次 × ", "highlight": false },
+        { "text": "5", "highlight": true },
+        { "text": " 组。评论告诉我——你推了几个？", "highlight": false }
+      ],
       "description": "用户提供的收尾视频，底部 TTS 字幕 + 评论图标弹跳",
       "transition_in": "push_left",
       "transition_out": "fade"

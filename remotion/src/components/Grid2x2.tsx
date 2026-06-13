@@ -1,6 +1,6 @@
 /**
  * Grid2x2 — 2×2 网格布局组件（共享）
- * 用于同屏展示 4 个视频或图片
+ * 4 个格子无缝撑满整个 canvas（1080×1920）
  *
  * 布局：
  * ┌─────────┬─────────┐
@@ -8,63 +8,69 @@
  * ├─────────┼─────────┤
  * │bottom-l │bottom-r │
  * └─────────┴─────────┘
- *
- * 使用方式：
- * <Grid2x2 sources={[src1, src2, src3, src4]} type="video" basePath="b14_push_day/videos" />
  */
 
 import { AbsoluteFill, OffthreadVideo, Img } from "remotion";
 import { staticFile } from "remotion";
 
 interface Grid2x2Props {
-  /** 4 个媒体源，按顺序：[top-left, top-right, bottom-left, bottom-right] */
   sources: [string, string, string, string];
-  /** 媒体类型 */
   type?: "video" | "image";
-  /** 基础路径（如 "b14_push_day/videos"），自动拼接 source */
   basePath?: string;
-  cellSize?: number;
-  gap?: number;
   showGridLines?: boolean;
 }
 
 const POSITIONS = ["top-left", "top-right", "bottom-left", "bottom-right"] as const;
 
+// canvas 尺寸
+const CANVAS_W = 1080;
+const CANVAS_H = 1920;
+
+// 每格尺寸：2*cellW = CANVAS_W, 2*cellH = CANVAS_H
+const CELL_W = CANVAS_W / 2;  // 540
+const CELL_H = CANVAS_H / 2;  // 960
+
+const cellPositions: Record<string, { left: number; top: number }> = {
+  "top-left":    { left: 0,          top: 0 },
+  "top-right":   { left: CELL_W,     top: 0 },
+  "bottom-left": { left: 0,          top: CELL_H },
+  "bottom-right":{ left: CELL_W,     top: CELL_H },
+};
+
 export const Grid2x2: React.FC<Grid2x2Props> = ({
   sources,
   type = "video",
   basePath,
-  cellSize = 480,
-  gap = 8,
   showGridLines = true,
 }) => {
-  const gridWidth = cellSize * 2 + gap;
-  const gridHeight = cellSize * 2 + gap;
-  const offsetX = (1080 - gridWidth) / 2;
-  const offsetY = (1920 - gridHeight) / 2 - 100;
-
-  const positions: Record<string, React.CSSProperties> = {
-    "top-left": { left: offsetX, top: offsetY },
-    "top-right": { left: offsetX + cellSize + gap, top: offsetY },
-    "bottom-left": { left: offsetX, top: offsetY + cellSize + gap },
-    "bottom-right": { left: offsetX + cellSize + gap, top: offsetY + cellSize + gap },
-  };
-
   return (
     <AbsoluteFill>
+      {/* 中间十字白缝 */}
       {showGridLines && (
-        <svg style={{ position: "absolute", width: "100%", height: "100%", zIndex: 10 }}>
-          <line x1={offsetX} y1={offsetY + cellSize} x2={offsetX + gridWidth} y2={offsetY + cellSize} stroke="white" strokeWidth={2} />
-          <line x1={offsetX + cellSize} y1={offsetY} x2={offsetX + cellSize} y2={offsetY + gridHeight} stroke="white" strokeWidth={2} />
+        <svg style={{ position: "absolute", width: CANVAS_W, height: CANVAS_H, zIndex: 10, left: 0, top: 0 }}>
+          <line x1={CELL_W} y1={0} x2={CELL_W} y2={CANVAS_H} stroke="white" strokeWidth={2} />
+          <line x1={0} y1={CELL_H} x2={CANVAS_W} y2={CELL_H} stroke="white" strokeWidth={2} />
         </svg>
       )}
+
+      {/* 4 个格子 */}
       {sources.map((source, i) => {
-        const position = POSITIONS[i];
+        const pos = cellPositions[POSITIONS[i]];
         const src = basePath ? `${basePath}/${source}` : source;
         return (
-          <div key={i} style={{ position: "absolute", width: cellSize, height: cellSize, ...positions[position] }}>
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: pos.left,
+              top: pos.top,
+              width: CELL_W,
+              height: CELL_H,
+              overflow: "hidden",
+            }}
+          >
             {type === "video" ? (
-              <OffthreadVideo src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <VideoFillCell src={staticFile(src)} cellW={CELL_W} cellH={CELL_H} />
             ) : (
               <Img src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             )}
@@ -73,4 +79,33 @@ export const Grid2x2: React.FC<Grid2x2Props> = ({
       })}
     </AbsoluteFill>
   );
+};
+
+/**
+ * 视频填充：自动检测方向，填满格子
+ *
+ * 竖屏视频（9:16, 1080×1920）：宽度撑满，上下裁剪居中
+ * 横屏视频（16:9, 1920×1080）：高度撑满，左右裁剪居中
+ * 正方形视频：直接撑满
+ */
+const VideoFillCell: React.FC<{ src: string; cellW: number; cellH: number }> = ({ src, cellW, cellH }) => {
+  const VIDEO_W = 1080;
+  const VIDEO_H = 1920;
+
+  if (VIDEO_W < VIDEO_H) {
+    // 竖屏：宽度撑满，高度按比例放大溢出裁剪（上下居中）
+    const scaledH = cellW * (VIDEO_H / VIDEO_W);
+    const top = -(scaledH - cellH) / 2;
+    return <OffthreadVideo src={src} style={{ position: "absolute", width: cellW, height: scaledH, left: 0, top }} />;
+  }
+
+  if (VIDEO_W > VIDEO_H) {
+    // 横屏：高度撑满，宽度按比例放大溢出裁剪（左右居中）
+    const scaledW = cellH * (VIDEO_W / VIDEO_H);
+    const left = -(scaledW - cellW) / 2;
+    return <OffthreadVideo src={src} style={{ position: "absolute", width: scaledW, height: cellH, left, top: 0 }} />;
+  }
+
+  // 正方形：直接撑满
+  return <OffthreadVideo src={src} style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: 0 }} />;
 };

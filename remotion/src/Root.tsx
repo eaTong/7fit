@@ -28,10 +28,14 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="b14-push-day"
         component={B14PushDay}
-        durationInFrames={960}  // 32s × 30fps
+        durationInFrames={960}
         fps={30}
         width={1080}
         height={1920}
+        defaultProps={{
+          bgmVolume: 0.25,
+          enableFadeIn: true,
+        }}
       />
 
       {/* === A 类示例：1920×1080 横屏（16:9）===
