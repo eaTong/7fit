@@ -4,6 +4,7 @@
  * 职责：
  * - 统一处理 enter/exit 转场动画（opacity + translateX/Y + scale）
  * - 接收 children 作为内容，不关心具体内容
+ * - 支持可选 LightLeak 叠加效果
  *
  * 使用方式：
  * <ShotRenderer
@@ -18,6 +19,7 @@
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { getTransitionEffect } from "../../utils/transition";
+import { LightLeak } from "@remotion/light-leaks";
 
 interface ShotRendererProps {
   /** 转场类型：转入 */
@@ -32,6 +34,12 @@ interface ShotRendererProps {
   paddedDuration: number;
   /** 转场帧数，默认 9 */
   transitionFrames?: number;
+  /** 是否启用 LightLeak 叠加 */
+  enableLightLeak?: boolean;
+  /** LightLeak 种子 */
+  lightLeakSeed?: number;
+  /** LightLeak 色相偏移 */
+  lightLeakHueShift?: number;
   /** 子组件内容 */
   children: React.ReactNode;
 }
@@ -43,6 +51,9 @@ export const ShotRenderer: React.FC<ShotRendererProps> = ({
   isLast = false,
   paddedDuration,
   transitionFrames = 9,
+  enableLightLeak = false,
+  lightLeakSeed = 3,
+  lightLeakHueShift = 30,
   children,
 }) => {
   const frame = useCurrentFrame();
@@ -69,13 +80,32 @@ export const ShotRenderer: React.FC<ShotRendererProps> = ({
   const scale = isInEnter ? enter.scale : (isInExit ? exit.scale : 1);
 
   return (
-    <AbsoluteFill
-      style={{
-        opacity,
-        transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
-      }}
-    >
-      {children}
-    </AbsoluteFill>
+    <>
+      <AbsoluteFill
+        style={{
+          opacity,
+          transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
+        }}
+      >
+        {children}
+      </AbsoluteFill>
+
+      {/* LightLeak 叠加效果（可选） */}
+      {enableLightLeak && isInEnter && (
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 1000,
+            pointerEvents: "none",
+          }}
+        >
+          <LightLeak seed={lightLeakSeed} hueShift={lightLeakHueShift} />
+        </div>
+      )}
+    </>
   );
 };

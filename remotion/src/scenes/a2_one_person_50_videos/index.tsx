@@ -2,6 +2,8 @@ import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { LayoutTransitionEngine } from "../../layout-state-machine/LayoutTransitionEngine";
 import { MediaFallback } from "../../components/media/MediaFallback";
 import { VoiceoverText } from "../../components/data-display/VoiceoverText";
+import { BgmAudio } from "./BgmAudio";
+import { BgmPulse } from "./BgmPulse";
 import subtitles from "./subtitles.json";
 
 /** 根据当前帧渲染字幕的内部组件（hooks 只能在组件内调用）*/
@@ -67,15 +69,37 @@ const shotSequence: ShotEntry[] = [
 // A2 Scene 入口
 // ============================================================
 export const A2OnePerson50Videos: React.FC = () => {
+  // 旁白结束帧 = 最后一条字幕 end × fps
+  // subtitles.json 最后一条 sub_029: end=107.5s → 107.5×30 = 3225 帧
+  const VOICEOVER_END_FRAME = 3225;
+
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
-      {/* 背景图层 */}
+      {/* Layer 0: BGM（含 Ducking） */}
+      <BgmAudio
+        bgmSrc="a2_one_person_50_videos/audios/bgm/a2_one_person_50_videos_v2.mp3"
+        voiceoverEndFrame={VOICEOVER_END_FRAME}
+        duckedVolume={0.15}
+        normalVolume={0.8}
+        recoveryDuration={30}
+      />
+
+      {/* Layer 1: BGM 节拍脉冲（视觉反馈） */}
+      <BgmPulse
+        bgmSrc="a2_one_person_50_videos/audios/bgm/a2_one_person_50_videos_v2.mp3"
+        color="#FF4500"
+        maxOpacity={0.4}
+        maxScale={1.3}
+      />
+
+      {/* Layer 2: 背景图层 */}
       <MediaFallback
         src="images/bg/a2_workout_intro/s1_hook.jpg"
         type="image"
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
-      {/* 布局切换引擎 */}
+
+      {/* Layer 3: 布局切换引擎 */}
       <LayoutTransitionEngine
         videoSrc="videos/a2_talking_head.mov"
         shotSequence={shotSequence}
@@ -89,7 +113,7 @@ export const A2OnePerson50Videos: React.FC = () => {
             case "s2":
               return (
                 <div style={{ position: "absolute", left: 0, top: 0, width: 1440, height: 864, display: "flex", alignItems: "center", padding: "0 50px" }}>
-                  <MetadataPair delay={enterFrame} label="身份" value="产品经理" subLabel="健身" subValue="七年爱好者" />
+                  <MetadataPair delay={enterFrame} label="身份" value="产品经理" subLabel="健身" subValue="两年爱好者" />
                 </div>
               );
             case "s3":
@@ -154,7 +178,8 @@ export const A2OnePerson50Videos: React.FC = () => {
           }
         }}
       </LayoutTransitionEngine>
-      {/* 字幕层：独立于 LayoutTransitionEngine */}
+
+      {/* Layer 4: 字幕层：独立于 LayoutTransitionEngine */}
       <SubtitleLayer />
     </AbsoluteFill>
   );

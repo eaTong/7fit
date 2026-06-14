@@ -37,6 +37,7 @@
 | 20 | [publish.md](publish.md) | 发布与复盘（小红书 + 抖音矩阵 + 24h/7d 数据） | 视频投出去后 |
 | 21 | [accounts.md](accounts.md) | 双账号档案（人设 / 隔离 / 安全设置）| 账号初始化 / 调整人设时 |
 | 22 | [calendar.md](calendar.md) | 发布日历（每周排期 + 实际发布记录）| 每周排期时 |
+| 23 | [animation-inventory.md](animation-inventory.md) | 动画/特效/转场清单（生成脚本**必须**参考）| 写 Scene 组件时**强制参考** |
 
 ---
 
@@ -65,6 +66,7 @@
 | [subtitle.md](subtitle.md) | 字幕生成 |
 | [storyboard.md](storyboard.md) | 分镜规范 |
 | [animation.md](animation.md) | 动效规范 |
+| [animation-inventory.md](animation-inventory.md) | 动画/特效/转场清单（**强制参考**）|
 | [bgm.md](bgm.md) | BGM 规范 |
 | [assets.md](assets.md) | 素材清单 |
 | [rhythm.md](rhythm.md) | 制作节奏 SOP |
@@ -120,6 +122,7 @@
 | 日期 | 变更 |
 |---|---|
 | 2026-06-13 | 规则体系演进，统一使用 Remotion 引擎，新增 9 份规则（strategy/backlog/voice-anchor/anti-ai-tells/research/rhythm/shoot-checklist/accounts/calendar），共 22 份规则 |
+| 2026-06-14 | 新增 [animation-inventory.md](animation-inventory.md)：14 种转场 / 20+ 动画模式 / 10+ 特效 / 可探索清单，生成脚本时**必须参考** |
 
 ---
 
