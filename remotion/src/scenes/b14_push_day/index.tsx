@@ -6,10 +6,10 @@
  * BGM：gym_beat_b14.mp3（120 BPM，prominent kick drum）
  * ⚠️ 默认静音（bgmVolume=0），传参开启
  *
- * v2 优化：
- * - 12 镜 → 9 镜（删除 3 个 pause_breath，用 wipe-h 替代）
- * - 钩子 2×2 网格 stagger 入场 + 第 4 格 impulse 冲击 + LightLeak
- * - 数字冲击镜（5×12）弹入（playful 贝塞尔 overshoot）
+ * v3 优化：
+ * - 数字 5×12×5 作为 outro_cta 的 overlay（不是独立镜）
+ * - 节省 2.5s（28.5s → 26s）
+ * - 前 2.5s 数字弹入 + 视频同屏，后 1s 纯视频（评论 CTA）
  * - 每个动作镜：ActionBadge + ProgressRing
  * - 要点镜：双 ParamCard（12次 / 5组）呼吸辉光
  * - 转场交替（wipe-h / zoom）避免单调
@@ -64,7 +64,6 @@ interface AnimationOverrides {
   grid_impulse_idx?: number;
   grid_impulse_scale?: number;
   light_leak?: { duration_frames: number; seed: number; hueShift: number };
-  number_spring_overshoot?: boolean;
   action_badge?: { name: string; position: "top-left" | "top-right" | "bottom-left" | "bottom-right"; delay_frames: number };
   progress_ring?: {
     current: number;
@@ -82,6 +81,12 @@ interface AnimationOverrides {
     breathing: boolean;
   }>;
   comment_cta_pulse?: { delay_frames: number };
+  number_overlay?: {
+    numbers: Array<{ text: string; highlight?: boolean }>;
+    visible_frames: number;
+    fade_frames: number;
+    stagger_frames: number;
+  };
 }
 
 /** 从 shot 中提取 animation_overrides */
@@ -113,17 +118,6 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
           impulseScale={anim.grid_impulse_scale ?? 1.15}
         />
         {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} />}
-      </AbsoluteFill>
-    );
-  }
-
-  // 数字冲击：5×12 大字弹入
-  if (shot.content_type === "transition_card" && shot.voiceover) {
-    const voiceArr = Array.isArray(shot.voiceover) ? shot.voiceover : [{ text: shot.voiceover, highlight: false }];
-    return (
-      <AbsoluteFill style={{ background: "#0A0A0A" }}>
-        <NumberImpact numbers={voiceArr} stagger={6} />
-        {/* 数字镜不显示底部副字幕（避免重叠）*/}
       </AbsoluteFill>
     );
   }
@@ -170,6 +164,16 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             breathing={card.breathing}
           />
         ))}
+        {/* 数字 overlay（弹入后淡出，露出视频）*/}
+        {anim.number_overlay && (
+          <NumberImpact
+            numbers={anim.number_overlay.numbers}
+            visibleFromFrame={0}
+            visibleToFrame={anim.number_overlay.visible_frames}
+            fadeFrames={anim.number_overlay.fade_frames}
+            stagger={anim.number_overlay.stagger_frames}
+          />
+        )}
         {/* 底部副字幕 */}
         {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} />}
       </AbsoluteFill>

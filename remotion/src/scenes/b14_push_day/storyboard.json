@@ -1,6 +1,6 @@
 {
   "id": "b14_push_day",
-  "duration": 28.5,
+  "duration": 26.0,
   "canvas": { "width": 1080, "height": 1920, "fps": 30 },
   "bgm": { "type": "gym_beat", "volume_db": -8, "file": "gym_beat_b14.mp3" },
   "transition_style": "alternating_power_cut",
@@ -149,33 +149,10 @@
       }
     },
     {
-      "shot_id": "number_impact_5x12",
-      "data_shot_id": "number_impact_5x12",
-      "start": 22.5,
-      "end": 25.0,
-      "duration": 2.5,
-      "content_type": "transition_card",
-      "content_source": null,
-      "voiceover": [
-        { "text": "5", "highlight": true },
-        { "text": " 动作 × ", "highlight": false },
-        { "text": "12", "highlight": true },
-        { "text": " 次 × ", "highlight": false },
-        { "text": "5", "highlight": true },
-        { "text": " 组", "highlight": false }
-      ],
-      "description": "中心数字 5×12 弹入（playful 贝塞尔 overshoot），承接 key_tips 的 12次/5组 参数",
-      "transition_in": "zoom",
-      "transition_out": "zoom",
-      "animation_overrides": {
-        "number_spring_overshoot": true
-      }
-    },
-    {
       "shot_id": "outro_cta",
       "data_shot_id": "outro_cta",
-      "start": 25.0,
-      "end": 28.5,
+      "start": 22.5,
+      "end": 26.0,
       "duration": 3.5,
       "content_type": "video",
       "content_source": "outro.mp4",
@@ -188,11 +165,24 @@
         { "text": "5", "highlight": true },
         { "text": " 组。评论告诉我——你推了几个？", "highlight": false }
       ],
-      "description": "用户 outro + 数字滚动高亮 + 评论图标脉冲（承接 number_impact）",
+      "description": "用户 outro + 前 2.5s 中心数字 5×12×5 弹入 overlay + 评论图标脉冲",
       "transition_in": "zoom",
       "transition_out": "wipe-h",
       "animation_overrides": {
-        "comment_cta_pulse": { "delay_frames": 15 }
+        "comment_cta_pulse": { "delay_frames": 15 },
+        "number_overlay": {
+          "numbers": [
+            { "text": "5", "highlight": true },
+            { "text": " 动作 × ", "highlight": false },
+            { "text": "12", "highlight": true },
+            { "text": " 次 × ", "highlight": false },
+            { "text": "5", "highlight": true },
+            { "text": " 组", "highlight": false }
+          ],
+          "visible_frames": 75,
+          "fade_frames": 12,
+          "stagger_frames": 6
+        }
       }
     }
   ]
