@@ -12,7 +12,7 @@ import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
 interface ParamCardProps {
   label: string;            // 主文字（"12次"）
   caption?: string;         // 副文字（"力竭"）
-  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "middle-left" | "middle-right";
   delay?: number;
   color?: string;
   breathing?: boolean;      // 呼吸辉光
@@ -49,7 +49,9 @@ export const ParamCard: React.FC<ParamCardProps> = ({
     if (position === "top-left") return { ...base, top: 160, left: 60 };
     if (position === "top-right") return { ...base, top: 160, right: 60 };
     if (position === "bottom-left") return { ...base, bottom: 520, left: 60 };
-    return { ...base, bottom: 520, right: 60 };
+    if (position === "bottom-right") return { ...base, bottom: 520, right: 60 };
+    if (position === "middle-left") return { ...base, top: 900, left: 60 };
+    return { ...base, top: 900, right: 60 }; // middle-right
   })();
 
   return (
