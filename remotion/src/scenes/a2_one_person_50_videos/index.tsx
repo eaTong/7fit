@@ -19,55 +19,47 @@ import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 import { LayoutId } from "../../layout-state-machine/layouts/types";
 
 // ============================================================
-// A2 · 一人一周50条视频 · 13 shot × 2.5s = 32.5s
+// A2 · 一人一周50条视频 · 10 shot × ~11s = ~112s
 // 文案稿：docs/copy/a2_one_person_50_videos.md
 // 布局规范：rules/video-types.md §2
+// 字幕：subtitles.json（29条，107.5s，全文字幕顺序对齐）
 // ============================================================
 
 const shotSequence: ShotEntry[] = [
-  // s1: 钩子 — HeadlineCard 全屏居中
-  { shotId: "s1", layoutId: LayoutId.Fullscreen, transitionType: "zoom", startFrame: 0, endFrame: 75 },
-  // s2: 身份锚定
-  { shotId: "s2", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "slide-left", startFrame: 75, endFrame: 150 },
-  // s3: 痛点
-  { shotId: "s3", layoutId: LayoutId.PipBottomRight, transitionType: "slide-left", startFrame: 150, endFrame: 225 },
-  // s4: 工具曝光
-  { shotId: "s4", layoutId: LayoutId.PipBottomLeft, transitionType: "slide-right", startFrame: 225, endFrame: 300 },
-  // s5: 工作流（辅助内容占左侧全高）
-  { shotId: "s5", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "fade", startFrame: 300, endFrame: 375 },
-  // s6: 方法论
-  { shotId: "s6", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "ease-out", startFrame: 375, endFrame: 450 },
-  // s7: AI 效果
-  { shotId: "s7", layoutId: LayoutId.BottomRightTalking, transitionType: "slide-left", startFrame: 450, endFrame: 525 },
-  // s8: 数字对比
-  { shotId: "s8", layoutId: LayoutId.BottomLeftTalking, transitionType: "slide-right", startFrame: 525, endFrame: 600 },
-  // s9: 感受
-  { shotId: "s9", layoutId: LayoutId.TopCenterTalking, transitionType: "slide-left", startFrame: 600, endFrame: 675 },
-  // s10: 核心观点
-  { shotId: "s10", layoutId: LayoutId.OverlayTalkingHead, transitionType: "ease-out", startFrame: 675, endFrame: 750 },
-  // s11: 收尾金句
-  { shotId: "s11", layoutId: LayoutId.CenteredFullscreenBg, transitionType: "fade", startFrame: 750, endFrame: 825 },
-  // s12: 证据（文件夹树 + GitLog）
-  { shotId: "s12", layoutId: LayoutId.CenterDualAux, transitionType: "ease-out", startFrame: 825, endFrame: 900 },
-  // s13: CTA 居中全屏
-  { shotId: "s13", layoutId: LayoutId.CenteredFullscreenBg, transitionType: "zoom", startFrame: 900, endFrame: 975 },
+  // s1: 钩子 — 反常识开场（sub_001+002），用口播居中布局
+  { shotId: "s1", layoutId: LayoutId.Fullscreen, transitionType: "zoom", startFrame: 0, endFrame: 201 },
+  // s2: 身份锚定 — 产品经理背景（sub_003+004）
+  { shotId: "s2", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "slide-left", startFrame: 201, endFrame: 425 },
+  // s3: 痛点 — 凌晨2点/人力剪辑（sub_008+009+010+011）
+  { shotId: "s3", layoutId: LayoutId.PipBottomRight, transitionType: "slide-left", startFrame: 425, endFrame: 791 },
+  // s4: 工具 — Claude/mmx/Remotion（sub_012+013+014+015）
+  { shotId: "s4", layoutId: LayoutId.PipBottomLeft, transitionType: "slide-right", startFrame: 791, endFrame: 1286 },
+  // s5: 方法论 — 方向确认/睡觉跑完（sub_016+017+018）
+  { shotId: "s5", layoutId: LayoutId.TextCenterTalkingLeft, transitionType: "fade", startFrame: 1286, endFrame: 1586 },
+  // s6: AI效果 — 扛90%苦活/只做判断（sub_019+020+021）
+  { shotId: "s6", layoutId: LayoutId.BottomRightTalking, transitionType: "slide-left", startFrame: 1586, endFrame: 1894 },
+  // s7: 数字对比 — 以前2周vs现在1天（sub_022+023+024）
+  { shotId: "s7", layoutId: LayoutId.BottomLeftTalking, transitionType: "slide-right", startFrame: 1894, endFrame: 2284 },
+  // s8: 感受 — 开挂/外包AI（sub_025+026）
+  { shotId: "s8", layoutId: LayoutId.TopCenterTalking, transitionType: "slide-left", startFrame: 2284, endFrame: 2524 },
+  // s9: 核心观点 — 工作流放大（sub_027+028）
+  { shotId: "s9", layoutId: LayoutId.OverlayTalkingHead, transitionType: "ease-out", startFrame: 2524, endFrame: 2824 },
+  // s10: CTA — 评论区说说（sub_029）
+  { shotId: "s10", layoutId: LayoutId.Fullscreen, transitionType: "fade", startFrame: 2824, endFrame: 2974 },
 ];
 
 // A2 背景图
 const BACKGROUND_MAP: Record<string, string> = {
-  s1: "images/bg/a2_workout_intro/s1_hook.jpg",
-  s2: "images/bg/a2_workout_intro/s2_identity.jpg",
-  s3: "images/bg/a2_workout_intro/s3_pain.jpg",
-  s4: "images/bg/a2_workout_intro/s4_tools.jpg",
-  s5: "images/bg/a2_workout_intro/s5_workflow.jpg",
-  s6: "images/bg/a2_workout_intro/s6_method.jpg",
-  s7: "images/bg/a2_workout_intro/s7_digital.jpg",
-  s8: "images/bg/a2_workout_intro/s8_feeling.jpg",
-  s9: "images/bg/a2_workout_intro/s9_workflow.jpg",
+  s1:  "images/bg/a2_workout_intro/s1_hook.jpg",
+  s2:  "images/bg/a2_workout_intro/s2_identity.jpg",
+  s3:  "images/bg/a2_workout_intro/s3_pain.jpg",
+  s4:  "images/bg/a2_workout_intro/s4_tools.jpg",
+  s5:  "images/bg/a2_workout_intro/s5_workflow.jpg",
+  s6:  "images/bg/a2_workout_intro/s6_method.jpg",
+  s7:  "images/bg/a2_workout_intro/s7_digital.jpg",
+  s8:  "images/bg/a2_workout_intro/s8_feeling.jpg",
+  s9:  "images/bg/a2_workout_intro/s9_workflow.jpg",
   s10: "images/bg/a2_workout_intro/s10_center.jpg",
-  s11: "images/bg/a2_workout_intro/s11_compare.jpg",
-  s12: "images/bg/a2_workout_intro/s12_cta.jpg",
-  s13: "images/bg/a2_workout_intro/s13_orbiting.jpg",
 };
 
 // ============================================================

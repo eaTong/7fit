@@ -53,7 +53,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="a2-one-person-50-videos"
         component={A2OnePerson50Videos}
-        durationInFrames={975}  // 13镜×2.5s/镜 × 30fps
+        durationInFrames={2974}  // 10镜 × ~99s（字幕全内容），末帧=2974
         fps={30}
         width={1920}
         height={1080}

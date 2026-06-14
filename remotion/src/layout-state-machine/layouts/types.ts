@@ -8,7 +8,7 @@ export enum LayoutId {
   BottomLeftTalking = "bottom_left_talking",
   TopCenterTalking = "top_center_talking",
   OverlayTalkingHead = "overlay_talking_head",
-  CenteredFullscreenBg = "centered_fullscreen_bg",
+  FullscreenBg = "fullscreen_bg",
   CenterDualAux = "center_dual_aux",
   OrbitingCenter = "orbiting_center",
   TextCenterTalkingLeft = "text_center_talking_left",
@@ -36,7 +36,7 @@ export interface LayoutState {
   shadow: string;
   /** 层叠顺序（默认 10）*/
   zIndex: number;
-  /** 口播是否为背景层（用于 centered_fullscreen_bg）*/
+  /** 口播是否为背景层（用于 fullscreen_bg）*/
   isBackgroundLayer?: boolean;
   /** 口播背景层透明度（0~1）*/
   bgOpacity?: number;

@@ -36,8 +36,8 @@ const shotSequence: ShotEntry[] = [
   { shotId: "s9", layoutId: LayoutId.TopCenterTalking,         transitionType: "slide-left", startFrame: 600,  endFrame: 675  },
   // s10: overlay_talking_head（左上角叠加口播）
   { shotId: "s10", layoutId: LayoutId.OverlayTalkingHead,    transitionType: "ease-out",   startFrame: 675,  endFrame: 750  },
-  // s11: centered_fullscreen_bg（口播全屏背景层，内容居中叠加）
-  { shotId: "s11", layoutId: LayoutId.CenteredFullscreenBg,   transitionType: "fade",      startFrame: 750,  endFrame: 825  },
+  // s11: fullscreen_bg（口播全屏背景层，内容居中叠加）
+  { shotId: "s11", layoutId: LayoutId.FullscreenBg,   transitionType: "fade",      startFrame: 750,  endFrame: 825  },
   // s12: center_dual_aux（居中口播，左右双侧辅助内容）
   { shotId: "s12", layoutId: LayoutId.CenterDualAux,           transitionType: "ease-out",   startFrame: 825,  endFrame: 900  },
   // s13: orbiting_center（居中圆形，4个视频环绕旋转）

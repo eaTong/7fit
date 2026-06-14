@@ -67,26 +67,29 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
   // 分屏布局留白边，防止顶着屏幕边缘或邻侧素材
   const PADDING = 50;
 
-  // 正方形：取宽高中较小值（分屏布局用有效区域减去 padding 后的尺寸）
-  // 背景模式用全画布尺寸（1920×1080），不做 square 裁剪
-  const squareSize = isBgMode
-    ? CANVAS_W  // 1920 = 全画布宽，背景层填满
-    : isFullscreen
-    ? Math.min(width, height)
-    : Math.min(width - PADDING * 2, height - PADDING * 2);
-
-  const effectiveLeft = left + PADDING;
-  const effectiveTop  = top  + PADDING;
+  const effectiveLeft   = left   + PADDING;
+  const effectiveTop    = top    + PADDING;
   const effectiveWidth  = width  - PADDING * 2;
   const effectiveHeight = height - PADDING * 2;
 
-  const squareLeft = isFullscreen
-    ? (CANVAS_W - squareSize) / 2
-    : effectiveLeft + (effectiveWidth - squareSize) / 2;
+  // 正方形尺寸：统一取宽高较小值减去 padding
+  // 全屏 → 以 canvas 高度为正方形边长（竖屏视频适配全屏）
+  // 分屏布局 → 以当前布局宽高较小值为边长
+  const rawSquare = isFullscreen
+    ? CANVAS_H
+    : Math.min(width, height);
 
-  const squareTop = isFullscreen
-    ? (CANVAS_H - squareSize) / 2
-    : effectiveTop + (effectiveHeight - squareSize) / 2;
+  const squareSize = rawSquare - PADDING * 2;
+
+  // 正方形容器定位：基于正方形尺寸重新计算 left/top（保证动画全程正方形）
+  // 当前布局的 center → 正方形容器 center
+  const curCenterX = effectiveLeft + effectiveWidth / 2;
+  const curCenterY = effectiveTop  + effectiveHeight / 2;
+  const prevCenterX = prevLayout.left + PADDING + (prevLayout.width  - PADDING * 2) / 2;
+  const prevCenterY = prevLayout.top  + PADDING + (prevLayout.height - PADDING * 2) / 2;
+
+  const squareLeft = interpolate(relFrame, [0, TRANSITION_FRAMES], [prevCenterX, curCenterX], { easing, extrapolateLeft: "clamp", extrapolateRight: "clamp" }) - squareSize / 2;
+  const squareTop  = interpolate(relFrame, [0, TRANSITION_FRAMES], [prevCenterY, curCenterY], { easing, extrapolateLeft: "clamp", extrapolateRight: "clamp" }) - squareSize / 2;
 
   // 圆形：borderRadius = squareSize / 2
   const rawRadius = interpolate(relFrame, [0, TRANSITION_FRAMES], [prevLayout.borderRadius, curLayout.borderRadius], { easing, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -124,14 +127,17 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
         src={videoSrc}
         type="video"
         style={{
-          width: "calc(100% + 100px)",
-          height: "calc(100% + 100px)",
+          width: "100%",
+          height: "100%",
           position: "absolute",
-          left: -50,
-          top: -50,
-          objectFit: "cover",
-          maskImage: "linear-gradient(to right, transparent 0px, transparent 50px, black 50px, black calc(100% - 50px), transparent calc(100% - 50px), transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to right, transparent 0px, transparent 50px, black 50px, black calc(100% - 50px), transparent calc(100% - 50px), transparent 100%)",
+          left: 0,
+          top: 0,
+          // 竖屏视频（如 9:16）放在横屏容器（1920×1080 画布）里：
+          // - 容器更窄（竖屏布局如 480×864）→ 用 contain 完整显示，避免切掉头顶下巴
+          // - 容器更宽（全屏等）→ 用 cover 填满
+          objectFit: effectiveWidth < squareSize ? "contain" : "cover",
+          // contain 模式下居中（口播视频通常是竖屏，人物居中）
+          objectPosition: effectiveWidth < squareSize ? "center center" : "center center",
         }}
       />
     </div>

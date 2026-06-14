@@ -103,7 +103,7 @@ registerLayout({
 
 // 口播视频全屏铺满背景（半透明），内容叠加在正中央
 registerLayout({
-  id: LayoutId.CenteredFullscreenBg,
+  id: LayoutId.FullscreenBg,
   left: 0, top: 0, width: 1920, height: 1080,
   borderRadius: 0, borderWidth: 0, borderColor: "transparent",
   shadow: "none", zIndex: 5,
