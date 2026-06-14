@@ -49,7 +49,7 @@ export const ParamCard: React.FC<ParamCardProps> = ({
     if (position === "top-left") return { ...base, top: 160, left: 60 };
     if (position === "top-right") return { ...base, top: 160, right: 60 };
     if (position === "bottom-left") return { ...base, bottom: 320, left: 60 };
-    return { ...base, bottom: 550, right: 60 };
+    return { ...base, bottom: 320, right: 60 };
   })();
 
   return (
