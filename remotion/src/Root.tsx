@@ -31,7 +31,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="b14-push-day"
         component={B14PushDay}
-        durationInFrames={960}
+        durationInFrames={900}  // 30s × 30fps（8镜：钩子+5动作+要点+outro）
         fps={30}
         width={1080}
         height={1920}
