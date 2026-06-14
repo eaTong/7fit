@@ -129,16 +129,14 @@
       "content_type": "video",
       "content_source": "key_tips.mp4",
       "voiceover": [
-        { "text": "挺胸", "highlight": false },
+        { "text": "抬头", "highlight": true },
         { "text": "、", "highlight": false },
-        { "text": "从轻", "highlight": false },
-        { "text": "、", "highlight": false },
+        { "text": "挺胸", "highlight": true },
+        { "text": "，从轻的开始做，加到 ", "highlight": false },
         { "text": "12", "highlight": true },
-        { "text": " 次力竭、", "highlight": false },
-        { "text": "5", "highlight": true },
-        { "text": " 组。", "highlight": false }
+        { "text": " 次力竭的重量。", "highlight": false }
       ],
-      "description": "用户演示挺胸 + 右上 12次参数卡（呼吸辉光）+ 左下 5组参数卡（呼吸辉光）",
+      "description": "用户演示抬头/挺胸（高亮动作要点）+ 右上 12次参数卡（呼吸辉光）+ 左下 5组参数卡（呼吸辉光）",
       "transition_in": "zoom",
       "transition_out": "zoom",
       "animation_overrides": {
