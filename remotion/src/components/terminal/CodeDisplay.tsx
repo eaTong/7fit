@@ -15,6 +15,7 @@
  * - 括号/符号: #888899
  */
 
+import { useCurrentFrame } from "remotion";
 import type { CSSProperties } from "react";
 
 interface CodeDisplayProps {
@@ -26,6 +27,8 @@ interface CodeDisplayProps {
   maxHeight?: number;
   /** 去掉容器背景和边框（用于 ShotContent 嵌入）*/
   plain?: boolean;
+  /** 打字速度（每帧显示的字符数），0 = 禁用打字效果直接显示全部 */
+  typingSpeed?: number;
   style?: CSSProperties;
 }
 
@@ -119,9 +122,23 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
   showLineNumbers = true,
   maxHeight = 400,
   plain = false,
+  typingSpeed = 0,
   style,
 }) => {
+  const frame = useCurrentFrame();
   const lines = tokenize(code, language);
+
+  // 打字效果：typingSpeed > 0 时，按每帧 typingSpeed 个字符的速度逐步显示
+  const totalChars = code.length;
+  const revealedChars = typingSpeed > 0 ? Math.min(frame * typingSpeed, totalChars) : totalChars;
+
+  // 统计每行累积字符数，用于打字效果掩码
+  const lineCumulativeChars: number[] = [];
+  let cumsum = 0;
+  lines.forEach((lineTokens) => {
+    lineCumulativeChars.push(cumsum);
+    cumsum += lineTokens.reduce((acc, t) => acc + t.text.length, 0) + 1; // +1 for newline
+  });
 
   return (
     <div
@@ -173,56 +190,78 @@ export const CodeDisplay: React.FC<CodeDisplayProps> = ({
           padding: `${fontSize / 2}px 0`,
         }}
       >
-        {lines.map((tokens, lineIdx) => (
-          <div
-            key={lineIdx}
-            style={{
-              display: "flex",
-              lineHeight: 1.6,
-              minHeight: fontSize * 1.6,
-            }}
-          >
-            {showLineNumbers && (
-              <div
-                style={{
-                  width: `${String(lines.length).length * fontSize * 0.65 + fontSize}px`,
-                  minWidth: `${String(lines.length).length * fontSize * 0.65 + fontSize}px`,
-                  paddingRight: fontSize * 0.5,
-                  textAlign: "right",
-                  color: "#444466",
-                  fontSize: fontSize * 0.9,
-                  background: "rgba(0,0,0,0.2)",
-                  paddingTop: fontSize * 0.1,
-                  userSelect: "none",
-                  flexShrink: 0,
-                }}
-              >
-                {lineIdx + 1}
-              </div>
-            )}
+        {lines.map((tokens, lineIdx) => {
+          const lineStart = lineCumulativeChars[lineIdx];
+          const lineEnd = lineStart + tokens.reduce((acc, t) => acc + t.text.length, 0);
+          const hasTyping = typingSpeed > 0;
+
+          return (
             <div
+              key={lineIdx}
               style={{
-                paddingLeft: fontSize * 0.5,
-                paddingRight: fontSize,
-                fontSize,
-                whiteSpace: "pre",
+                display: "flex",
+                lineHeight: 1.6,
+                minHeight: fontSize * 1.6,
               }}
             >
-              {tokens.length === 0 ? (
-                <span style={{ color: "#333344" }}> </span>
-              ) : (
-                tokens.map((token, tokenIdx) => (
-                  <span
-                    key={tokenIdx}
-                    style={{ color: TOKEN_COLORS[token.type] }}
-                  >
-                    {token.text}
-                  </span>
-                ))
+              {showLineNumbers && (
+                <div
+                  style={{
+                    width: `${String(lines.length).length * fontSize * 0.65 + fontSize}px`,
+                    minWidth: `${String(lines.length).length * fontSize * 0.65 + fontSize}px`,
+                    paddingRight: fontSize * 0.5,
+                    textAlign: "right",
+                    color: "#444466",
+                    fontSize: fontSize * 0.9,
+                    background: "rgba(0,0,0,0.2)",
+                    paddingTop: fontSize * 0.1,
+                    userSelect: "none",
+                    flexShrink: 0,
+                  }}
+                >
+                  {lineIdx + 1}
+                </div>
               )}
+              <div
+                style={{
+                  paddingLeft: fontSize * 0.5,
+                  paddingRight: fontSize,
+                  fontSize,
+                  whiteSpace: "pre",
+                }}
+              >
+                {tokens.length === 0 ? (
+                  <span style={{ color: "#333344" }}> </span>
+                ) : (
+                  tokens.map((token, tokenIdx) => {
+                    const tokenStart = lineStart + tokens.slice(0, tokenIdx).reduce((a, t) => a + t.text.length, 0);
+                    const tokenRevealed = Math.max(0, Math.min(revealedChars - tokenStart, token.text.length));
+                    const isMasked = hasTyping && tokenRevealed < token.text.length;
+
+                    return (
+                      <span
+                        key={tokenIdx}
+                        style={{ color: TOKEN_COLORS[token.type] }}
+                      >
+                        {isMasked ? token.text.slice(0, tokenRevealed) || " " : token.text}
+                      </span>
+                    );
+                  })
+                )}
+                {typingSpeed > 0 && lineEnd <= revealedChars && lineIdx < lines.length - 1 && (
+                  <span
+                    style={{
+                      color: "#00CCFF",
+                      opacity: frame % 40 < 20 ? 1 : 0,
+                    }}
+                  >
+                    █
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

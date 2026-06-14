@@ -26,44 +26,44 @@ import { LayoutId } from "../../layout-state-machine/layouts/types";
 
 const shotSequence: ShotEntry[] = [
   // s1: 钩子 — HeadlineCard 全屏居中
-  { shotId: "s1", layoutId: LayoutId.Fullscreen,              transitionType: "zoom",       startFrame: 0,    endFrame: 75   },
+  { shotId: "s1", layoutId: LayoutId.Fullscreen, transitionType: "zoom", startFrame: 0, endFrame: 75 },
   // s2: 身份锚定
-  { shotId: "s2", layoutId: LayoutId.TextCenterTalkingRight,  transitionType: "slide-left", startFrame: 75,   endFrame: 150 },
+  { shotId: "s2", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "slide-left", startFrame: 75, endFrame: 150 },
   // s3: 痛点
-  { shotId: "s3", layoutId: LayoutId.PipBottomRight,          transitionType: "slide-left", startFrame: 150,  endFrame: 225 },
+  { shotId: "s3", layoutId: LayoutId.PipBottomRight, transitionType: "slide-left", startFrame: 150, endFrame: 225 },
   // s4: 工具曝光
-  { shotId: "s4", layoutId: LayoutId.PipBottomLeft,           transitionType: "slide-right", startFrame: 225,  endFrame: 300 },
-  // s5: 工作流
-  { shotId: "s5", layoutId: LayoutId.Grid2x2,                  transitionType: "fade",        startFrame: 300,  endFrame: 375 },
+  { shotId: "s4", layoutId: LayoutId.PipBottomLeft, transitionType: "slide-right", startFrame: 225, endFrame: 300 },
+  // s5: 工作流（辅助内容占左侧全高）
+  { shotId: "s5", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "fade", startFrame: 300, endFrame: 375 },
   // s6: 方法论
-  { shotId: "s6", layoutId: LayoutId.TextCenterTalkingLeft,   transitionType: "ease-out",    startFrame: 375,  endFrame: 450 },
+  { shotId: "s6", layoutId: LayoutId.TextCenterTalkingRight, transitionType: "ease-out", startFrame: 375, endFrame: 450 },
   // s7: AI 效果
-  { shotId: "s7", layoutId: LayoutId.BottomRightTalking,       transitionType: "slide-left", startFrame: 450,  endFrame: 525 },
+  { shotId: "s7", layoutId: LayoutId.BottomRightTalking, transitionType: "slide-left", startFrame: 450, endFrame: 525 },
   // s8: 数字对比
-  { shotId: "s8", layoutId: LayoutId.BottomLeftTalking,        transitionType: "slide-right", startFrame: 525,  endFrame: 600 },
+  { shotId: "s8", layoutId: LayoutId.BottomLeftTalking, transitionType: "slide-right", startFrame: 525, endFrame: 600 },
   // s9: 感受
-  { shotId: "s9", layoutId: LayoutId.TopCenterTalking,         transitionType: "slide-left", startFrame: 600,  endFrame: 675 },
+  { shotId: "s9", layoutId: LayoutId.TopCenterTalking, transitionType: "slide-left", startFrame: 600, endFrame: 675 },
   // s10: 核心观点
-  { shotId: "s10", layoutId: LayoutId.OverlayTalkingHead,     transitionType: "ease-out",   startFrame: 675,  endFrame: 750 },
+  { shotId: "s10", layoutId: LayoutId.OverlayTalkingHead, transitionType: "ease-out", startFrame: 675, endFrame: 750 },
   // s11: 收尾金句
-  { shotId: "s11", layoutId: LayoutId.CenteredFullscreenBg,   transitionType: "fade",      startFrame: 750,  endFrame: 825 },
+  { shotId: "s11", layoutId: LayoutId.CenteredFullscreenBg, transitionType: "fade", startFrame: 750, endFrame: 825 },
   // s12: 证据（文件夹树 + GitLog）
-  { shotId: "s12", layoutId: LayoutId.CenterDualAux,           transitionType: "ease-out",   startFrame: 825,  endFrame: 900 },
+  { shotId: "s12", layoutId: LayoutId.CenterDualAux, transitionType: "ease-out", startFrame: 825, endFrame: 900 },
   // s13: CTA 居中全屏
-  { shotId: "s13", layoutId: LayoutId.CenteredFullscreenBg,   transitionType: "zoom",       startFrame: 900,  endFrame: 975 },
+  { shotId: "s13", layoutId: LayoutId.CenteredFullscreenBg, transitionType: "zoom", startFrame: 900, endFrame: 975 },
 ];
 
 // A2 背景图
 const BACKGROUND_MAP: Record<string, string> = {
-  s1:  "images/bg/a2_workout_intro/s1_hook.jpg",
-  s2:  "images/bg/a2_workout_intro/s2_identity.jpg",
-  s3:  "images/bg/a2_workout_intro/s3_pain.jpg",
-  s4:  "images/bg/a2_workout_intro/s4_tools.jpg",
-  s5:  "images/bg/a2_workout_intro/s5_workflow.jpg",
-  s6:  "images/bg/a2_workout_intro/s6_method.jpg",
-  s7:  "images/bg/a2_workout_intro/s7_digital.jpg",
-  s8:  "images/bg/a2_workout_intro/s8_feeling.jpg",
-  s9:  "images/bg/a2_workout_intro/s9_workflow.jpg",
+  s1: "images/bg/a2_workout_intro/s1_hook.jpg",
+  s2: "images/bg/a2_workout_intro/s2_identity.jpg",
+  s3: "images/bg/a2_workout_intro/s3_pain.jpg",
+  s4: "images/bg/a2_workout_intro/s4_tools.jpg",
+  s5: "images/bg/a2_workout_intro/s5_workflow.jpg",
+  s6: "images/bg/a2_workout_intro/s6_method.jpg",
+  s7: "images/bg/a2_workout_intro/s7_digital.jpg",
+  s8: "images/bg/a2_workout_intro/s8_feeling.jpg",
+  s9: "images/bg/a2_workout_intro/s9_workflow.jpg",
   s10: "images/bg/a2_workout_intro/s10_center.jpg",
   s11: "images/bg/a2_workout_intro/s11_compare.jpg",
   s12: "images/bg/a2_workout_intro/s12_cta.jpg",
@@ -104,67 +104,89 @@ const FOLDER_TREE = [
     name: "src",
     type: "dir" as const,
     children: [
-      { name: "components", type: "dir" as const, children: [
-        { name: "auxiliary", type: "dir" as const, children: [
-          { name: "ComparisonCard.tsx", type: "file" as const },
-          { name: "FlowDiagram.tsx", type: "file" as const },
-          { name: "FolderTree.tsx", type: "file" as const },
-          { name: "FormulaCard.tsx", type: "file" as const },
-          { name: "HeadlineCard.tsx", type: "file" as const },
-          { name: "ImpactBar.tsx", type: "file" as const },
-          { name: "MetadataPair.tsx", type: "file" as const },
-          { name: "QuoteCard.tsx", type: "file" as const },
-          { name: "TimeStateCard.tsx", type: "file" as const },
-          { name: "ToolBadgeList.tsx", type: "file" as const },
-          { name: "WorkflowCard.tsx", type: "file" as const },
-          { name: "OrbitingContent.tsx", type: "file" as const },
+      {
+        name: "components", type: "dir" as const, children: [
+          {
+            name: "auxiliary", type: "dir" as const, children: [
+              { name: "ComparisonCard.tsx", type: "file" as const },
+              { name: "FlowDiagram.tsx", type: "file" as const },
+              { name: "FolderTree.tsx", type: "file" as const },
+              { name: "FormulaCard.tsx", type: "file" as const },
+              { name: "HeadlineCard.tsx", type: "file" as const },
+              { name: "ImpactBar.tsx", type: "file" as const },
+              { name: "MetadataPair.tsx", type: "file" as const },
+              { name: "QuoteCard.tsx", type: "file" as const },
+              { name: "TimeStateCard.tsx", type: "file" as const },
+              { name: "ToolBadgeList.tsx", type: "file" as const },
+              { name: "WorkflowCard.tsx", type: "file" as const },
+              { name: "OrbitingContent.tsx", type: "file" as const },
+              { name: "index.ts", type: "file" as const },
+            ]
+          },
+          {
+            name: "data-display", type: "dir" as const, children: [
+              { name: "ActionDataCard.tsx", type: "file" as const },
+              { name: "CTAButton.tsx", type: "file" as const },
+              { name: "OverlayCard.tsx", type: "file" as const },
+              { name: "VoiceoverText.tsx", type: "file" as const },
+            ]
+          },
+          {
+            name: "layout", type: "dir" as const, children: [
+              { name: "Grid2x2.tsx", type: "file" as const },
+              { name: "PictureInPicture.tsx", type: "file" as const },
+              { name: "SplitLeftRight.tsx", type: "file" as const },
+              { name: "TripleSplit.tsx", type: "file" as const },
+            ]
+          },
+          {
+            name: "media", type: "dir" as const, children: [
+              { name: "BGMWithDucking.tsx", type: "file" as const },
+              { name: "MediaFallback.tsx", type: "file" as const },
+              { name: "OrbitingVideo.tsx", type: "file" as const },
+            ]
+          },
+          {
+            name: "terminal", type: "dir" as const, children: [
+              { name: "CodeDisplay.tsx", type: "file" as const },
+              { name: "GitLogDisplay.tsx", type: "file" as const },
+            ]
+          },
+          {
+            name: "transitions", type: "dir" as const, children: [
+              { name: "ShotRenderer.tsx", type: "file" as const },
+            ]
+          },
+        ]
+      },
+      {
+        name: "layout-state-machine", type: "dir" as const, children: [
+          { name: "AnimatedTalkingHead.tsx", type: "file" as const },
+          { name: "AuxiliaryContentManager.tsx", type: "file" as const },
+          { name: "LayoutTransitionEngine.tsx", type: "file" as const },
+          { name: "ShotContent.tsx", type: "file" as const },
           { name: "index.ts", type: "file" as const },
-        ]},
-        { name: "data-display", type: "dir" as const, children: [
-          { name: "ActionDataCard.tsx", type: "file" as const },
-          { name: "CTAButton.tsx", type: "file" as const },
-          { name: "OverlayCard.tsx", type: "file" as const },
-          { name: "VoiceoverText.tsx", type: "file" as const },
-        ]},
-        { name: "layout", type: "dir" as const, children: [
-          { name: "Grid2x2.tsx", type: "file" as const },
-          { name: "PictureInPicture.tsx", type: "file" as const },
-          { name: "SplitLeftRight.tsx", type: "file" as const },
-          { name: "TripleSplit.tsx", type: "file" as const },
-        ]},
-        { name: "media", type: "dir" as const, children: [
-          { name: "BGMWithDucking.tsx", type: "file" as const },
-          { name: "MediaFallback.tsx", type: "file" as const },
-          { name: "OrbitingVideo.tsx", type: "file" as const },
-        ]},
-        { name: "terminal", type: "dir" as const, children: [
-          { name: "CodeDisplay.tsx", type: "file" as const },
-          { name: "GitLogDisplay.tsx", type: "file" as const },
-        ]},
-        { name: "transitions", type: "dir" as const, children: [
-          { name: "ShotRenderer.tsx", type: "file" as const },
-        ]},
-      ]},
-      { name: "layout-state-machine", type: "dir" as const, children: [
-        { name: "AnimatedTalkingHead.tsx", type: "file" as const },
-        { name: "AuxiliaryContentManager.tsx", type: "file" as const },
-        { name: "LayoutTransitionEngine.tsx", type: "file" as const },
-        { name: "ShotContent.tsx", type: "file" as const },
-        { name: "index.ts", type: "file" as const },
-        { name: "layouts", type: "dir" as const, children: [
-          { name: "index.ts", type: "file" as const },
-          { name: "registry.ts", type: "file" as const },
-          { name: "types.ts", type: "file" as const },
-        ]},
-      ]},
-      { name: "scenes", type: "dir" as const, children: [
-        { name: "a2_one_person_50_videos", type: "dir" as const, children: [
-          { name: "index.tsx", type: "file" as const },
-          { name: "status.md", type: "file" as const },
-        ]},
-        { name: "b14_push_day", type: "dir" as const },
-        { name: "winged_scapula_b3", type: "dir" as const },
-      ]},
+          {
+            name: "layouts", type: "dir" as const, children: [
+              { name: "index.ts", type: "file" as const },
+              { name: "registry.ts", type: "file" as const },
+              { name: "types.ts", type: "file" as const },
+            ]
+          },
+        ]
+      },
+      {
+        name: "scenes", type: "dir" as const, children: [
+          {
+            name: "a2_one_person_50_videos", type: "dir" as const, children: [
+              { name: "index.tsx", type: "file" as const },
+              { name: "status.md", type: "file" as const },
+            ]
+          },
+          { name: "b14_push_day", type: "dir" as const },
+          { name: "winged_scapula_b3", type: "dir" as const },
+        ]
+      },
       { name: "index.ts", type: "file" as const },
       { name: "Root.tsx", type: "file" as const },
       { name: "index.css", type: "file" as const },
@@ -238,7 +260,7 @@ export const A2OnePerson50Videos: React.FC = () => {
               return (
                 <div style={{ position: "absolute", left: 0, top: 0, width: 1440, height: 864, display: "flex", alignItems: "center", padding: "0 50px" }}>
                   <MetadataPair delay={enterFrame}
-                                        label="身份"
+                    label="身份"
                     value="产品经理"
                     subLabel="健身"
                     subValue="七年爱好者"
@@ -267,7 +289,7 @@ export const A2OnePerson50Videos: React.FC = () => {
               return (
                 <div style={{ position: "absolute", left: 960, top: 0, width: 960, height: 432, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
                   <WorkflowCard delay={enterFrame}
-                                        steps={[
+                    steps={[
                       { icon: "1", name: "确认方向", desc: "Claude Code 判断" },
                       { icon: "2", name: "睡觉跑完", desc: "AI 自动执行" },
                       { icon: "3", name: "审核结果", desc: "mmx 生成素材" },
@@ -282,7 +304,7 @@ export const A2OnePerson50Videos: React.FC = () => {
               return (
                 <div style={{ position: "absolute", left: 0, top: 0, width: 960, height: 864, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <FlowDiagram delay={enterFrame}
-                                        nodes={[
+                    nodes={[
                       { label: "确认方向", sublabel: "我判断" },
                       { label: "睡觉", sublabel: "AI 执行" },
                       { label: "跑完", sublabel: "自动完成" },
@@ -296,7 +318,7 @@ export const A2OnePerson50Videos: React.FC = () => {
               return (
                 <div style={{ position: "absolute", left: 0, top: 0, width: 1440, height: 864, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <ImpactBar delay={enterFrame}
-                                        aiPercent={90}
+                    aiPercent={90}
                     mePercent={10}
                     aiLabel="AI 执行"
                     meLabel="我判断"
@@ -309,7 +331,7 @@ export const A2OnePerson50Videos: React.FC = () => {
               return (
                 <div style={{ position: "absolute", left: 480, top: 0, width: 1440, height: 864, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <ComparisonCard delay={enterFrame}
-                                        before={{ label: "以前", value: "2周", unit: "/ 条" }}
+                    before={{ label: "以前", value: "2周", unit: "/ 条" }}
                     after={{ label: "现在", value: "1天", unit: "/ 条" }}
                   />
                 </div>
@@ -332,7 +354,7 @@ export const A2OnePerson50Videos: React.FC = () => {
               return (
                 <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 864, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <FormulaCard delay={enterFrame}
-                                        formula="1 × 50 = 50"
+                    formula="1 × 50 = 50"
                     resultLabel="一个人 × AI 放大 = 一周 50 条"
                   />
                 </div>

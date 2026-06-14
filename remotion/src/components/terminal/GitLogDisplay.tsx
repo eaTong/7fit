@@ -99,7 +99,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
           const isCenter = showAll ? false : absoluteIdx === currentIndex;
           const isBeforeCenter = showAll ? false : absoluteIdx < currentIndex;
 
-          // 每行动效：从上方滑入
+          // 每行动效：从上方滑入 + scale 弹入
           const entrySpring = spring({
             frame: frame - (startIndex + relativeIdx) * 4,
             fps,
@@ -107,6 +107,16 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
           });
           const slideIn = interpolate(entrySpring, [0, 1], [20, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
           const opacity = interpolate(entrySpring, [0, 1], [0.4, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          const scale = interpolate(entrySpring, [0, 1], [0.95, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+
+          // 高亮行脉冲：边框 + hash 颜色呼吸
+          const pulse = interpolate(Math.sin(frame * 0.15), [-1, 1], [0.6, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          const borderOpacity = isCenter ? pulse : 1;
+
+          // Message 弹入：居中时 scale 1.0 → 1.02 再弹回
+          const msgScale = isCenter
+            ? interpolate(Math.sin(frame * 0.12), [-1, 1], [1, 1.02], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })
+            : 1;
 
           return (
             <div
@@ -116,7 +126,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
                 alignItems: "center",
                 height: LINE_H,
                 padding: `0 ${fontSize}px`,
-                transform: `translateY(${slideIn}px)`,
+                transform: `translateY(${slideIn}px) scale(${scale})`,
                 opacity,
                 background: isCenter
                   ? `rgba(255, 69, 0, 0.12)`
@@ -126,7 +136,6 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
                 borderLeft: isCenter
                   ? `3px solid ${highlightColor}`
                   : "3px solid transparent",
-                transition: "background 0.2s",
                 boxSizing: "border-box",
               }}
             >
@@ -136,8 +145,9 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
                   fontSize: 24,
                   color: isCenter ? highlightColor : "#00CCFF",
                   fontWeight: isCenter ? 700 : 400,
-                  minWidth: fontSize * 5,
+                  minWidth: fontSize * 3.5,
                   flexShrink: 0,
+                  opacity: isCenter ? borderOpacity : 1,
                 }}
               >
                 {entry.hash}
@@ -149,7 +159,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
                   fontSize: 24,
                   color: isCenter ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)",
                   marginLeft: fontSize,
-                  minWidth: fontSize * 4,
+                  minWidth: fontSize * 3,
                   flexShrink: 0,
                 }}
               >
@@ -162,6 +172,7 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
                   fontSize: 24,
                   color: "rgba(255,255,255,0.3)",
                   marginLeft: fontSize * 0.5,
+                  minWidth: fontSize * 4,
                   flexShrink: 0,
                 }}
               >
@@ -179,6 +190,9 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                   flex: 1,
+                  transform: `scale(${msgScale})`,
+                  transformOrigin: "left center",
+                  display: "block",
                 }}
               >
                 {entry.message}

@@ -38,7 +38,7 @@
 | 口播 + 文字/图片素材 | `left_text_right_talking` | 口播右侧 480px，辅助内容左侧 1340px |
 | 口播 + 右下角色素材 | `pip_bottom_right` | 口播右下角小窗，素材全屏 |
 | 口播 + 左下角色素材 | `pip_bottom_left` | 口播左下角小窗，素材全屏 |
-| 多数据并列展示 | `grid_2x2` | 口播左上格，4格辅助素材 |
+| 多数据并列展示（≥4个素材） | `grid_2x2` | 口播左上格，4格辅助素材；素材不足时禁用，改用 `bottom_right_talking` |
 | 口播 + 各占一半 | `left_text_right_talking_50pct` | 口播右半，辅助内容左半 |
 | 口播为背景，内容聚焦 | `centered_fullscreen_bg` | 口播全屏铺底（半透明），内容居中叠加 |
 | 口播居中，素材左右对称 | `center_dual_aux` | 口播居中(864²)，辅助内容左右各 400px |
