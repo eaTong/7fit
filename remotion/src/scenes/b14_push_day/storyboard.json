@@ -1,17 +1,17 @@
 {
   "id": "b14_push_day",
-  "duration": 32.0,
+  "duration": 30.0,
   "canvas": { "width": 1080, "height": 1920, "fps": 30 },
   "bgm": { "type": "gym_beat", "volume_db": -8, "file": "gym_beat_b14.mp3" },
-  "transition_style": "powerful_hard_cut",
+  "transition_style": "alternating_power_cut",
   "tts": true,
   "shots": [
     {
       "shot_id": "hook_2x2_grid",
       "data_shot_id": "hook_2x2_grid",
       "start": 0.0,
-      "end": 3.0,
-      "duration": 3.0,
+      "end": 2.5,
+      "duration": 2.5,
       "content_type": "video_grid",
       "content_source": "push_lying.mp4, push_seated.mp4, push_overhead.mp4, push_front.mp4",
       "voiceover": [
@@ -19,100 +19,96 @@
         { "text": "第一天", "highlight": true },
         { "text": "你就推。", "highlight": false }
       ],
-      "description": "2×2 网格同屏 4 个动作（躺着推/靠着推/向上推/向前推），每格 540×960px，白线分割",
-      "transition_in": "fade",
-      "transition_out": "push_left",
-      "layout": "2x2_grid",
+      "description": "2×2 网格 4 格 stagger 入场 + 第 4 格 impulse 冲击 + LightLeak",
+      "transition_in": "zoom",
+      "transition_out": "zoom",
       "grid_cells": [
         { "position": "top-left", "source": "push_lying.mp4" },
         { "position": "top-right", "source": "push_seated.mp4" },
         { "position": "bottom-left", "source": "push_overhead.mp4" },
         { "position": "bottom-right", "source": "push_front.mp4" }
-      ]
+      ],
+      "animation_overrides": {
+        "grid_stagger_frames": 5,
+        "grid_impulse_idx": 3,
+        "grid_impulse_scale": 1.15,
+        "light_leak": { "duration_frames": 12, "seed": 42, "hueShift": 180 }
+      }
+    },
+    {
+      "shot_id": "number_impact_5x12",
+      "data_shot_id": "number_impact_5x12",
+      "start": 2.5,
+      "end": 4.5,
+      "duration": 2.0,
+      "content_type": "transition_card",
+      "content_source": null,
+      "voiceover": [
+        { "text": "5", "highlight": true },
+        { "text": " 个动作 × ", "highlight": false },
+        { "text": "12", "highlight": true },
+        { "text": " 次 × ", "highlight": false },
+        { "text": "5", "highlight": true },
+        { "text": " 组", "highlight": false }
+      ],
+      "description": "中心数字 5×12 弹入（playful 贝塞尔 overshoot）+ BGM 强脉冲",
+      "transition_in": "zoom",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "number_spring_overshoot": true,
+        "bgm_pulse_intensity": "strong"
+      }
     },
     {
       "shot_id": "push_lying",
       "data_shot_id": "push_lying",
-      "start": 3.0,
-      "end": 6.0,
+      "start": 4.5,
+      "end": 7.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_lying.mp4",
-      "voiceover": [
-        { "text": "躺着推", "highlight": true }
-      ],
-      "description": "仰卧推演示，全屏动作视频，底部字幕",
-      "transition_in": "push_left",
-      "transition_out": "push_left"
-    },
-    {
-      "shot_id": "pause_breath_1",
-      "data_shot_id": "pause_breath_1",
-      "start": 6.0,
-      "end": 6.5,
-      "duration": 0.5,
-      "content_type": "pause_breath",
-      "content_source": "push_lying.mp4 (freeze frame)",
-      "voiceover": "",
-      "description": "上一镜 freeze frame 定格，0.5s 停顿",
-      "transition_in": "pause_breath",
-      "transition_out": "fade"
+      "voiceover": [{ "text": "躺着推", "highlight": true }],
+      "description": "仰卧推演示 + 左上角动作名 chip + 右下角 1/5 进度环",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "躺着推", "position": "top-left", "delay_frames": 5 },
+        "progress_ring": { "current": 1, "total": 5, "position": "bottom-right", "delay_frames": 10 }
+      }
     },
     {
       "shot_id": "push_seated",
       "data_shot_id": "push_seated",
-      "start": 6.5,
-      "end": 9.5,
+      "start": 7.5,
+      "end": 10.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_seated.mp4",
-      "voiceover": [
-        { "text": "靠着推", "highlight": true }
-      ],
-      "description": "坐姿器械推胸演示，全屏动作视频",
-      "transition_in": "fade",
-      "transition_out": "push_left"
-    },
-    {
-      "shot_id": "pause_breath_2",
-      "data_shit_id": "pause_breath_2",
-      "start": 9.5,
-      "end": 10.0,
-      "duration": 0.5,
-      "content_type": "pause_breath",
-      "content_source": "push_seated.mp4 (freeze frame)",
-      "voiceover": "",
-      "description": "freeze frame 定格，0.5s 停顿",
-      "transition_in": "pause_breath",
-      "transition_out": "fade"
+      "voiceover": [{ "text": "靠着推", "highlight": true }],
+      "description": "坐姿器械推胸 + 动作名 chip + 2/5 进度环",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "靠着推", "position": "top-left", "delay_frames": 5 },
+        "progress_ring": { "current": 2, "total": 5, "position": "bottom-right", "delay_frames": 10 }
+      }
     },
     {
       "shot_id": "push_overhead",
       "data_shot_id": "push_overhead",
-      "start": 10.0,
-      "end": 13.0,
+      "start": 10.5,
+      "end": 13.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_overhead.mp4",
-      "voiceover": [
-        { "text": "向上推", "highlight": true }
-      ],
-      "description": "哑铃推肩演示，全屏动作视频",
-      "transition_in": "fade",
-      "transition_out": "push_left"
-    },
-    {
-      "shot_id": "pause_breath_3",
-      "data_shot_id": "pause_breath_3",
-      "start": 13.0,
-      "end": 13.5,
-      "duration": 0.5,
-      "content_type": "pause_breath",
-      "content_source": "push_overhead.mp4 (freeze frame)",
-      "voiceover": "",
-      "description": "freeze frame 定格，0.5s 停顿",
-      "transition_in": "pause_breath",
-      "transition_out": "fade"
+      "voiceover": [{ "text": "向上推", "highlight": true }],
+      "description": "哑铃推肩 + 动作名 chip + 3/5 进度环",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "向上推", "position": "top-left", "delay_frames": 5 },
+        "progress_ring": { "current": 3, "total": 5, "position": "bottom-right", "delay_frames": 10 }
+      }
     },
     {
       "shot_id": "push_front",
@@ -122,83 +118,83 @@
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_front.mp4",
-      "voiceover": [
-        { "text": "向前推", "highlight": true }
-      ],
-      "description": "地雷管前推演示，全屏动作视频",
-      "transition_in": "fade",
-      "transition_out": "push_left"
-    },
-    {
-      "shot_id": "pause_breath_4",
-      "data_shot_id": "pause_breath_4",
-      "start": 16.5,
-      "end": 17.0,
-      "duration": 0.5,
-      "content_type": "pause_breath",
-      "content_source": "push_front.mp4 (freeze frame)",
-      "voiceover": "",
-      "description": "freeze frame 定格，0.5s 停顿",
-      "transition_in": "pause_breath",
-      "transition_out": "fade"
+      "voiceover": [{ "text": "向前推", "highlight": true }],
+      "description": "地雷管前推 + 动作名 chip + 4/5 进度环",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "向前推", "position": "top-left", "delay_frames": 5 },
+        "progress_ring": { "current": 4, "total": 5, "position": "bottom-right", "delay_frames": 10 }
+      }
     },
     {
       "shot_id": "push_reverse",
       "data_shot_id": "push_reverse",
-      "start": 17.0,
-      "end": 20.0,
+      "start": 16.5,
+      "end": 19.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_reverse.mp4",
-      "voiceover": [
-        { "text": "反着推", "highlight": true }
-      ],
-      "description": "窄距反手推演示，全屏动作视频",
-      "transition_in": "fade",
-      "transition_out": "push_left"
+      "voiceover": [{ "text": "反着推", "highlight": true }],
+      "description": "窄距反手推 + 动作名 chip + 5/5 进度环（满环冲击）",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "反着推", "position": "top-left", "delay_frames": 5 },
+        "progress_ring": { "current": 5, "total": 5, "position": "bottom-right", "delay_frames": 10, "impulse": true }
+      }
     },
     {
-      "shot_id": "key_tips",
-      "data_shot_id": "key_tips",
-      "start": 20.0,
-      "end": 25.0,
-      "duration": 5.0,
+      "shot_id": "key_tips_with_params",
+      "data_shot_id": "key_tips_with_params",
+      "start": 19.5,
+      "end": 23.5,
+      "duration": 4.0,
       "content_type": "video",
       "content_source": "key_tips.mp4",
       "voiceover": [
-        { "text": "推的时候胸挺起来。", "highlight": false },
-        { "text": "从轻的重量开始。", "highlight": false },
-        { "text": "加到 ", "highlight": false },
+        { "text": "挺胸", "highlight": false },
+        { "text": "、", "highlight": false },
+        { "text": "从轻", "highlight": false },
+        { "text": "、", "highlight": false },
         { "text": "12", "highlight": true },
-        { "text": " 次力竭。", "highlight": false },
-        { "text": "做 ", "highlight": false },
+        { "text": " 次力竭、", "highlight": false },
         { "text": "5", "highlight": true },
         { "text": " 组。", "highlight": false }
       ],
-      "description": "用户演示挺胸持杠，4 条 TTS 字幕 + 右上角 12次/5组 橙色参数卡",
-      "transition_in": "push_left",
-      "transition_out": "push_left"
+      "description": "用户演示挺胸 + 右上 12次参数卡（呼吸辉光）+ 左下 5组参数卡（呼吸辉光）",
+      "transition_in": "wipe-h",
+      "transition_out": "zoom",
+      "animation_overrides": {
+        "param_card": [
+          { "label": "12次", "color": "#FF4500", "position": "top-right", "delay_frames": 8, "breathing": true },
+          { "label": "5组", "color": "#DC143C", "position": "bottom-left", "delay_frames": 14, "breathing": true }
+        ]
+      }
     },
     {
-      "shot_id": "outro_video",
-      "data_shot_id": "outro_video",
-      "start": 25.0,
-      "end": 32.0,
-      "duration": 7.0,
+      "shot_id": "outro_cta",
+      "data_shot_id": "outro_cta",
+      "start": 23.5,
+      "end": 27.0,
+      "duration": 3.5,
       "content_type": "video",
       "content_source": "outro.mp4",
       "voiceover": [
-        { "text": "推力日计划，", "highlight": false },
+        { "text": "推力日计划：", "highlight": false },
         { "text": "5", "highlight": true },
-        { "text": " 个动作 + ", "highlight": false },
+        { "text": " 个动作 × ", "highlight": false },
         { "text": "12", "highlight": true },
         { "text": " 次 × ", "highlight": false },
         { "text": "5", "highlight": true },
         { "text": " 组。评论告诉我——你推了几个？", "highlight": false }
       ],
-      "description": "用户提供的收尾视频，底部 TTS 字幕 + 评论图标弹跳",
-      "transition_in": "push_left",
-      "transition_out": "fade"
+      "description": "用户 outro + 数字滚动高亮 + 评论图标脉冲",
+      "transition_in": "zoom",
+      "transition_out": "fade",
+      "animation_overrides": {
+        "comment_cta_pulse": { "delay_frames": 15 }
+      }
     }
   ]
 }
