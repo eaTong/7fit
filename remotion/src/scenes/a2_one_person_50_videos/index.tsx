@@ -224,7 +224,7 @@ export const A2OnePerson50Videos: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
       <LayoutTransitionEngine
-        videoSrc="videos/talking_head.mov"
+        videoSrc="videos/a2_talking_head.mov"
         shotSequence={shotSequence}
         renderBackground={(currentShot) => {
           const bgSrc = BACKGROUND_MAP[currentShot.shotId];
