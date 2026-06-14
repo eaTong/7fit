@@ -1,6 +1,6 @@
 {
   "id": "b14_push_day",
-  "duration": 30.0,
+  "duration": 28.0,
   "canvas": { "width": 1080, "height": 1920, "fps": 30 },
   "bgm": { "type": "gym_beat", "volume_db": -8, "file": "gym_beat_b14.mp3" },
   "transition_style": "alternating_power_cut",
@@ -21,7 +21,7 @@
       ],
       "description": "2×2 网格 4 格 stagger 入场 + 第 4 格 impulse 冲击 + LightLeak",
       "transition_in": "zoom",
-      "transition_out": "zoom",
+      "transition_out": "wipe-h",
       "grid_cells": [
         { "position": "top-left", "source": "push_lying.mp4" },
         { "position": "top-right", "source": "push_seated.mp4" },
@@ -36,34 +36,10 @@
       }
     },
     {
-      "shot_id": "number_impact_5x12",
-      "data_shot_id": "number_impact_5x12",
-      "start": 2.5,
-      "end": 4.5,
-      "duration": 2.0,
-      "content_type": "transition_card",
-      "content_source": null,
-      "voiceover": [
-        { "text": "5", "highlight": true },
-        { "text": " 个动作 × ", "highlight": false },
-        { "text": "12", "highlight": true },
-        { "text": " 次 × ", "highlight": false },
-        { "text": "5", "highlight": true },
-        { "text": " 组", "highlight": false }
-      ],
-      "description": "中心数字 5×12 弹入（playful 贝塞尔 overshoot）+ BGM 强脉冲",
-      "transition_in": "zoom",
-      "transition_out": "wipe-h",
-      "animation_overrides": {
-        "number_spring_overshoot": true,
-        "bgm_pulse_intensity": "strong"
-      }
-    },
-    {
       "shot_id": "push_lying",
       "data_shot_id": "push_lying",
-      "start": 4.5,
-      "end": 7.5,
+      "start": 2.5,
+      "end": 5.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_lying.mp4",
@@ -79,8 +55,8 @@
     {
       "shot_id": "push_seated",
       "data_shot_id": "push_seated",
-      "start": 7.5,
-      "end": 10.5,
+      "start": 5.5,
+      "end": 8.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_seated.mp4",
@@ -96,8 +72,8 @@
     {
       "shot_id": "push_overhead",
       "data_shot_id": "push_overhead",
-      "start": 10.5,
-      "end": 13.5,
+      "start": 8.5,
+      "end": 11.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_overhead.mp4",
@@ -113,8 +89,8 @@
     {
       "shot_id": "push_front",
       "data_shot_id": "push_front",
-      "start": 13.5,
-      "end": 16.5,
+      "start": 11.5,
+      "end": 14.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_front.mp4",
@@ -130,15 +106,15 @@
     {
       "shot_id": "push_reverse",
       "data_shot_id": "push_reverse",
-      "start": 16.5,
-      "end": 19.5,
+      "start": 14.5,
+      "end": 17.5,
       "duration": 3.0,
       "content_type": "video",
       "content_source": "push_reverse.mp4",
       "voiceover": [{ "text": "反着推", "highlight": true }],
       "description": "窄距反手推 + 动作名 chip + 5/5 进度环（满环冲击）",
       "transition_in": "wipe-h",
-      "transition_out": "wipe-h",
+      "transition_out": "zoom",
       "animation_overrides": {
         "action_badge": { "name": "反着推", "position": "top-left", "delay_frames": 5 },
         "progress_ring": { "current": 5, "total": 5, "position": "bottom-right", "delay_frames": 10, "impulse": true }
@@ -147,9 +123,9 @@
     {
       "shot_id": "key_tips_with_params",
       "data_shot_id": "key_tips_with_params",
-      "start": 19.5,
+      "start": 17.5,
       "end": 23.5,
-      "duration": 4.0,
+      "duration": 6.0,
       "content_type": "video",
       "content_source": "key_tips.mp4",
       "voiceover": [
@@ -163,7 +139,7 @@
         { "text": " 组。", "highlight": false }
       ],
       "description": "用户演示挺胸 + 右上 12次参数卡（呼吸辉光）+ 左下 5组参数卡（呼吸辉光）",
-      "transition_in": "wipe-h",
+      "transition_in": "zoom",
       "transition_out": "zoom",
       "animation_overrides": {
         "param_card": [
@@ -176,8 +152,8 @@
       "shot_id": "outro_cta",
       "data_shot_id": "outro_cta",
       "start": 23.5,
-      "end": 27.0,
-      "duration": 3.5,
+      "end": 28.0,
+      "duration": 4.5,
       "content_type": "video",
       "content_source": "outro.mp4",
       "voiceover": [

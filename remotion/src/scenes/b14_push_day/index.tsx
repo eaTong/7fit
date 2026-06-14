@@ -31,7 +31,6 @@ import { ShotRenderer } from "../../components/transitions/ShotRenderer";
 import { BGMWithDucking } from "../../components/media/BGMWithDucking";
 import { ActionBadge } from "../../components/auxiliary/ActionBadge";
 import { ProgressRing } from "../../components/auxiliary/ProgressRing";
-import { NumberImpact } from "../../components/auxiliary/NumberImpact";
 import { ParamCard } from "../../components/auxiliary/ParamCard";
 import type { Shot } from "../../types/shot";
 
@@ -64,8 +63,6 @@ interface AnimationOverrides {
   grid_impulse_idx?: number;
   grid_impulse_scale?: number;
   light_leak?: { duration_frames: number; seed: number; hueShift: number };
-  number_spring_overshoot?: boolean;
-  bgm_pulse_intensity?: string;
   action_badge?: { name: string; position: "top-left" | "top-right" | "bottom-left" | "bottom-right"; delay_frames: number };
   progress_ring?: {
     current: number;
@@ -114,17 +111,6 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
           impulseScale={anim.grid_impulse_scale ?? 1.15}
         />
         {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} />}
-      </AbsoluteFill>
-    );
-  }
-
-  // 数字冲击：5×12 大字弹入
-  if (shot.content_type === "transition_card" && shot.voiceover) {
-    const voiceArr = Array.isArray(shot.voiceover) ? shot.voiceover : [{ text: shot.voiceover, highlight: false }];
-    return (
-      <AbsoluteFill style={{ background: "#0A0A0A" }}>
-        <NumberImpact numbers={voiceArr} stagger={6} />
-        {/* 数字镜不显示底部副字幕（避免重叠）*/}
       </AbsoluteFill>
     );
   }
