@@ -52,7 +52,7 @@ const VIDEO_DURATIONS: Record<string, number> = {
   "push_lying.mp4": 5.873,
   "push_seated.mp4": 6.231,
   "push_overhead.mp4": 5.687,
-  "push_front.mp4": 13.747,
+  "push_front.mp4": 3.504,  // ffmpeg 截取：原 13.7s → 3.5s（去掉前 3s 静态 + 尾部）
   "push_reverse.mp4": 6.771,
   "key_tips.mp4": 3.766,
   "outro.mp4": 8.733,
