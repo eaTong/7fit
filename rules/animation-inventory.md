@@ -2,24 +2,231 @@
 
 > **强制优先级**：生成脚本时**必须**参考本清单。复用组件优先，但**绝不将就**——如果现有组件不满足需求，必须新建或扩展。
 >
-> **生效日期**：2026-06-14
+> **Remotion 原生包全量覆盖**：本清单涵盖所有 `@remotion/*` 包提供的原生能力，不仅仅是项目已用过的。
+>
+> **生效日期**：2026-06-14（更新：Remotion 原生包全量纳入）
 > **维护人**：每次新增动画/特效/转场组件后**必须**更新本清单
 
 ---
 
 ## 目录
 
-1. [转场清单](#1-转场清单transition-types) — `remotion/src/utils/transition.ts`
-2. [动画清单](#2-动画清单animations) — 组件入场/出场/循环动画
-3. [特效清单](#3-特效清单effects) — 视觉增强效果
-4. [可探索清单（可选）](#4-可探索清单可选) — 尚未实现但可考虑
-5. [组件复用规则](#5-组件复用规则)
+1. [Remotion 原生包速查](#1-remotion-原生包速查) — 9 个包的 API 速查
+2. [转场清单](#2-转场清单) — 14 种自实现 + 14+ 种 @remotion/transitions 原生
+3. [动画清单](#3-动画清单) — 入场/出场/循环动画
+4. [特效清单](#4-特效清单) — 视觉增强效果
+5. [可探索清单](#5-可探索清单可选) — 尚未实现但可考虑
+6. [组件复用规则](#6-组件复用规则)
 
 ---
 
-## 1. 转场清单（Transition Types）
+## 1. Remotion 原生包速查
 
-### 1.1 已实现转场（14 种）
+### 1.1 @remotion/transitions — 转场引擎（14+ 种转场）
+
+**核心组件**：`TransitionSeries`（替代 `Sequence`，支持 `TransitionSeries.Transition`）
+
+**使用方式**：
+```tsx
+import { TransitionSeries } from '@remotion/transitions';
+import { fade } from '@remotion/transitions/fade';
+import { filmBurn } from '@remotion/transitions/film-burn';
+import { linearTiming } from '@remotion/transitions';
+
+<TransitionSeries>
+  <TransitionSeries.Sequence durationInFrames={60}><SceneA /></TransitionSeries.Sequence>
+  <TransitionSeries.Transition
+    timing={linearTiming({ durationInFrames: 30 })}
+    presentation={filmBurn({ seed: 42 })}
+  />
+  <TransitionSeries.Sequence durationInFrames={60}><SceneB /></TransitionSeries.Sequence>
+</TransitionSeries>
+```
+
+**14+ 种内置转场**：
+
+| 转场 | 子路径 | 类型 | 关键参数 |
+|---|---|---|---|
+| `fade` | `/fade` | CSS | `enterStyle?`, `exitStyle?` |
+| `slide` | `/slide` | CSS | `direction: from-left/top/right/bottom` |
+| `wipe` | `/wipe` | CSS | `direction: 8方向` |
+| `flip` | `/flip` | CSS | `direction?`, `perspective?` |
+| `clockWipe` | `/clock-wipe` | CSS | `width`, `height` |
+| `bookFlip` | `/book-flip` | CSS | `direction` |
+| `iris` | `/iris` | CSS | `width`, `height` |
+| `none` | `/none` | CSS | — |
+| `filmBurn` | `/film-burn` | **Shader** | `seed?` |
+| `crosswarp` | `/crosswarp` | **Shader** | — |
+| `crossZoom` | `/cross-zoom` | **Shader** | `strength?` |
+| `swap` | `/swap` | **Shader** | `reflection?`, `perspective?`, `depth?` |
+| `dreamyZoom` | `/dreamy-zoom` | **Shader** | — |
+| `zoomBlur` | `/zoom-blur` | **Shader** | `rotation?` |
+| `linearBlur` | `/linear-blur` | **Shader** | `intensity?` |
+| `zoomInOut` | `/zoom-in-out` | **Shader** | — |
+| `dissolve` | `/dissolve` | **Shader** | `lineWidth?`, `spreadColor?`, `hotColor?` |
+| `ripple` | `/ripple` | **Shader** | `amplitude?`, `speed?` |
+
+> **性能注意**：Shader 转场（filmBurn/crosswarp/ripple 等）需要 OffscreenCanvas 渲染，比 CSS 转场（fade/slide/wipe/flip）开销大。
+
+### 1.2 @remotion/light-leaks — 光漏叠加
+
+**组件**：`LightLeak` + 工厂函数 `lightLeak(...)`（Remotion Effects API）
+
+**使用方式**：
+```tsx
+import { LightLeak } from '@remotion/light-leaks';
+
+<LightLeak durationInFrames={30} seed={7} hueShift={180} />
+```
+
+**参数**：`seed?`（随机种子）、`hueShift?`（0-360，色相偏移）
+
+### 1.3 @remotion/media-utils — 音频可视化
+
+**已用**：`useWindowedAudioData` + `visualizeAudio`（BGM Pulse）
+
+**新增可用**：
+
+| API | 用途 |
+|---|---|
+| `visualizeAudioWaveform` | 原始波形（示波器风格） |
+| `getWaveformPortion` | 分段波形，返回 `{ index, amplitude }[]` |
+| `createSmoothSvgPath` | 平滑 SVG 路径（用于波形可视化） |
+| `useAudioData` | 全量音频数据（短音频用，长音频用 `useWindowedAudioData`） |
+
+```tsx
+import { visualizeAudioWaveform } from '@remotion/media-utils';
+
+const waveform = visualizeAudioWaveform({
+  audioData, frame, fps, windowInSeconds: 3, numberOfSamples: 64
+});
+```
+
+### 1.4 @remotion/three — Three.js 集成
+
+**组件**：`ThreeCanvas`（React Three Fiber 封装）
+
+**使用方式**：
+```tsx
+import { ThreeCanvas } from '@remotion/three';
+
+<ThreeCanvas width={1920} height={1080}>
+  <ambientLight />
+  <mesh>
+    <boxGeometry args={[1, 1, 1]} />
+    <meshStandardMaterial color="#FF4500" />
+  </mesh>
+</ThreeCanvas>
+```
+
+**可用**：
+- 完整 Three.js / React Three Fiber 能力
+- 粒子系统、自定义着色器、3D 动画
+- **需 peer deps**：`@react-three/fiber >= 8.0.0`、`three >= 0.137.0`
+
+### 1.5 @remotion/lottie — AE 动画导出
+
+**组件**：`Lottie`
+
+**使用方式**：
+```tsx
+import { Lottie, getLottieMetadata } from '@remotion/lottie';
+import animation from './animation.json';
+
+const meta = getLottieMetadata(animation);
+<Lottie animationData={animation} loop playbackRate={1} />
+```
+
+**Props**：`animationData`、`direction`、`loop`、`playbackRate`、`renderer: 'svg'|'canvas'|'html'`
+
+### 1.6 @remotion/captions — 字幕数据处理
+
+**能力**：纯数据处理（不渲染），生成结构化字幕。
+
+**关键 API**：
+
+| API | 用途 |
+|---|---|
+| `parseSrt({ input })` | SRT → `Caption[]` |
+| `createTikTokStyleCaptions({ captions, combineTokensWithinMilliseconds })` | 生成 `TikTokPage[]`，含 `TikTokToken[]`（**词级时间**） |
+| `ensureMaxCharactersPerLine` | 按行_maxChars 分段 |
+
+**词级时间**（用于逐词高亮）：
+```tsx
+const { pages } = createTikTokStyleCaptions({
+  captions,
+  combineTokensWithinMilliseconds: 100,
+});
+// pages[i].tokens[j].fromMs / toMs → 逐词时间，可做高亮动画
+```
+
+### 1.7 @remotion/gif — GIF 播放
+
+**组件**：`Gif` + 工具函数
+
+| API | 用途 |
+|---|---|
+| `Gif` | 渲染 GIF 到 canvas |
+| `getGifDurationInSeconds(src)` | 获取时长 |
+| `preloadGif(src)` | 预加载，返回 `{ waitUntilDone(), free() }` |
+| `onLoad` callback | 获取原始帧 `ImageData[]` + 每帧 delay |
+
+```tsx
+import { Gif, preloadGif } from '@remotion/gif';
+
+const preload = preloadGif('/foo.gif');
+preload.waitUntilDone().then(() => preload.free());
+
+<Gif src="/foo.gif" width={400} height={300} fit="cover" loopBehavior="loop" />
+```
+
+### 1.8 @remotion/google-fonts — 字体加载
+
+**已用**：Inter（通过 `enableTailwind`）
+
+**新增可用**：
+
+```tsx
+import { loadFont, fontFamily } from '@remotion/google-fonts/BebasNeue';
+
+loadFont('normal', { weights: ['400', '700'] }).waitUntilDone();
+<div style={{ fontFamily: bebasNeueFamily }}>Hello</div>
+```
+
+**API**：`getAvailableFonts()` 列出所有可用字体（用于运行时字体选择器）
+
+### 1.9 @remotion/layout-utils — 文本自适应
+
+**核心工具**：
+
+| API | 用途 |
+|---|---|
+| `fitText` | 单行文本自适应字号 |
+| `fitTextOnNLines` | **多行文本自适应**（返回 `fontSize` + `lines[]`）|
+| `measureText` | 测量文本尺寸 |
+| `fillTextBox` | 增量填充文本 |
+
+```tsx
+import { fitTextOnNLines } from '@remotion/layout-utils';
+
+const { fontSize, lines } = fitTextOnNLines({
+  text: '多行文本',
+  maxLines: 2,
+  maxBoxWidth: 600,
+  fontFamily: 'Inter',
+  fontWeight: '700',
+  maxFontSize: 72,
+});
+// lines[] 可用于逐行动画
+```
+
+> **注意**：需配合 `@remotion/google-fonts` 的 `loadFont().waitUntilDone()` 确保字体已加载。
+
+---
+
+## 2. 转场清单
+
+### 2.1 自实现转场（14 种）
 
 | 转场名称 | 实现位置 | 参数 | 适用场景 |
 |---|---|---|---|
@@ -37,34 +244,60 @@
 | `none` | — | 无动效 | 硬切（仅在转场帧≥0.3s 时可用） |
 | `pause_breath` | `transition.ts:152` | opacity 呼吸 | 镜头间自然呼吸 |
 
-### 1.2 转场引擎
+### 2.2 @remotion/transitions 原生转场（14+ 种）
+
+> **优先使用 CSS 转场**（fade/slide/wipe/flip 等），Shader 转场（filmBurn/crossZoom 等）开销大。
+
+| 转场 | 类型 | 场景建议 |
+|---|---|---|
+| `fade` | CSS | 通用首选 |
+| `slide` | CSS | 8 方向滑入 |
+| `wipe` | CSS | 8 方向扫过 |
+| `flip` | CSS | 3D 翻转（需注意调性冲突）|
+| `clockWipe` | CSS | 时钟式展开 |
+| `bookFlip` | CSS | 书页式翻动 |
+| `iris` | CSS | 虹膜式展开 |
+| `filmBurn` | **Shader** | 胶片燃烧感 |
+| `crosswarp` | **Shader** | 扭曲变形 |
+| `crossZoom` | **Shader** | 缩放交叉 |
+| `swap` | **Shader** | 3D 交换 |
+| `dreamyZoom` | **Shader** | 梦幻缩放 |
+| `ripple` | **Shader** | 水波纹 |
+| `dissolve` | **Shader** | 溶解 |
+| `zoomBlur` | **Shader** | 缩放模糊 |
+| `linearBlur` | **Shader** | 线性模糊 |
+| `zoomInOut` | **Shader** | 缩放入出 |
+
+### 2.3 转场引擎
 
 | 组件 | 位置 | 用途 |
 |---|---|---|
 | `ShotRenderer` | `components/transitions/ShotRenderer.tsx` | 统一转场封装（enter/exit 组合） |
 | `TransitionSeriesEngine` | `components/transitions/TransitionSeriesEngine.tsx` | 序列转场 + LightLeak |
+| `TransitionSeries` | `@remotion/transitions` | 原生序列转场（替代 ShotRenderer） |
 
-### 1.3 转场使用规则
+### 2.4 转场使用规则
 
 - **最低时长**：`≥ 0.3s`（9 帧 @ 30fps）
-- **禁止**：flip / 旋转 / 3D 转场（与力量感调性冲突）
-- **优先**：Crossfade（fade）/ Push / 方向滑动
-- **BGM 场景**：转场时 BGM 同步做 ducking
+- **优先**：fade / slide / wipe（CSS 转场，开销小）
+- **慎用**：Shader 转场（开销大，仅在特定调性需要时用）
+- **禁止**：flip / 旋转 / 3D（与力量感调性冲突）——除非 C 类视频且有明确理由
 
 ---
 
-## 2. 动画清单（Animations）
+## 3. 动画清单
 
-### 2.1 入场动画（Entry Animations）
+### 3.1 入场动画（Entry Animations）
 
 | 动画名称 | 实现组件 | 模式 | 关键参数 |
 |---|---|---|---|
-| **弹簧弹入** | 13+ 组件（HeadlineCard/QuoteCard/FormulaCard/WorkflowCard/ToolBadgeList/FolderTree/ImpactBar/TimeStateCard/MetadataPair/ComparisonCard/FlowDiagram/ActionDataCard） | `spring({ damping: 8, stiffness: 200, mass: 0.5 })` | delay 可调 |
+| **弹簧弹入** | 13+ 组件 | `spring({ damping: 8, stiffness: 200, mass: 0.5 })` | delay 可调 |
 | **渐显** | 所有组件 | `interpolate(enter, [0,1], [0,1])` | opacity 0→1 |
 | **缩放弹入** | ActionDataCard | scale: 0.85→1 | spring + translateX/Y |
-| **交错入场** | FormulaCard(i×3)/WorkflowCard(i×6)/ToolBadgeList(i×8)/FolderTree(i×4)/GitLogDisplay | `spring({ frame: frame - delay - i*stagger })` | i 为索引 |
+| **交错入场** | FormulaCard/WorkflowCard/ToolBadgeList/FolderTree/GitLogDisplay | `spring({ frame: frame - delay - i*stagger })` | i 为索引 |
+| **Lottie 动画** | `@remotion/lottie` | AE 导出 JSON | `animationData`、`loop`、`playbackRate` |
 
-### 2.2 出场动画（Exit Animations）
+### 3.2 出场动画（Exit Animations）
 
 | 动画名称 | 实现位置 | 模式 |
 |---|---|---|
@@ -72,7 +305,7 @@
 | **缩小退出** | ActionDataCard | `Easing.out(Easing.cubic)` |
 | **向左滑出** | ShotRenderer exit | `translateX: 0→-80` |
 
-### 2.3 循环动画（Loop Animations）
+### 3.3 循环动画（Loop Animations）
 
 | 动画名称 | 实现组件 | 模式 |
 |---|---|---|
@@ -85,7 +318,7 @@
 | **流动高亮** | FlowDiagram.tsx | `frame % (nodes.length*30)` 循环 |
 | **活跃边框** | GitLogDisplay.tsx | `border + scale` sin 波 |
 
-### 2.4 动效 API 规范
+### 3.4 动效 API 规范
 
 ```tsx
 // 弹簧入场（标准模板）
@@ -112,7 +345,7 @@ items.map((item, i) => {
 });
 ```
 
-### 2.5 贝塞尔曲线（4 条推荐）
+### 3.5 贝塞尔曲线（4 条推荐）
 
 | 名称 | 参数 | 用途 |
 |---|---|---|
@@ -123,92 +356,122 @@ items.map((item, i) => {
 
 ---
 
-## 3. 特效清单（Effects）
+## 4. 特效清单
 
-### 3.1 已实现特效
+### 4.1 已实现特效
 
 | 特效名称 | 实现位置 | 参数 | 备注 |
 |---|---|---|---|
-| **LightLeak** | `TransitionSeriesEngine.tsx:145-161` / `ShotRenderer.tsx:94-108` | seed / hueShift | `@remotion/light-leaks` |
-| **BGM Pulse** | `BgmPulse.tsx:64-76` | bass→scale(1→1.4) + opacity(0→0.5) | 音频驱动 |
+| **LightLeak** | `TransitionSeriesEngine.tsx` / `ShotRenderer.tsx` | seed / hueShift | `@remotion/light-leaks` |
+| **BGM Pulse** | `BgmPulse.tsx` | bass→scale + opacity | 音频驱动 |
+| **BGM Waveform** | `BgmPulse.tsx` | `visualizeAudioWaveform` | 波形可视化 |
 | **边框辉光** | 所有 Auxiliary 组件 | `boxShadow: "0 0 20px rgba(255,69,0,0.15)"` | 呼吸动画 |
 | **霓虹边框** | CTAButton | `border: "2px solid #FF4500"` | 静态 |
 | **玻璃态** | 所有 Auxiliary 组件 | `bg: rgba(10,10,20,0.88) + backdropFilter: blur(8px)` | 半透明背景 |
 | **打字光标** | CodeDisplay.tsx:255 | blink via sin | 500ms 周期 |
 | **Shimmer 条纹** | ImpactBar.tsx | interpolate shimmer | 进度条纹理 |
 
-### 3.2 音频相关特效
+### 4.2 @remotion/media-utils 音频特效
 
-| 特效名称 | 实现位置 | 用途 |
+| 特效名称 | API | 用途 |
 |---|---|---|
-| **BGM Ducking** | `BGMWithDucking.tsx:53-73` | 旁白期间 BGM 降 -12dB |
-| **BGM Fade In/Out** | `BGMWithDucking.tsx` | 帧 0-60 fade in，末 60 帧 fade out |
-| **音频可视化** | `BgmPulse.tsx` | `useWindowedAudioData` + `visualizeAudio` |
+| **FFT 频谱** | `visualizeAudio` | BGM Pulse 已用，频率柱可视化 |
+| **波形** | `visualizeAudioWaveform` | 示波器风格波形 |
+| **SVG 波形路径** | `createSmoothSvgPath` | 平滑波形 SVG |
+| **分段波形** | `getWaveformPortion` | 返回 `{ index, amplitude }[]` |
 
-### 3.3 样式特效
+### 4.3 @remotion/three 3D 特效
+
+| 特效 | 场景建议 |
+|---|---|
+| **粒子系统** | 数据可视化、背景粒子 |
+| **自定义着色器** | 科技感/力量感效果 |
+| **3D 旋转/缩放** | C 类视频卡片强调 |
+| **WebGL 渲染** | 高性能背景层 |
+
+### 4.4 @remotion/lottie 特效
+
+AE 导出的 Lottie JSON 动画，可用于：
+- 图标动画（loading/spinner/checkmark）
+- 装饰动画（粒子/光效/背景动效）
+- 复杂路径动画（手写效果/路径描边）
+
+### 4.5 @remotion/captions 字幕特效
+
+**词级时间**用于：
+- 逐词高亮（sweep / glow）
+- 卡拉OK 效果
+- 动态字幕位置
+
+### 4.6 样式特效
 
 | 特效名称 | 实现组件 | 模式 |
 |---|---|---|
-| **文字辉光** | HeadlineCard.tsx:67-68 | `textShadow: "0 0 50px rgba(...)"` |
+| **文字辉光** | HeadlineCard.tsx | `textShadow: "0 0 50px rgba(...)"` |
 | **亮度呼吸** | HeadlineCard/TimeStateCard/FormulaCard | `filter: brightness` + sin |
 | **半透明强调背景** | 所有 Auxiliary 组件 | 强调色 1/2 + 透明度 |
 
 ---
 
-## 4. 可探索清单（可选）
+## 5. 可探索清单（可选）
 
-> 以下特效/动画**尚未实现**，但在**特定场景合适时可以考虑**。实现前需确认：
-> 1. 调性匹配（力量感/科技感）
-> 2. 性能影响评估
-> 3. 不影响现有组件稳定性
+> 以下特效/动画**尚未实现**，但在**特定场景合适时可以考虑**。
 
-### 4.1 入场/强调动画
+### 5.1 入场/强调动画
 
-| 特效 | 场景建议 | 复杂度 |
-|---|---|---|
-| **字母逐一显示** | 代码展示、步骤说明 | 中 |
-| **词语逐一显示** | 字幕高亮、关键词强调 | 低 |
-| **挤压入场** | 数据卡片、强调数字 | 低 |
-| **旋转入场** | 图标、工具徽章 | 中 |
-| **下划线强调** | 关键词高亮 | 低 |
-| **背景闪烁** | 切换提示 | 低 |
-| **脉冲循环（自动）** | 活跃状态指示器 | 低 |
+| 特效 | 场景建议 | 包依赖 | 复杂度 |
+|---|---|---|---|
+| **字母逐一显示** | 代码展示、步骤说明 | `@remotion/captions` 词级时间 | 中 |
+| **词语逐一显示** | 字幕高亮、关键词强调 | `@remotion/captions` | 低 |
+| **挤压入场** | 数据卡片、强调数字 | 自实现 | 低 |
+| **旋转入场** | 图标、工具徽章 | 自实现 | 中 |
+| **下划线强调** | 关键词高亮 | 自实现 | 低 |
+| **背景闪烁** | 切换提示 | 自实现 | 低 |
+| **脉冲循环（自动）** | 活跃状态指示器 | 自实现 | 低 |
+| **Lottie 动画** | 图标/装饰动画 | `@remotion/lottie` | 低 |
 
-### 4.2 转场变体
+### 5.2 转场变体
 
-| 特效 | 场景建议 | 复杂度 |
-|---|---|---|
-| **Wipe Left/Right/Up/Down** | 方向感强的内容切换 | 中 |
-| **窗帘转场** | 戏剧性切换 | 中 |
-| **缩放转场（1.5×）** | 聚焦放大 | 低 |
-| **模糊转场** | 柔和过渡 | 中 |
+| 特效 | 场景建议 | 包依赖 | 复杂度 |
+|---|---|---|---|
+| **filmBurn** | 胶片燃烧感 | `@remotion/transitions` | 低 |
+| **crossZoom** | 缩放交叉 | `@remotion/transitions` | 低 |
+| **ripple** | 水波纹 | `@remotion/transitions` | 低 |
+| **dissolve** | 溶解 | `@remotion/transitions` | 低 |
+| **clockWipe** | 时钟展开 | `@remotion/transitions` | 低 |
+| **dreamyZoom** | 梦幻缩放 | `@remotion/transitions` | 中 |
+| **Wipe 8 方向** | 方向感切换 | `@remotion/transitions` | 低 |
 
-### 4.3 视觉特效
+### 5.3 3D / WebGL 特效
 
-| 特效 | 场景建议 | 复杂度 |
-|---|---|---|
-| **Glitch 故障** | 科技感强调、数据错误展示 | 高 |
-| **RGB 偏移** | 动感强调 | 高 |
-| **扫描线** | 复古/科技感 | 中 |
-| **粒子爆发** | CTA、成就展示 | 高 |
-| **视差滚动** | 多层背景 | 中 |
-| **边框圆角渐变** | 布局过渡 | 低 |
-| **动作轨迹线** | B 类健身动作演示 | 高 |
-| **频谱柱** | BGM 可视化增强 | 中 |
+| 特效 | 场景建议 | 包依赖 | 复杂度 |
+|---|---|---|---|
+| **粒子爆发** | CTA、成就展示 | `@remotion/three` | 高 |
+| **3D 卡片翻转** | C 类视频 | `@remotion/three` | 高 |
+| **自定义着色器** | 科技感特效 | `@remotion/three` | 高 |
+| **粒子系统** | 背景层 | `@remotion/three` | 中 |
 
-### 4.4 音频特效
+### 5.4 音频特效
 
-| 特效 | 场景建议 | 复杂度 |
-|---|---|---|
-| **Beat Pulse Ring（AnalyserNode）** | B 类视频节拍可视化 | 高 |
-| **Treble Sparkle** | 高频闪烁 | 中 |
-| **RPE 难度块** | B 类健身难度展示 | 中 |
+| 特效 | 场景建议 | 包依赖 | 复杂度 |
+|---|---|---|---|
+| **FFT 频谱柱** | BGM 可视化增强 | `@remotion/media-utils` | 中 |
+| **波形示波器** | 音频波形展示 | `@remotion/media-utils` | 中 |
+| **平滑 SVG 波形** | 背景装饰 | `@remotion/media-utils` | 低 |
+
+### 5.5 文本特效
+
+| 特效 | 场景建议 | 包依赖 | 复杂度 |
+|---|---|---|---|
+| **fitTextOnNLines** | 多行自适应字号 | `@remotion/layout-utils` | 低 |
+| **逐行动画** | 多行文本逐行揭示 | `@remotion/layout-utils` | 中 |
+| **字体选择器** | 运行时字体切换 | `@remotion/google-fonts` | 中 |
 
 ---
 
-## 5. 组件复用规则
+## 6. 组件复用规则
 
-### 5.1 复用优先级
+### 6.1 复用优先级
 
 ```
 1. 现有组件完全满足需求 → 直接使用
@@ -217,19 +480,20 @@ items.map((item, i) => {
 4. 多个场景需要相同模式 → 提取为共享组件/hooks
 ```
 
-### 5.2 "不将就" 原则
+### 6.2 "不将就" 原则
 
 - **禁止**：因为"差不多能用"而强行复用不匹配的组件
 - **禁止**：修改现有组件使其丧失原有功能
 - **允许**：通过 props 扩展组件行为（不影响原有调用方）
 - **允许**：新建组件后，旧组件保留（逐步迁移）
 
-### 5.3 可复用组件索引
+### 6.3 可复用组件索引
 
 | 类别 | 组件 | 路径 |
 |---|---|---|
 | **转场引擎** | ShotRenderer | `components/transitions/ShotRenderer.tsx` |
 | **转场引擎** | TransitionSeriesEngine | `components/transitions/TransitionSeriesEngine.tsx` |
+| **转场引擎** | TransitionSeries | `@remotion/transitions` |
 | **转场工具** | 14 种转场函数 | `utils/transition.ts` |
 | **布局引擎** | LayoutTransitionEngine | `layout-state-machine/LayoutTransitionEngine.tsx` |
 | **布局引擎** | AnimatedTalkingHead | `layout-state-machine/AnimatedTalkingHead.tsx` |
@@ -254,9 +518,23 @@ items.map((item, i) => {
 | **媒体** | OrbitingContent | `components/auxiliary/OrbitingContent.tsx` |
 | **媒体** | OrbitingVideo | `components/media/OrbitingVideo.tsx` |
 
+### 6.4 Remotion 原生包速查索引
+
+| 包 | 能力 | 入口文件 |
+|---|---|---|
+| `@remotion/transitions` | 14+ 种转场 + TransitionSeries | `TransitionSeries` 组件 |
+| `@remotion/light-leaks` | 光漏叠加 | `LightLeak` 组件 |
+| `@remotion/media-utils` | 音频可视化（FFT/波形）| `visualizeAudio` / `visualizeAudioWaveform` |
+| `@remotion/three` | Three.js / WebGL | `ThreeCanvas` 组件 |
+| `@remotion/lottie` | AE 动画 | `Lottie` 组件 |
+| `@remotion/captions` | 字幕数据处理（词级时间）| `createTikTokStyleCaptions` |
+| `@remotion/gif` | GIF 播放 | `Gif` 组件 |
+| `@remotion/google-fonts` | 字体加载 | `loadFont` / `getAvailableFonts` |
+| `@remotion/layout-utils` | 文本自适应 | `fitText` / `fitTextOnNLines` |
+
 ---
 
-## 6. 新增组件登记
+## 7. 新增组件登记
 
 每次新建动画/特效/转场组件后，**必须**填写：
 
@@ -271,7 +549,7 @@ items.map((item, i) => {
 
 ---
 
-## 7. 相关规范索引
+## 8. 相关规范索引
 
 | 规范 | 路径 | 关联 |
 |---|---|---|
