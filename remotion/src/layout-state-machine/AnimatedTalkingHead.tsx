@@ -4,7 +4,7 @@ import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { LayoutState, TransitionEasing } from "./layouts/types";
 import { MediaFallback } from "../components/media/MediaFallback";
 
-const TRANSITION_FRAMES = 60; // 30fps × 2s 过渡动画
+const TRANSITION_FRAMES = 30; // 30fps × 1s 过渡动画（减半）
 
 const MIN_RADIUS = 20; // 默认最小圆角（防止 borderRadius=0 的硬边）
 

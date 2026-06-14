@@ -1,5 +1,6 @@
 import { AuxiliaryContentManager } from "./AuxiliaryContentManager";
 import type { LayoutState } from "./layouts/types";
+import { LayoutId } from "./layouts/types";
 import { CodeDisplay } from "../components/terminal/CodeDisplay";
 import { GitLogDisplay, type GitLogEntry } from "../components/terminal/GitLogDisplay";
 
@@ -14,6 +15,8 @@ interface ShotContentProps {
   gitlogEntries?: GitLogEntry[];
   /** gitlog_display 时传入可见行数 */
   gitlogVisibleCount?: number;
+  /** text_card 时传入文字内容 */
+  textContent?: string;
 }
 
 /**
@@ -33,6 +36,7 @@ export const ShotContent: React.FC<ShotContentProps> = ({
   codeContent,
   gitlogEntries,
   gitlogVisibleCount,
+  textContent,
 }) => {
   // code_display / gitlog_display 需要额外数据，不走 contentSrc
   const needsAuxiliary = contentType !== "pause_breath" && (contentSrc || contentType === "code_display" || contentType === "gitlog_display");
@@ -67,6 +71,31 @@ export const ShotContent: React.FC<ShotContentProps> = ({
     );
   }
 
+  // text_card 传入文字内容作为 children
+  const children = contentType === "text_card" && textContent ? (
+    <div style={{
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "0 40px",
+      gap: 16,
+    }}>
+      {textContent.split("\n").map((line, i) => (
+        <div key={i} style={{
+          fontSize: 36,
+          fontWeight: 700,
+          color: "#FFFFFF",
+          lineHeight: 1.4,
+          textShadow: "0 2px 8px rgba(0,0,0,0.8)",
+        }}>
+          {line}
+        </div>
+      ))}
+    </div>
+  ) : undefined;
+
   return (
     <AuxiliaryContentManager
       contentType={contentType}
@@ -74,39 +103,41 @@ export const ShotContent: React.FC<ShotContentProps> = ({
       enterFrame={0}
       visible={true}
       style={auxStyle}
-    />
+    >
+      {children}
+    </AuxiliaryContentManager>
   );
 }
 
-function getAuxiliaryStyle(layoutId: string): React.CSSProperties {
+function getAuxiliaryStyle(layoutId: LayoutId): React.CSSProperties {
   switch (layoutId) {
-    case "left_text_right_talking":
+    case LayoutId.TextCenterTalkingRight:
       return { left: 50, top: 50, width: 1340, height: 864 };
-    case "left_text_right_talking_50pct":
+    case LayoutId.TextCenterTalkingLeft:
       return { left: 0, top: 0, width: 910, height: 864 };
-    case "bottom_right_talking":
+    case LayoutId.BottomRightTalking:
       // 口播在右下角小窗，辅助内容占左侧全高
       return { left: 0, top: 0, width: 1440, height: 864 };
-    case "bottom_left_talking":
+    case LayoutId.BottomLeftTalking:
       // 口播在左下角小窗，辅助内容占右侧全高
       return { left: 480, top: 0, width: 1440, height: 864 };
-    case "top_center_talking":
+    case LayoutId.TopCenterTalking:
       // 口播在顶部中央，辅助内容占下方
       return { left: 0, top: 360, width: 1920, height: 504 };
-    case "overlay_talking_head":
+    case LayoutId.OverlayTalkingHead:
       // 口播在左上角小窗叠加（zIndex=20），辅助内容全屏
       return { left: 0, top: 0, width: 1920, height: 864 };
-    case "centered_fullscreen_bg":
-    case "center_dual_aux":
-    case "orbiting_center":
+    case LayoutId.CenteredFullscreenBg:
+    case LayoutId.CenterDualAux:
+    case LayoutId.OrbitingCenter:
       // 这些布局内容复杂，在 workout_intro children 里直接渲染
       return { display: "none" };
-    case "pip_bottom_right":
-    case "pip_bottom_left":
+    case LayoutId.PipBottomRight:
+    case LayoutId.PipBottomLeft:
       return { left: 0, top: 0, width: 1920, height: 864 };
-    case "grid_2x2":
+    case LayoutId.Grid2x2:
       return { left: 960, top: 0, width: 960, height: 864 };
-    case "fullscreen":
+    case LayoutId.Fullscreen:
     default:
       return { display: "none" };
   }

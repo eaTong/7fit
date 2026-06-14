@@ -19,7 +19,7 @@ export interface GitLogEntry {
 interface GitLogDisplayProps {
   entries: GitLogEntry[];
   fontSize?: number;
-  visibleCount?: number;   // 可见行数，默认 15
+  visibleCount?: number;   // 可见行数，默认 15；设为 0 或 Infinity 时显示全部
   scrollSpeed?: number;     // 每秒滚动行数，默认 1
   highlightColor?: string;  // 高亮色，默认 #FF4500
   style?: React.CSSProperties;
@@ -38,14 +38,18 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
 
   if (!entries.length) return null;
 
+  // showAll = visibleCount 为 0 或 entries.length 时显示全部
+  const showAll = visibleCount === 0 || visibleCount === Infinity || visibleCount >= entries.length;
+  const effectiveVisibleCount = showAll ? entries.length : visibleCount;
+
   // 当前滚动到的 index（居中行）
-  const currentIndex = Math.floor((frame * scrollSpeed / fps) % entries.length);
-  const halfVisible = Math.floor(visibleCount / 2);
+  const currentIndex = showAll ? -1 : Math.floor((frame * scrollSpeed / fps) % entries.length);
+  const halfVisible = Math.floor(effectiveVisibleCount / 2);
 
   // 显示的 entry 范围
-  const startIndex = Math.max(0, currentIndex - halfVisible);
-  const endIndex = Math.min(entries.length, startIndex + visibleCount);
-  const visibleEntries = entries.slice(startIndex, endIndex);
+  const startIndex = showAll ? 0 : Math.max(0, currentIndex - halfVisible);
+  const endIndex = showAll ? entries.length : Math.min(entries.length, startIndex + effectiveVisibleCount);
+  const visibleEntries = showAll ? entries : entries.slice(startIndex, endIndex);
 
   const LINE_H = fontSize * 1.7;
 
@@ -92,8 +96,8 @@ export const GitLogDisplay: React.FC<GitLogDisplayProps> = ({
       <div style={{ overflow: "hidden" }}>
         {visibleEntries.map((entry, relativeIdx) => {
           const absoluteIdx = startIndex + relativeIdx;
-          const isCenter = absoluteIdx === currentIndex;
-          const isBeforeCenter = absoluteIdx < currentIndex;
+          const isCenter = showAll ? false : absoluteIdx === currentIndex;
+          const isBeforeCenter = showAll ? false : absoluteIdx < currentIndex;
 
           // 每行动效：从上方滑入
           const entrySpring = spring({

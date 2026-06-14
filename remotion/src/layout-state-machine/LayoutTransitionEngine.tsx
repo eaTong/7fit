@@ -4,6 +4,7 @@ import { AnimatedTalkingHead } from "./AnimatedTalkingHead";
 import { MediaFallback } from "../components/media/MediaFallback";
 import { getLayout } from "./layouts";
 import type { LayoutState, ShotEntry } from "./layouts/types";
+import { LayoutId } from "./layouts/types";
 
 interface LayoutTransitionEngineProps {
   videoSrc: string;
@@ -47,7 +48,7 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
   const prevShot = currentIndex > 0 ? shotSequence[currentIndex - 1] : null;
 
   const curLayout = useMemo(
-    () => getLayout(currentShot.layoutId) ?? getLayout("fullscreen")!,
+    () => getLayout(currentShot.layoutId) ?? getLayout(LayoutId.Fullscreen)!,
     [currentShot.layoutId]
   );
   const prevLayout = useMemo(
@@ -76,7 +77,7 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
   };
 
   if (!shotSequence.length) {
-    const fallbackLayout = getLayout("fullscreen")!;
+    const fallbackLayout = getLayout(LayoutId.Fullscreen)!;
     return (
       <AbsoluteFill>
         {renderBackgroundLayer()}

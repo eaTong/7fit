@@ -1,2 +1,2 @@
-export { registerLayout, getLayout, getAllLayouts } from "./registry";
-export type { LayoutState, ShotEntry, TransitionEasing } from "./types";
+export { registerLayout, getLayout, getAllLayouts, layoutIdOf } from "./registry";
+export type { LayoutState, ShotEntry, TransitionEasing, LayoutId } from "./types";

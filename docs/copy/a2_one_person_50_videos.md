@@ -28,7 +28,7 @@
 | 1 | s1 | fullscreen（圆）| 2.5s | 钩子：反常识开场 |
 | 2 | s2 | left_text_right_talking | 2.5s | 身份锚定：产品经理 |
 | 3 | s3 | pip_bottom_right | 2.5s | 痛点：凌晨 2 点剪视频 |
-| 4 | s4 | pip_bottom_left | 2.5s | 工具：Claude Code / mmx / Hyperframes |
+| 4 | s4 | pip_bottom_left | 2.5s | 工具：Claude Code / mmx / Remotion |
 | 5 | s5 | grid_2x2 | 2.5s | 工具清单（3 个） |
 | 6 | s6 | left_text_right_talking_50pct | 2.5s | 方法：方向确认，睡觉跑完 |
 | 7 | s7 | bottom_right_talking | 2.5s | 效果：AI 扛 90% 苦活 |
@@ -77,7 +77,7 @@
 > 后来我换了 3 个工具。
 > Claude Code——写脚本、出创意、对镜头做决策；
 > mmx——生成图片、BGM、做字幕；
-> Hyperframes——按帧渲染，保证质量。
+> Remotion——按帧渲染，保证质量。
 
 ### s5 工具清单（13.5s）
 

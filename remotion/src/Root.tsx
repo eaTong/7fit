@@ -3,6 +3,7 @@ import { Composition } from "remotion";
 import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
 import { B14PushDay } from "./scenes/b14_push_day";
 import { WorkoutIntro } from "./scenes/workout_intro";
+import { A2OnePerson50Videos } from "./scenes/a2_one_person_50_videos";
 
 /**
  * A/B/C 三类视频的画布尺寸规范：
@@ -44,6 +45,15 @@ export const RemotionRoot: React.FC = () => {
         id="workout-intro"
         component={WorkoutIntro}
         durationInFrames={975}  // 32.5s × 30fps（13镜×2.5s/镜）
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+
+      <Composition
+        id="a2-one-person-50-videos"
+        component={A2OnePerson50Videos}
+        durationInFrames={975}  // 13镜×2.5s/镜 × 30fps
         fps={30}
         width={1920}
         height={1080}

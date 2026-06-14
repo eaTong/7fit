@@ -1,6 +1,23 @@
+/** 布局 ID 枚举（用于类型检查 + 反向查找）*/
+export enum LayoutId {
+  Fullscreen = "fullscreen",
+  PipBottomRight = "pip_bottom_right",
+  PipBottomLeft = "pip_bottom_left",
+  Grid2x2 = "grid_2x2",
+  BottomRightTalking = "bottom_right_talking",
+  BottomLeftTalking = "bottom_left_talking",
+  TopCenterTalking = "top_center_talking",
+  OverlayTalkingHead = "overlay_talking_head",
+  CenteredFullscreenBg = "centered_fullscreen_bg",
+  CenterDualAux = "center_dual_aux",
+  OrbitingCenter = "orbiting_center",
+  TextCenterTalkingLeft = "text_center_talking_left",
+  TextCenterTalkingRight = "text_center_talking_right",
+}
+
 export interface LayoutState {
-  /** 唯一标识，如 "fullscreen" / "pip_bottom_right" */
-  id: string;
+  /** 唯一标识 */
+  id: LayoutId;
   /** 左上角 X（横屏 1920 基准）*/
   left: number;
   /** 左上角 Y */
@@ -51,7 +68,7 @@ export type TransitionEasing =
 
 export interface ShotEntry {
   shotId: string;
-  layoutId: string;
+  layoutId: LayoutId;
   transitionType: TransitionEasing;
   startFrame: number;
   endFrame: number;

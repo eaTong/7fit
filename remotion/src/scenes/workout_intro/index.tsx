@@ -6,6 +6,7 @@ import { CodeDisplay } from "../../components/terminal/CodeDisplay";
 import { GitLogDisplay } from "../../components/terminal/GitLogDisplay";
 import { OrbitingVideo } from "../../components/media/OrbitingVideo";
 import type { ShotEntry } from "../../layout-state-machine/layouts/types";
+import { LayoutId } from "../../layout-state-machine/layouts/types";
 
 // ============================================================
 // 13-Shot A类布局展示（每种布局各一次，每镜 75 帧/2.5s @ 30fps）
@@ -16,31 +17,31 @@ import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 
 const shotSequence: ShotEntry[] = [
   // s1: fullscreen（全屏口播，圆）
-  { shotId: "s1", layoutId: "fullscreen",              transitionType: "zoom",       startFrame: 0,    endFrame: 75,   isCircle: true  },
-  // s2: left_text_right_talking（左文右口播）
-  { shotId: "s2", layoutId: "left_text_right_talking", transitionType: "slide-left", startFrame: 75,   endFrame: 150  },
+  { shotId: "s1", layoutId: LayoutId.Fullscreen,              transitionType: "zoom",       startFrame: 0,    endFrame: 75,   isCircle: true  },
+  // s2: text_center_talking_right（左文右口播）
+  { shotId: "s2", layoutId: LayoutId.TextCenterTalkingRight,  transitionType: "slide-left", startFrame: 75,   endFrame: 150  },
   // s3: pip_bottom_right（右下角色口播）
-  { shotId: "s3", layoutId: "pip_bottom_right",        transitionType: "slide-left", startFrame: 150,  endFrame: 225  },
+  { shotId: "s3", layoutId: LayoutId.PipBottomRight,          transitionType: "slide-left", startFrame: 150,  endFrame: 225  },
   // s4: pip_bottom_left（左下角色口播）
-  { shotId: "s4", layoutId: "pip_bottom_left",         transitionType: "slide-right", startFrame: 225,  endFrame: 300  },
+  { shotId: "s4", layoutId: LayoutId.PipBottomLeft,           transitionType: "slide-right", startFrame: 225,  endFrame: 300  },
   // s5: grid_2x2（2×2 网格）
-  { shotId: "s5", layoutId: "grid_2x2",                transitionType: "fade",        startFrame: 300,  endFrame: 375  },
-  // s6: left_text_right_talking_50pct（50%等分左文右口播）
-  { shotId: "s6", layoutId: "left_text_right_talking_50pct", transitionType: "ease-out", startFrame: 375, endFrame: 450  },
+  { shotId: "s5", layoutId: LayoutId.Grid2x2,                  transitionType: "fade",        startFrame: 300,  endFrame: 375  },
+  // s6: text_center_talking_left（50%等分左文右口播）
+  { shotId: "s6", layoutId: LayoutId.TextCenterTalkingLeft,   transitionType: "ease-out",    startFrame: 375,  endFrame: 450  },
   // s7: bottom_right_talking（右下角色口播，宽幅辅助内容）
-  { shotId: "s7", layoutId: "bottom_right_talking",     transitionType: "slide-left", startFrame: 450,  endFrame: 525  },
+  { shotId: "s7", layoutId: LayoutId.BottomRightTalking,       transitionType: "slide-left", startFrame: 450,  endFrame: 525  },
   // s8: bottom_left_talking（左下角色口播）
-  { shotId: "s8", layoutId: "bottom_left_talking",     transitionType: "slide-right", startFrame: 525, endFrame: 600  },
+  { shotId: "s8", layoutId: LayoutId.BottomLeftTalking,        transitionType: "slide-right", startFrame: 525,  endFrame: 600  },
   // s9: top_center_talking（顶部居中口播）
-  { shotId: "s9", layoutId: "top_center_talking",     transitionType: "slide-left", startFrame: 600,  endFrame: 675  },
+  { shotId: "s9", layoutId: LayoutId.TopCenterTalking,         transitionType: "slide-left", startFrame: 600,  endFrame: 675  },
   // s10: overlay_talking_head（左上角叠加口播）
-  { shotId: "s10", layoutId: "overlay_talking_head",  transitionType: "ease-out",   startFrame: 675,  endFrame: 750  },
+  { shotId: "s10", layoutId: LayoutId.OverlayTalkingHead,    transitionType: "ease-out",   startFrame: 675,  endFrame: 750  },
   // s11: centered_fullscreen_bg（口播全屏背景层，内容居中叠加）
-  { shotId: "s11", layoutId: "centered_fullscreen_bg", transitionType: "fade",      startFrame: 750,  endFrame: 825  },
+  { shotId: "s11", layoutId: LayoutId.CenteredFullscreenBg,   transitionType: "fade",      startFrame: 750,  endFrame: 825  },
   // s12: center_dual_aux（居中口播，左右双侧辅助内容）
-  { shotId: "s12", layoutId: "center_dual_aux",        transitionType: "ease-out",   startFrame: 825,  endFrame: 900  },
+  { shotId: "s12", layoutId: LayoutId.CenterDualAux,           transitionType: "ease-out",   startFrame: 825,  endFrame: 900  },
   // s13: orbiting_center（居中圆形，4个视频环绕旋转）
-  { shotId: "s13", layoutId: "orbiting_center",        transitionType: "zoom",       startFrame: 900,  endFrame: 975, isCircle: true },
+  { shotId: "s13", layoutId: LayoutId.OrbitingCenter,         transitionType: "zoom",       startFrame: 900,  endFrame: 975, isCircle: true },
 ];
 
 const BACKGROUND_MAP: Record<string, string> = {
@@ -65,14 +66,14 @@ const BACKGROUND_MAP: Record<string, string> = {
 
 const CODE_SAMPLE = `interface ShotEntry {
   shotId: string;
-  layoutId: string;
+  layoutId: LayoutId;
   transitionType: TransitionEasing;
   startFrame: number;
   endFrame: number;
 }
 
 const shotSequence: ShotEntry[] = [
-  { shotId: "s1", layoutId: "fullscreen",
+  { shotId: "s1", layoutId: LayoutId.Fullscreen,
     transitionType: "zoom", startFrame: 0, endFrame: 75 },
 ];`;
 
