@@ -1,7 +1,7 @@
 // remotion/src/scenes/AnimatedTalkingHead.tsx
 
 import { useCurrentFrame, interpolate, Easing } from "remotion";
-import { LayoutState, TransitionEasing } from "./layouts/types";
+import { LayoutState, TransitionEasing, LayoutId } from "./layouts/types";
 import { MediaFallback } from "../components/media/MediaFallback";
 
 const TRANSITION_FRAMES = 30; // 30fps × 1s 过渡动画（减半）
@@ -60,7 +60,7 @@ export const AnimatedTalkingHead: React.FC<AnimatedTalkingHeadProps> = ({
   // canvas 居中（fullscreen 以 canvas 中心为基准）
   const CANVAS_W = 1920;
   const CANVAS_H = 1080;
-  const isFullscreen = curLayout.id === "fullscreen";
+  const isFullscreen = curLayout.id === LayoutId.Fullscreen || curLayout.id === LayoutId.CenteredFullBg;
   const isBgMode = isBackground || curLayout.isBackgroundLayer;
   const opacity = isBgMode ? (curLayout.bgOpacity ?? bgOpacity) : 1;
 

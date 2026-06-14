@@ -43,8 +43,8 @@ export const ShotContent: React.FC<ShotContentProps> = ({
 
   if (!needsAuxiliary) return null;
 
-  // 根据 layoutId 计算辅助素材的占位区域
-  const auxStyle = getAuxiliaryStyle(curLayout.id);
+  // 根据 layoutId 计算辅助素材的占位区域（zIndex = curLayout.zIndex + 10，确保在口播上方）
+  const auxStyle = getAuxiliaryStyle(curLayout);
 
   // code_display 和 gitlog_display 独立渲染（不走 AuxiliaryContentManager）
   if (contentType === "code_display") {
@@ -109,34 +109,37 @@ export const ShotContent: React.FC<ShotContentProps> = ({
   );
 }
 
-function getAuxiliaryStyle(layoutId: LayoutId): React.CSSProperties {
-  switch (layoutId) {
+function getAuxiliaryStyle(layout: LayoutState): React.CSSProperties {
+  const z = layout.zIndex + 10;
+  switch (layout.id) {
     case LayoutId.TextCenterTalkingRight:
-      return { left: 50, top: 50, width: 1340, height: 864 };
+      return { left: 50, top: 50, width: 1340, height: 864, zIndex: z };
     case LayoutId.TextCenterTalkingLeft:
-      return { left: 0, top: 0, width: 910, height: 864 };
+      return { left: 0, top: 0, width: 910, height: 864, zIndex: z };
     case LayoutId.BottomRightTalking:
       // 口播在右下角小窗，辅助内容占左侧全高
-      return { left: 0, top: 0, width: 1440, height: 864 };
+      return { left: 0, top: 0, width: 1440, height: 864, zIndex: z };
     case LayoutId.BottomLeftTalking:
       // 口播在左下角小窗，辅助内容占右侧全高
-      return { left: 480, top: 0, width: 1440, height: 864 };
+      return { left: 480, top: 0, width: 1440, height: 864, zIndex: z };
     case LayoutId.TopCenterTalking:
       // 口播在顶部中央，辅助内容占下方
-      return { left: 0, top: 360, width: 1920, height: 504 };
+      return { left: 0, top: 360, width: 1920, height: 504, zIndex: z };
     case LayoutId.OverlayTalkingHead:
       // 口播在左上角小窗叠加（zIndex=20），辅助内容全屏
-      return { left: 0, top: 0, width: 1920, height: 864 };
-    case LayoutId.FullscreenBg:
+      return { left: 0, top: 0, width: 1920, height: 864, zIndex: z };
+    case LayoutId.CenteredFullBg:
+      // 辅助内容在口播上方
+      return { left: 470, top: 50, width: 980, height: 450, zIndex: z };
     case LayoutId.CenterDualAux:
     case LayoutId.OrbitingCenter:
       // 这些布局内容复杂，在 workout_intro children 里直接渲染
       return { display: "none" };
     case LayoutId.PipBottomRight:
     case LayoutId.PipBottomLeft:
-      return { left: 0, top: 0, width: 1920, height: 864 };
+      return { left: 0, top: 0, width: 1920, height: 864, zIndex: z };
     case LayoutId.Grid2x2:
-      return { left: 960, top: 0, width: 960, height: 864 };
+      return { left: 960, top: 0, width: 960, height: 864, zIndex: z };
     case LayoutId.Fullscreen:
     default:
       return { display: "none" };

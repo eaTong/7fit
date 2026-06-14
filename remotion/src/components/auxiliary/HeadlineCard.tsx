@@ -56,6 +56,7 @@ export const HeadlineCard: React.FC<HeadlineCardProps> = ({
           fontSize: 125,
           fontWeight: 900,
           lineHeight: 1.1,
+          color: "#FFFFFF",
         }}
       >
         {titleParts[0]}
@@ -78,7 +79,7 @@ export const HeadlineCard: React.FC<HeadlineCardProps> = ({
       {subtitle && (
         <div
           style={{
-            fontSize: 58,
+            fontSize: 72,
             color: "#FFFFFF",
             fontWeight: 600,
             textAlign: "center",

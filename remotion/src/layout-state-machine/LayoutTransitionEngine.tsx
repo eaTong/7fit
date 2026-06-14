@@ -108,8 +108,17 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
         isCircle={currentShot.isCircle}
       />
 
-      {/* Layer 3: 辅助素材层 */}
-      {children(prevLayout, curLayout, currentShot.transitionType, currentShot.shotId)}
+      {/* Layer 3: 辅助素材层（zIndex = curLayout.zIndex + 10，确保在口播上方）*/}
+      <div
+        style={{
+          position: "absolute",
+          left: 0, top: 0,
+          width: "100%", height: "100%",
+          zIndex: curLayout.zIndex + 10,
+        }}
+      >
+        {children(prevLayout, curLayout, currentShot.transitionType, currentShot.shotId)}
+      </div>
     </AbsoluteFill>
   );
 };

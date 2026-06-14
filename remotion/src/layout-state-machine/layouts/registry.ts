@@ -39,7 +39,7 @@ export function layoutIdOf(id: string): LayoutId | undefined {
 
 registerLayout({
   id: LayoutId.Fullscreen,
-  left: 0, top: 0, width: 1920, height: 864,
+  left: 0, top: 0, width: 1920, height: 1080,
   borderRadius: 0, borderWidth: 0, borderColor: "transparent",
   shadow: "none", zIndex: 10,
 });
@@ -101,16 +101,14 @@ registerLayout({
 
 // ── 3 种多辅助元素布局 ──
 
-// 口播视频全屏铺满背景（半透明），内容叠加在正中央
+// 口播正方形居中，背景图从视频四周透出（口播zIndex低于辅助内容）
 registerLayout({
-  id: LayoutId.FullscreenBg,
+  id: LayoutId.CenteredFullBg,
   left: 0, top: 0, width: 1920, height: 1080,
   borderRadius: 0, borderWidth: 0, borderColor: "transparent",
   shadow: "none", zIndex: 5,
-  isBackgroundLayer: true,
-  bgOpacity: 1,
   auxiliarySlots: [
-    { id: "center", slot: "center", left: 560, top: 190, width: 800, height: 700 },
+    { id: "above", slot: "above", left: 470, top: 50, width: 980, height: 450 },
   ],
 });
 

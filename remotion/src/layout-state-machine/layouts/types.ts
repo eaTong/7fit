@@ -8,7 +8,7 @@ export enum LayoutId {
   BottomLeftTalking = "bottom_left_talking",
   TopCenterTalking = "top_center_talking",
   OverlayTalkingHead = "overlay_talking_head",
-  FullscreenBg = "fullscreen_bg",
+  CenteredFullBg = "centered_full_bg",
   CenterDualAux = "center_dual_aux",
   OrbitingCenter = "orbiting_center",
   TextCenterTalkingLeft = "text_center_talking_left",
