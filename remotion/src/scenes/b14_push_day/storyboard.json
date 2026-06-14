@@ -141,8 +141,7 @@
       "transition_out": "zoom",
       "animation_overrides": {
         "param_card": [
-          { "label": "12次", "color": "#FF4500", "position": "top-right", "delay_frames": 8, "breathing": true },
-          { "label": "5组", "color": "#DC143C", "position": "bottom-left", "delay_frames": 14, "breathing": true }
+          { "label": "12次", "color": "#FF4500", "position": "top-right", "delay_frames": 8, "breathing": true }
         ]
       }
     },
