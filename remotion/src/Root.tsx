@@ -6,6 +6,7 @@ import { B15Abs } from "./scenes/b15_abs";
 import { TalkingHeadEffectDemo } from "./scenes/talking_head_effect_demo";
 import { A2OnePerson50Videos } from "./scenes/a2_one_person_50_videos";
 import { A2TransitionSeries } from "./scenes/a2_transition_series";
+import { C1PMFitnessLog } from "./scenes/c01_pm_fitness_log";
 
 /**
  * A/B/C 三类视频的画布尺寸规范：
@@ -115,17 +116,30 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
       />
 
-      {/* === C 类示例：1080×1920 竖屏（9:16）===
-      // 未来 C 类视频在此注册，示例：
+      {/* === C 类：1080×1920 竖屏（9:16）===
+          C-1 PM Fitness Log — 一个产品经理的健身自救（C 类 · 七练解码）
+          v3.1 口播分段（8 段 TA0-TA7）+ 信息密度拉满
+          90s × 30fps = 2700 帧
+          A 版（健身角度）/ B 版（PM 角度）双版本 */}
+
       <Composition
-        id="c1-product-intro"
-        component={C1ProductIntro}
-        durationInFrames={1800}  // 60s × 30fps
+        id="c1-pm-fitness-log-a"
+        component={C1PMFitnessLog}
+        durationInFrames={2700}  // 90s × 30fps
         fps={30}
         width={1080}
         height={1920}
+        defaultProps={{ variant: "a" }}
       />
-      */}
+      <Composition
+        id="c1-pm-fitness-log-b"
+        component={C1PMFitnessLog}
+        durationInFrames={2700}  // 90s × 30fps
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ variant: "b" }}
+      />
     </>
   );
 };
