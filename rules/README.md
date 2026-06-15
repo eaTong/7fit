@@ -15,7 +15,7 @@
 
 | # | 规则 | 用途 | 必读时机 |
 |---|---|---|---|
-| 1 | [video-types.md](video-types.md) | 3 类视频（A 个人人设 / B 健身知识 / C 七练介绍）判定 + BGM 配对 | 用户说"做 X 视频"后**第一件事** |
+| 1 | [video-types.md](video-types.md) | 3 类视频（A 个人人设 / B 健身知识 / C 七练解码）判定 + BGM 配对 | 用户说"做 X 视频"后**第一件事** |
 | 2 | [docs-sync.md](docs-sync.md) | 增量同步 `fit_lc` + `7fit_opc` 到 `docs/` + SUMMARY.md | 写文案稿前强制 |
 | 3 | [copy.md](copy.md) | 文案稿撰写规范（口语化、3 秒钩子、违禁词自检、5 维评分卡）| 写 `docs/copy/<主题>.md` 时 |
 | 4 | [timing-sync.md](timing-sync.md) | ⏰ 统一语速控制（B/C 主体 50s 锚点 / A 类 ≥ 90s 全文 / 中速 3.4 字/秒 / 4 档速度） | **改任何时间字段必走** |

@@ -65,7 +65,7 @@
 | B.2 | 字段完整 | `id` / `start` / `end` / `text` / `segments[]` 全部存在 | 同上 |
 | B.3 | highlight 标记 | 数字/动作/品牌句/CTA 已打 `highlight: true` | [subtitle.md §4](subtitle.md#4--重点-segment-标记规则) |
 | B.4 | 时间线连续 | `sub[i].start = sub[i-1].end`（±0.05s 误差）| 重新跑 [regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) |
-| B.5 | 时长匹配 | B/C 类 > 60s / A 类 ≥ 90s（[timing-sync.md §1.1/§1.2](timing-sync.md) 锚点）| 调整段数 / 收尾 |
+| B.5 | 时长匹配 | B 类 > 60s / C 类 60-90s / A 类 ≥ 90s（[timing-sync.md §1.1/§1.2](timing-sync.md) 锚点）| 调整段数 / 收尾 |
 | B.6 | 单条 ≤ 24 字 | 每条 `text` 字符数 ≤ 24 | [subtitle.md §8 拆条与合并策略](subtitle.md#8-拆条与合并策略) |
 | B.7 | 单条 ≤ 4s | 每条 `end - start` ≤ 4 | 同上 |
 | B.8 | 不带句末标点 | `text` 不含 `。！？，；：` 等 | 手动清理 |

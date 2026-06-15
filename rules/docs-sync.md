@@ -160,7 +160,7 @@ docs/
 🟡 按视频类型：
 - A 类 → docs/opc/founders-note.md
 - B 类 → docs/fit_lc/prd.md §动作清单
-- C 类 → docs/fit_lc/prd-details/ + 落地页骨架
+- C 类（解码）→ docs/fit_lc/prd-details/ + docs/opc/founders-note.md + 落地页骨架
 ```
 
 ---

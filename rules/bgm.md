@@ -51,7 +51,7 @@ BGM 长度 ≥ 视频总时长 + 3s（fade out 余量）
 |---|---|---|
 | **A · 个人人设** | **C · Quiet Think**（ambient, 80 BPM）| 衬托人声，不抢戏 |
 | **B · 健身知识** | **B · Power Build**（tech house, 105 BPM）| 训练 + 演示的混合气质 |
-| **C · 七练介绍** | **A · Cyber Pulse**（synthwave, 100 BPM）| 科技感 + 产品演示 |
+| **C · 七练解码** | **A · Cyber Pulse 增强版**（synthwave, 100 BPM，创始人故事段可混用 **C · Quiet Think**）| 赛博解码 + 科技感 + 深度分析 |
 | 混合类型 | 时长占比最大的类型 | 例：A 60% + B 40% → A 的 BGM |
 
 > 视频类型判定见 [video-types.md §默认搭配](video-types.md#默认搭配视频类型--bgm-类型)。
@@ -60,11 +60,12 @@ BGM 长度 ≥ 视频总时长 + 3s（fade out 余量）
 
 #### A · Cyber Pulse（synthwave, 100 BPM, Am）
 
-- **情绪**：科技感 / 未来感 / 高速推进
-- **元素**：合成器 + 鼓机 + 失真贝斯
-- **典型场景**：C 类产品演示、数据飞入卡片、PR 视频
-- **慎用**：人声多的视频（容易盖过人声）
-- **prompt 模板**：`"synthwave, 100 BPM, A minor, 75s, NO vocals, dark futuristic, retro-futuristic pulse"`
+- **情绪**：赛博解码 / 未来感 / 深度推进
+- **元素**：合成器 + 鼓机 + 失真贝斯 + 琶音序列 + **模拟合成器主音**
+- **典型场景**：C 类七练解码（深度分析/代码/HUD 展示）、数据飞入、赛博视觉效果
+- **慎用**：人声多的视频（容易盖过人声）；纯口播段建议降 ducking
+- **prompt 模板**：`"synthwave, 100 BPM, A minor, 75s, NO vocals, dark futuristic, heavy synth bass, arpeggiated sequences, cyberpunk atmosphere, sci-fi pulse"`
+- **混合模式**：C 类视频可在"创始人视角"主题段切换为 C · Quiet Think（80 BPM），主体分析段用 Cyber Pulse 增强版，形成节奏对比
 
 #### B · Power Build（tech house, 105 BPM, Dm）
 
@@ -285,7 +286,7 @@ resources/audios/sfx/         ← 音效（与 BGM 区分）
 │  └─ BGM = C · Quiet Think
 ├─ B 知识
 │  └─ BGM = B · Power Build
-├─ C 产品
+├─ C 七练解码
 │  └─ BGM = A · Cyber Pulse
 ├─ 混合类型
 │  └─ 时长占比最大的类型对应的 BGM

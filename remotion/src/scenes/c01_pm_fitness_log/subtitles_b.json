@@ -1,0 +1,32 @@
+{
+  "id": "c01_pm_fitness_log_b",
+  "language": "zh-CN",
+  "duration": 86,
+  "track_index": 0,
+  "version": "manual-b版-慢速2.5-终端绿",
+  "notes": "B版 · PM角度 · 慢速 2.5 · ~86s · 终端绿字幕风格",
+  "subtitles": [
+    { "id": "sub_001", "start": 0.0, "end": 6.0, "text": "一个产品经理的健身数据焦虑——和我的 AI 解法。", "segments": [{ "text": "一个产品经理的健身数据焦虑——和我的 AI 解法。", "highlight": false }] },
+    { "id": "sub_002", "start": 6.0, "end": 10.0, "text": "有阵子状态特别差，睡不着觉，白天像踩棉花。", "segments": [{ "text": "有阵子状态特别差，睡不着觉，白天像踩棉花。", "highlight": false }] },
+    { "id": "sub_003", "start": 10.0, "end": 14.0, "text": "花了一周才反应过来——皮质醇太高了。", "segments": [{ "text": "花了一周才反应过来——皮质醇太高了。", "highlight": true }] },
+    { "id": "sub_004", "start": 14.0, "end": 18.0, "text": "又花了两周做轻训才缓过来。", "segments": [{ "text": "又花了两周做轻训才缓过来。", "highlight": false }] },
+    { "id": "sub_005", "start": 18.7, "end": 23.0, "text": "事后我在想——为什么身体报警了都不知道？", "segments": [{ "text": "事后我在想——为什么身体报警了都不知道？", "highlight": false }] },
+    { "id": "sub_006", "start": 23.0, "end": 27.0, "text": "因为没有数据。为什么不记数据？因为太麻烦了。", "segments": [{ "text": "因为没有数据。为什么不记数据？因为太麻烦了。", "highlight": false }] },
+    { "id": "sub_007", "start": 27.0, "end": 31.0, "text": "每次练完要填 5-6 个字段，30 秒一组——", "segments": [{ "text": "每次练完要填 5-6 个字段，30 秒一组——", "highlight": false }] },
+    { "id": "sub_008", "start": 31.0, "end": 34.7, "text": "坚持不了 6 个月。", "segments": [{ "text": "坚持不了 6 个月。", "highlight": true }] },
+    { "id": "sub_009", "start": 35.4, "end": 40.0, "text": "做产品的都知道——把监控做在事前，比复盘便宜得多。", "segments": [{ "text": "做产品的都知道——把监控做在事前，比复盘便宜得多。", "highlight": false }] },
+    { "id": "sub_010", "start": 40.0, "end": 45.0, "text": "健身最大的成本不是动作不标准，是事后才知道自己哪里错了。", "segments": [{ "text": "健身最大的成本不是动作不标准，是事后才知道自己哪里错了。", "highlight": true }] },
+    { "id": "sub_011", "start": 45.0, "end": 49.4, "text": "这就好像产品上线一个月，才发现功能用户根本不用。", "segments": [{ "text": "这就好像产品上线一个月，才发现功能用户根本不用。", "highlight": false }] },
+    { "id": "sub_012", "start": 50.1, "end": 53.0, "text": "所以我干脆自己做了小程序。", "segments": [{ "text": "所以我干脆自己做了小程序。", "highlight": false }] },
+    { "id": "sub_013", "start": 53.0, "end": 56.0, "text": "核心就一件事：用自然语言记录训练。", "segments": [{ "text": "核心就一件事：用自然语言记录训练。", "highlight": false }] },
+    { "id": "sub_014", "start": 56.0, "end": 62.1, "text": "说一句'深蹲 100kg 5 组每组 8 个'，AI 自动拆成结构化数据。", "segments": [{ "text": "说一句'深蹲 100kg 5 组每组 8 个'，AI 自动拆成结构化数据。", "highlight": true }] },
+    { "id": "sub_015", "start": 62.8, "end": 66.0, "text": "三个功能：对话式记录，不只记训练围度也能记。", "segments": [{ "text": "三个功能：对话式记录，不只记训练围度也能记。", "highlight": false }] },
+    { "id": "sub_016", "start": 66.0, "end": 69.0, "text": "智能查询，问'这周跑了多少次'直接给结论。", "segments": [{ "text": "智能查询，问'这周跑了多少次'直接给结论。", "highlight": false }] },
+    { "id": "sub_017", "start": 69.0, "end": 72.8, "text": "AI 训练计划，根据你的历史数据定制。", "segments": [{ "text": "AI 训练计划，根据你的历史数据定制。", "highlight": false }] },
+    { "id": "sub_018", "start": 73.5, "end": 77.0, "text": "这不是习惯问题，是产品设计问题。", "segments": [{ "text": "这不是习惯问题，是产品设计问题。", "highlight": false }] },
+    { "id": "sub_019", "start": 77.0, "end": 81.0, "text": "30 秒的记录一定坚持不了 6 个月。", "segments": [{ "text": "30 秒的记录一定坚持不了 6 个月。", "highlight": true }] },
+    { "id": "sub_020", "start": 81.0, "end": 83.5, "text": "但 3 秒一句话，就能坚持。", "segments": [{ "text": "但 3 秒一句话，就能坚持。", "highlight": true }] },
+    { "id": "sub_021", "start": 84.5, "end": 89.0, "text": "用产品思维去健身，用健身改造产品。评论区说说你的想法。", "segments": [{ "text": "用产品思维去健身，用健身改造产品。评论区说说你的想法。", "highlight": false }] },
+    { "id": "sub_022", "start": 89.0, "end": 94.5, "text": "关注我，下期拆解 3 秒记录背后的 AI 逻辑。", "segments": [{ "text": "关注我，下期拆解 3 秒记录背后的 AI 逻辑。", "highlight": false }] }
+  ]
+}

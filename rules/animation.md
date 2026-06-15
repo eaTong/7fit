@@ -161,13 +161,13 @@ const Scene = () => {
 ### 4.1 14 类转场 Remotion 实现
 
 > **转场代码**：`src/utils/transition.ts` 的 `getTransitionEffect()` 函数。
-> **调性选择**：B 类力量感用 push_left/slide-left/zoom；A 类柔和用 fade/slide-up/down；C 类科技用 fade/slide-left/wipe-h。
+> **调性选择**：B 类力量感用 push_left/slide-left/zoom；A 类柔和用 fade/slide-up/down；C 类赛博解码用 wipe/glitch/scanline。
 
 #### 4.1.1 纯透明度（1 种）
 
 | 转场 | 效果 | 适用场景 |
 |---|---|---|
-| `fade` | opacity 0↔1 | A 类人设 / 柔和切换 / 默认 |
+| `fade` | opacity 0↔1 | 通用 / 默认 |
 
 #### 4.1.2 水平位移 X 轴（4 种）
 
@@ -175,7 +175,7 @@ const Scene = () => {
 |---|---|---|
 | `push_left` | translateX 80→0，有力硬切 | **B 类默认**，强调动作 |
 | `push_right` | translateX -80→0，有力右推 | B 类交替方向 |
-| `slide-left` | translateX 50→0，柔和滑入 | A 类柔和 / C 类科技 |
+| `slide-left` | translateX 50→0，柔和滑入 | A 类柔和 / C 类解码 |
 | `slide-right` | translateX -50→0，柔和右滑 | A 类柔和 |
 
 #### 4.1.3 垂直位移 Y 轴（2 种）
@@ -942,7 +942,7 @@ const rightX = interpolate(frame, [0, 12], [100, 0], {
 | 科技感 | 毛玻璃 + 霓虹描边 + 暗角 + 噪点 | `#0A0A0A` + `#FF4500` | A 类工具展示 |
 | 力量感 | 粗描边 + 高对比 + 硬朗圆角 | `#0A0A0A` + `#DC143C` | B 类动作教学 |
 | 数据冲击 | 数字弹跳 + 霓虹 + 深色背景 | `#FF4500` + `#FFC800` | A 类钩子数字卡 |
-| 极简 | 无装饰 + 纯白文字 + 透明背景 | `#FFFFFF` on transparent | C 类产品介绍 |
+| 赛博解码 | HUD/终端/glitch/scanlines/霓虹边框 | `#FF4500` + `#00FF00` + `#0A0A0A` | C 类解码（造轮子/健脑/创始人视角）|
 | 复古科技 | VHS 条纹 + 噪点 + 色差 | 低饱和 + tracking lines | A/B 类创意场景 |
 | 自然氛围 | 暖色温 + 柔焦 | `#0A0A0A` + 暖橙光晕 | 个人故事类 A |
 
@@ -1080,7 +1080,7 @@ useEffect(() => {
 | **科技感** | 毛玻璃 + 霓虹描边 + 暗角 | `#0A0A0A` + `#FF4500` | A 类工具展示 |
 | **力量感** | 粗描边 + 高对比 + 硬朗圆角 | `#0A0A0A` + `#DC143C` | B 类动作教学 |
 | **数据冲击** | 数字弹跳 + 霓虹 + 深色背景 | `#FF4500` + `#FFC800` | A 类钩子数字卡 |
-| **极简** | 无装饰 + 纯白文字 + 透明背景 | `#FFFFFF` on transparent | C 类产品介绍 |
+| **赛博解码** | HUD/终端/glitch/scanlines/霓虹边框 | `#FF4500` + `#00FF00` + `#0A0A0A` | C 类解码（造轮子/健脑/创始人视角）|
 
 ---
 
