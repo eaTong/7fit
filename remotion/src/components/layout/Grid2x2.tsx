@@ -28,6 +28,10 @@ interface Grid2x2Props {
   impulseScale?: number;
   /** 整体入场延迟（帧） */
   delay?: number;
+  /** 底层光晕颜色（解决首帧黑屏） */
+  glowColor?: string;
+  /** 底层背景图片（优先级高于 glowColor） */
+  backgroundImage?: string;
 }
 
 const POSITIONS = ["top-left", "top-right", "bottom-left", "bottom-right"] as const;
@@ -53,12 +57,42 @@ export const Grid2x2: React.FC<Grid2x2Props> = ({
   impulseIdx = -1,
   impulseScale = 1.15,
   delay = 0,
+  glowColor,
+  backgroundImage,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   return (
     <AbsoluteFill>
+      {/* 底层背景（图片优先，否则用光晕，解决首帧黑屏） */}
+      {backgroundImage ? (
+        <Img
+          src={staticFile(backgroundImage)}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+          }}
+        />
+      ) : glowColor ? (
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            background: `radial-gradient(circle at 50% 50%, ${glowColor}33 0%, transparent 70%)`,
+            zIndex: 0,
+          }}
+        />
+      ) : null}
+
       {/* 4 个格子 */}
       {sources.map((source, i) => {
         const pos = cellPositions[POSITIONS[i]];

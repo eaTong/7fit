@@ -29,28 +29,58 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
 
+      {/* B14：pro + lite 双版本 */}
       <Composition
-        id="b14-push-day"
+        id="b14-push-day-pro"
         component={B14PushDay}
-        durationInFrames={930}  // 31s × 30fps（8镜：钩子+5动作+要点+outro）
+        durationInFrames={930}
         fps={30}
         width={1080}
         height={1920}
         defaultProps={{
-          bgmVolume: 0.25,        // -12dB（对齐 winged_scapula_b3，防盖人声）
+          variant: 'pro',
+          bgmVolume: 0.25,
+          enableFadeIn: true,
+        }}
+      />
+      <Composition
+        id="b14-push-day-lite"
+        component={B14PushDay}
+        durationInFrames={930}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          variant: 'lite',
+          bgmVolume: 0.25,
           enableFadeIn: true,
         }}
       />
 
+      {/* B15：pro + lite 双版本 */}
       <Composition
-        id="b15-abs"
+        id="b15-abs-pro"
         component={B15Abs}
-        durationInFrames={900}  // 30s × 30fps（9镜：钩子+6动作+要点+outro）
+        durationInFrames={900}
         fps={30}
         width={1080}
         height={1920}
         defaultProps={{
-          bgmVolume: 0.25,        // -12dB（对齐 winged_scapula_b3，防盖人声）
+          variant: 'pro',
+          bgmVolume: 0.25,
+          enableFadeIn: true,
+        }}
+      />
+      <Composition
+        id="b15-abs-lite"
+        component={B15Abs}
+        durationInFrames={900}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          variant: 'lite',
+          bgmVolume: 0.25,
           enableFadeIn: true,
         }}
       />

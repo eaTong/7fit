@@ -8,6 +8,7 @@
  */
 
 import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
+import type { BVariantTheme } from "../../themes/b-variant-theme";
 
 interface ProgressRingProps {
   current: number;       // 1-5
@@ -17,6 +18,7 @@ interface ProgressRingProps {
   size?: number;         // 直径，默认 160
   color?: string;
   impulse?: boolean;     // 满环时整体缩放脉冲
+  theme?: BVariantTheme; // 可选：B 类双版本主题
 }
 
 export const ProgressRing: React.FC<ProgressRingProps> = ({
@@ -27,6 +29,7 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
   size = 160,
   color = "#FF4500",
   impulse = false,
+  theme,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -86,14 +89,14 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
         transform: `scale(${enterScale * impulseScale})`,
       }}
     >
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)" }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)" }}>
         {/* 背景环 */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          fill="rgba(10, 10, 20, 0.88)"
-          stroke="rgba(255, 255, 255, 0.2)"
+          fill={theme?.cardBg ?? "rgba(10, 10, 20, 0.88)"}
+          stroke={theme?.progressTrack ?? "rgba(255, 255, 255, 0.2)"}
           strokeWidth={strokeWidth}
         />
         {/* 进度环 */}
@@ -125,7 +128,7 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
       >
         <span
           style={{
-            color: "#FFFFFF",
+            color: theme?.text ?? "#FFFFFF",
             fontSize: 36,
             fontWeight: 900,
             fontFamily: "monospace",

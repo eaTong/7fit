@@ -12,6 +12,7 @@
  */
 
 import { useCurrentFrame, useVideoConfig, spring, interpolate, Easing } from "remotion";
+import type { BVariantTheme } from "../../themes/b-variant-theme";
 
 interface NumberImpactProps {
   numbers: Array<{ text: string; highlight?: boolean }>;
@@ -25,6 +26,7 @@ interface NumberImpactProps {
   fadeFrames?: number;
   /** 位置 */
   position?: "center" | "top" | "bottom";
+  theme?: BVariantTheme; // 可选：B 类双版本主题
 }
 
 export const NumberImpact: React.FC<NumberImpactProps> = ({
@@ -35,6 +37,7 @@ export const NumberImpact: React.FC<NumberImpactProps> = ({
   visibleToFrame,
   fadeFrames = 12,
   position = "center",
+  theme,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -123,7 +126,7 @@ export const NumberImpact: React.FC<NumberImpactProps> = ({
             <span
               key={i}
               style={{
-                color: "#FFFFFF",
+                color: theme?.text ?? "#FFFFFF",
                 fontSize: 72,
                 fontWeight: 700,
                 opacity,
@@ -136,17 +139,18 @@ export const NumberImpact: React.FC<NumberImpactProps> = ({
           );
         }
 
+        const highlightColor = theme?.primary ?? "#FF4500";
         return (
           <span
             key={i}
             style={{
-              color: "#FF4500",
+              color: highlightColor,
               fontSize: 200,
               fontWeight: 900,
               lineHeight: 1,
               opacity,
               transform: `scale(${overshootScale})`,
-              textShadow: `0 0 ${glowSize}px rgba(255, 69, 0, ${0.6 + 0.3 * pulse})`,
+              textShadow: `0 0 ${glowSize}px ${highlightColor}${Math.round((0.6 + 0.3 * pulse) * 255).toString(16).padStart(2, '0')}`,
               filter: `brightness(${pulse})`,
               fontFamily: "monospace",
             }}

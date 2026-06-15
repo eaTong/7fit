@@ -35,6 +35,8 @@ import { ProgressRing } from "../../components/auxiliary/ProgressRing";
 import { NumberImpact } from "../../components/auxiliary/NumberImpact";
 import { ParamCard } from "../../components/auxiliary/ParamCard";
 import type { Shot } from "../../types/shot";
+import { B_VARIANTS, getBgmFileName, mapStoryboardColor } from "../../themes/b-variant-theme";
+import type { BVariantTheme } from "../../themes/b-variant-theme";
 
 /* === 配置 === */
 const FPS = 30;
@@ -96,8 +98,9 @@ function getAnim(shot: Shot): AnimationOverrides {
 }
 
 /* === Shot 内容渲染器 === */
-const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
+const ShotContent: React.FC<{ shot: Shot; theme: BVariantTheme }> = ({ shot, theme }) => {
   const anim = getAnim(shot);
+  const mapColor = (c?: string) => mapStoryboardColor(c, theme);
 
   // 钩子：2×2 网格（带 stagger + impulse）
   if (shot.content_type === "video_grid" && shot.grid_cells) {
@@ -117,8 +120,9 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
           staggerFrames={anim.grid_stagger_frames ?? 5}
           impulseIdx={anim.grid_impulse_idx ?? 3}
           impulseScale={anim.grid_impulse_scale ?? 1.15}
+          backgroundImage={`${BASE}/images/${theme.id === 'pro' ? 'b_pro_bg.JPG' : 'b_lite_bg.JPG'}`}
         />
-        {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} />}
+        {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} theme={theme} />}
       </AbsoluteFill>
     );
   }
@@ -143,6 +147,8 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             name={anim.action_badge.name}
             position={anim.action_badge.position}
             delay={anim.action_badge.delay_frames}
+            color={theme.primary}
+            theme={theme}
           />
         )}
         {/* 进度环 */}
@@ -153,6 +159,8 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             position={anim.progress_ring.position}
             delay={anim.progress_ring.delay_frames}
             impulse={anim.progress_ring.impulse}
+            color={theme.primary}
+            theme={theme}
           />
         )}
         {/* 参数卡（12次/5组）*/}
@@ -161,10 +169,11 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             key={i}
             label={card.label}
             caption={card.caption}
-            color={card.color}
+            color={mapColor(card.color)}
             position={card.position}
             delay={card.delay_frames}
             breathing={card.breathing}
+            theme={theme}
           />
         ))}
         {/* 数字 overlay（弹入后淡出，露出视频）*/}
@@ -175,10 +184,11 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             visibleToFrame={anim.number_overlay.visible_frames}
             fadeFrames={anim.number_overlay.fade_frames}
             stagger={anim.number_overlay.stagger_frames}
+            theme={theme}
           />
         )}
         {/* 底部副字幕 */}
-        {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} />}
+        {shot.voiceover && <VoiceoverText text={shot.voiceover} bottom={50} theme={theme} />}
       </AbsoluteFill>
     );
   }
@@ -193,19 +203,22 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
 
 /* === 主 Scene === */
 export const B14PushDay: React.FC<{
+  variant?: 'pro' | 'lite';
   bgmVolume?: number;
   enableFadeIn?: boolean;
   enableTransitions?: boolean;
-}> = ({ bgmVolume = 0.25, enableFadeIn = true, enableTransitions = true }) => {
+}> = ({ variant = 'pro', bgmVolume = 0.25, enableFadeIn = true, enableTransitions = true }) => {
+  const theme = B_VARIANTS[variant];
   const shots = storyboard.shots as Shot[];
 
   // 实际总帧数：取最后一镜的 end
   const compositionFrames = Math.round(shots[shots.length - 1].end * FPS);
+  const bgmFile = getBgmFileName(theme, 'b14');
 
   return (
-    <AbsoluteFill style={{ background: "#0A0A0A" }}>
+    <AbsoluteFill style={{ background: theme.bg }}>
       <BGMWithDucking
-        src={staticFile(audio("bgm/gym_beat_b14.mp3"))}
+        src={staticFile(audio(`bgm/${bgmFile}`))}
         compositionFrames={compositionFrames}
         normalVolume={bgmVolume}
         fadeInFrames={enableFadeIn ? 30 : 0}
@@ -249,7 +262,7 @@ export const B14PushDay: React.FC<{
               lightLeakSeed={anim.light_leak?.seed}
               lightLeakHueShift={anim.light_leak?.hueShift}
             >
-              <ShotContent shot={shot} />
+              <ShotContent shot={shot} theme={theme} />
             </ShotRenderer>
           </Sequence>
         );

@@ -8,6 +8,7 @@
  */
 
 import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
+import type { BVariantTheme } from "../../themes/b-variant-theme";
 
 interface ParamCardProps {
   label: string;            // 主文字（"12次"）
@@ -16,6 +17,7 @@ interface ParamCardProps {
   delay?: number;
   color?: string;
   breathing?: boolean;      // 呼吸辉光
+  theme?: BVariantTheme;    // 可选：B 类双版本主题
 }
 
 export const ParamCard: React.FC<ParamCardProps> = ({
@@ -25,6 +27,7 @@ export const ParamCard: React.FC<ParamCardProps> = ({
   delay = 0,
   color = "#FF4500",
   breathing = true,
+  theme,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -64,7 +67,7 @@ export const ParamCard: React.FC<ParamCardProps> = ({
         flexDirection: "column",
         alignItems: "center",
         gap: 8,
-        background: "rgba(10, 10, 20, 0.88)",
+        background: theme?.cardBg ?? "rgba(10, 10, 20, 0.88)",
         backdropFilter: "blur(8px)",
         border: `3px solid ${color}`,
         borderRadius: 24,
@@ -87,7 +90,7 @@ export const ParamCard: React.FC<ParamCardProps> = ({
       {caption && (
         <span
           style={{
-            color: "#FFFFFF",
+            color: theme?.text ?? "#FFFFFF",
             fontSize: 36,
             fontWeight: 600,
             opacity: 0.9,

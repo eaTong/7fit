@@ -8,12 +8,14 @@
  */
 
 import { useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
+import type { BVariantTheme } from "../../themes/b-variant-theme";
 
 interface ActionBadgeProps {
   name: string;
   position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
   delay?: number;        // 帧延迟
   color?: string;        // 强调色
+  theme?: BVariantTheme; // 可选：B 类双版本主题
 }
 
 export const ActionBadge: React.FC<ActionBadgeProps> = ({
@@ -21,6 +23,7 @@ export const ActionBadge: React.FC<ActionBadgeProps> = ({
   position = "top-left",
   delay = 0,
   color = "#FF4500",
+  theme,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -56,12 +59,12 @@ export const ActionBadge: React.FC<ActionBadgeProps> = ({
         display: "flex",
         alignItems: "center",
         gap: 12,
-        background: "rgba(10, 10, 20, 0.88)",
+        background: theme?.cardBg ?? "rgba(10, 10, 20, 0.88)",
         backdropFilter: "blur(8px)",
         border: `2px solid ${color}`,
         borderRadius: 999,
         padding: "16px 32px",
-        boxShadow: `0 0 ${20 + 20 * pulse}px rgba(255, 69, 0, ${glowOpacity})`,
+        boxShadow: `0 0 ${20 + 20 * pulse}px ${theme?.shadowColor ?? 'rgba(255, 69, 0,'}${glowOpacity})`,
       }}
     >
       {/* 圆点指示器 */}
@@ -76,7 +79,7 @@ export const ActionBadge: React.FC<ActionBadgeProps> = ({
       />
       <span
         style={{
-          color: "#FFFFFF",
+          color: theme?.text ?? "#FFFFFF",
           fontSize: 48,
           fontWeight: 800,
           letterSpacing: 2,

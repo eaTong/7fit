@@ -13,12 +13,14 @@
  */
 
 import type { SubtitleSegment } from "../../types/shot";
+import type { BVariantTheme } from "../../themes/b-variant-theme";
 
 interface VoiceoverTextProps {
   text: string | string[] | SubtitleSegment[];
   bottom?: number;      // 底部距离，默认 140
   fontSize?: number;     // 字号，默认 72
   paddingX?: number;     // 水平内边距，默认 32
+  theme?: BVariantTheme; // 可选：B 类双版本主题
 }
 
 /** 判断是否为 SubtitleSegment 数组 */
@@ -36,6 +38,7 @@ export const VoiceoverText: React.FC<VoiceoverTextProps> = ({
   bottom = 140,
   fontSize = 72,
   paddingX = 32,
+  theme,
 }) => {
   // 统一成 SubtitleSegment[]
   const segments: SubtitleSegment[] = (() => {
@@ -59,10 +62,10 @@ export const VoiceoverText: React.FC<VoiceoverTextProps> = ({
         padding: `0 ${paddingX}px`,
       }}
     >
-      {/* 半透明黑色背景 */}
+      {/* 字幕背景 */}
       <div
         style={{
-          background: "rgba(0,0,0,0.6)",
+          background: theme?.subtitleBg ?? "rgba(0,0,0,0.6)",
           borderRadius: fontSize / 4,
           padding: `${fontSize / 2}px ${fontSize}px`,
           maxWidth: "100%",
@@ -70,12 +73,12 @@ export const VoiceoverText: React.FC<VoiceoverTextProps> = ({
       >
         {segments.map((seg, i) =>
           seg.highlight ? (
-            // 高亮段：橙底白字
+            // 高亮段
             <span
               key={i}
               style={{
-                background: "#FF4500",
-                color: "#FFFFFF",
+                background: theme?.highlightBg ?? "#FF4500",
+                color: theme?.highlightText ?? "#FFFFFF",
                 fontWeight: 700,
                 fontSize: fontSize * 1.15,
                 borderRadius: 6,
@@ -86,11 +89,11 @@ export const VoiceoverText: React.FC<VoiceoverTextProps> = ({
               {seg.text}
             </span>
           ) : (
-            // 普通段：白字
+            // 普通段
             <span
               key={i}
               style={{
-                color: "#FFFFFF",
+                color: theme?.subtitleText ?? "#FFFFFF",
                 fontWeight: 700,
                 fontSize,
                 textShadow: "0 2px 8px rgba(0,0,0,0.9)",
