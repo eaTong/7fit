@@ -37,7 +37,10 @@
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
-    "scenes:regen": "node tools/regenerate-scenes.js"
+    "scenes:regen": "node tools/regenerate-scenes.js",
+    "scenes:sync": "node ../tools/sync-public-symlinks.js",
+    "predev": "node ../tools/sync-public-symlinks.js && remotion studio",
+    "prebuild": "node ../tools/sync-public-symlinks.js && remotion bundle"
   },
   "sideEffects": [
     "*.css"
