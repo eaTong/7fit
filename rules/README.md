@@ -11,14 +11,14 @@
 
 ---
 
-## 22 份规范总览
+## 24 份规范总览
 
 | # | 规则 | 用途 | 必读时机 |
 |---|---|---|---|
 | 1 | [video-types.md](video-types.md) | 3 类视频（A 个人人设 / B 健身知识 / C 七练解码）判定 + BGM 配对 | 用户说"做 X 视频"后**第一件事** |
 | 2 | [docs-sync.md](docs-sync.md) | 增量同步 `fit_lc` + `7fit_opc` 到 `docs/` + SUMMARY.md | 写文案稿前强制 |
 | 3 | [copy.md](copy.md) | 文案稿撰写规范（口语化、3 秒钩子、违禁词自检、5 维评分卡）| 写 `docs/copy/<主题>.md` 时 |
-| 4 | [timing-sync.md](timing-sync.md) | ⏰ 统一语速控制（B/C 主体 50s 锚点 / A 类 ≥ 90s 全文 / 中速 3.4 字/秒 / 4 档速度） | **改任何时间字段必走** |
+| 4 | [timing-sync.md](timing-sync.md) | ⏰ 统一语速控制（B 类主体 50s / C 类七练解码 60s / A 类 ≥ 90s 全文 / 中速 3.4 字/秒）| **改任何时间字段必走** |
 | 5 | [strategy.md](strategy.md) | 项目级发布策略（双账号矩阵、节奏、禁区）| 立项前 / 调整策略时 |
 | 6 | [backlog.md](backlog.md) | 选题池（按 A/B/C 类型分组 + 状态流转）| 每周一选题会议 |
 | 7 | [voice-anchor.md](voice-anchor.md) | 声音锚定（语气词/停顿/节奏控制）| 录音前 |
@@ -30,14 +30,15 @@
 | 13 | [storyboard.md](storyboard.md) | 分镜表：shot + pause + 段间停顿差异化动效 | 有字幕后设计分镜时 |
 | 14 | [animation.md](animation.md) | Remotion 动效：interpolate + spring + 4 条 easing + 转场动画 | 写 Scene 组件时 |
 | 15 | [bgm.md](bgm.md) | 4 类 BGM（Cyber Pulse / Power Build / Quiet Think / Hop Pulse）+ ducking | 选 BGM 时 |
-| 16 | [assets.md](assets.md) | 素材清单 + 缺失补齐（mmx prompt 模板）| 写分镜时配套输出 |
-| 17 | [rhythm.md](rhythm.md) | 单条视频制作流程 SOP（5 步 + 1 触发 + T-3/T+7 节奏）| 制作单条视频时 |
-| 18 | [checklist.md](checklist.md) | 6 大块 30+ 项检查（开工前 + 渲染前） | 开工前 + 渲染前 |
-| 19 | [render.md](render.md) | 渲染触发硬规则（默认只预览 / 显式指令才 render） | 准备 `npm run render` 时 |
-| 20 | [publish.md](publish.md) | 发布与复盘（小红书 + 抖音矩阵 + 24h/7d 数据） | 视频投出去后 |
-| 21 | [accounts.md](accounts.md) | 双账号档案（人设 / 隔离 / 安全设置）| 账号初始化 / 调整人设时 |
-| 22 | [calendar.md](calendar.md) | 发布日历（每周排期 + 实际发布记录）| 每周排期时 |
-| 23 | [animation-inventory.md](animation-inventory.md) | 动画/特效/转场清单（生成脚本**必须**参考）| 写 Scene 组件时**强制参考** |
+| 16 | [assets.md](assets.md) | 单场景 `assets.md` 素材清单（写在 `remotion/src/scenes/<scene>/` 下） | 写分镜时配套输出 |
+| 17 | **[resources.md](resources.md)** | **仓库资源管理（assets/ 入库 · scenes/ 不入库 · 软链集成）** | **添加新场景 / 排查资源问题时** |
+| 18 | [rhythm.md](rhythm.md) | 单条视频制作流程 SOP（5 步 + 1 触发 + T-3/T+7 节奏）| 制作单条视频时 |
+| 19 | [checklist.md](checklist.md) | 6 大块 30+ 项检查（开工前 + 渲染前） | 开工前 + 渲染前 |
+| 20 | [render.md](render.md) | 渲染触发硬规则（默认只预览 / 显式指令才 render） | 准备 `npm run render` 时 |
+| 21 | [publish.md](publish.md) | 发布与复盘（小红书 + 抖音矩阵 + 24h/7d 数据） | 视频投出去后 |
+| 22 | [accounts.md](accounts.md) | 双账号档案（人设 / 隔离 / 安全设置）| 账号初始化 / 调整人设时 |
+| 23 | [calendar.md](calendar.md) | 发布日历（每周排期 + 实际发布记录）| 每周排期时 |
+| 24 | [animation-inventory.md](animation-inventory.md) | 动画/特效/转场清单（生成脚本**必须**参考）| 写 Scene 组件时**强制参考** |
 
 ---
 
@@ -55,6 +56,7 @@
 | [backlog.md](backlog.md) | 选题池 |
 | [voice-anchor.md](voice-anchor.md) | 声音锚定 |
 | [anti-ai-tells.md](anti-ai-tells.md) | 反 AI 味清单 |
+| **[resources.md](resources.md)** | **资源管理（assets/ 入库 · scenes/ 不入库 · 软链集成）** |
 
 ### production · 实现（Phase 2-4）
 
