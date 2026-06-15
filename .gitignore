@@ -25,36 +25,27 @@ out/
 !remotion/public/**/*.mov
 !remotion/public/**/*.mp4
 
-# ───────── 视频草稿（用户在 resources/videos/ 提供，不进 git）─────────
-# 这些是用户拍摄的训练视频，占空间大，由用户本地管理
-resources/videos/*
-!resources/videos/.gitkeep
+# ───────── resources/ 资源管理 ─────────
+# 核心规则：assets/（公用）入库，user/（用户专属）不入库
+# 详见 resources/README.md
 
-# ───────── 音频素材（mmx 生成 + 用户提供）─────────
-# 默认忽略 audios/*（用户录音 / 大文件 / 隐私）
-resources/audios/bgm/*
-!resources/audios/.gitkeep
-# !resources/audios/bgm/
-!resources/audios/bgm/.gitkeep
+# ===== 公用素材 · 入库 =====
+# 默认全量忽略，再用 ! 逐个/逐目录入库
+# （目前用白名单方式，简洁安全）
+!resources/assets/
+!resources/assets/**/*
 
-# 例外：ffmpeg/mmx 生成的 SFX（短小可入库）
-!resources/audios/sfx/whoosh.mp3
-!resources/audios/sfx/pop.mp3
-!resources/audios/sfx/click.mp3
-!resources/audios/sfx/glitch.mp3
-!resources/audios/sfx/data-ping.mp3
+# ===== 用户素材 · 不入库 =====
+# 全量忽略 user/ 整个目录
+resources/user/
+!resources/user/.gitkeep
 
-
-# ───────── 图片素材（mmx 生成 + 用户截图）─────────
-# 默认忽略 images/*（用户截图 / 大文件 / 临时）
-resources/images/*
-!resources/images/.gitkeep
-# 例外：mmx 生成的数据卡 / 示意（按场景命名）必须进 git
-!resources/images/winged_scapula_b3_*.png
-!resources/images/winged_scapula_b3_*.jpg
-!resources/images/winged_scapula_*.png
-!resources/images/weekly_review_*.png
-!resources/images/pr_breakthrough_*.png
+# ===== 历史位置兼容（已迁移，新位置在 assets/ 和 user/）=====
+# 旧 audios/ / images/ / videos/ 不再使用
+resources/audios/
+resources/images/
+resources/videos/
+!resources/.gitkeep
 
 # ───────── 临时/中间产物 ─────────
 .tmp/
@@ -87,6 +78,10 @@ remotion/**/*.mp4
 remotion/**/**/*.webm
 remotion/**/**/*.mov
 remotion/**/**/*.gif
+# 视频素材可以进库（不超 20MB）；音频 m4a/mp3 不进（隐私 + 大小）
 remotion/**/**/*.m4a
 remotion/**/**/*.mp3
+# 例外：通用 BGM 短小可入库
+!remotion/**/**/bgm/*.mp3
+!remotion/**/**/bgm/*.json
 remotion/**/**/*.wav
