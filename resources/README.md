@@ -2,7 +2,7 @@
 
 > **核心规则**：
 > - `assets/` 公用素材 → **进版本管理**
-> - `user/` 用户专属素材 → **不进版本管理**（本地保留）
+> - `scenes/` 场景专属素材 → **不进版本管理**（本地保留）
 
 ---
 
@@ -13,122 +13,125 @@
 ```
 assets/
 ├── bgm/        # 背景音乐（mmx 生成，每段 <5MB）
-│   └── c01_pm_fitness_log_a.mp3
-│
 ├── sfx/        # 短音效（ffmpeg/人工生成，<50KB/段）
-│   ├── whoosh.mp3       # wipe-h/wipe-v 转场
-│   ├── pop.mp3          # highlight 弹入
-│   ├── click.mp3        # CTA 按钮
-│   ├── glitch.mp3       # glitch+色差 转场
-│   └── data-ping.mp3    # 数据提示音
-│
-├── overlays/   # 通用叠加层（HUD/扫描线/背景）
-│   ├── B_pro_bg.JPG
-│   ├── b_lite_bg.JPG
-│   └── outro.JPG
-│
-├── fonts/      # 自定义字体（如果引入）
-│   └── JetBrainsMono-Bold.ttf
-│
+├── overlays/   # 通用叠加层（HUD/扫描线/背景图）
+├── fonts/      # 字体
 ├── icons/      # 通用 SVG icon
-│   └── fitness-default.svg
-│
 └── presets/    # 通用预设（mmx prompt 模板等）
-    └── mmx_cyberpunk_bg.txt
 ```
 
 **命名约定**：
-- bgm/：`{scene}_{variant}_{style}.mp3`，例：`c01_pm_fitness_log_a.mp3`
+- bgm/：`{scene}_{variant}_{style}.mp3`，例：`c01_main_a.mp3`
 - sfx/：按**音效类型**命名（与场景无关），例：`whoosh.mp3`
 - overlays/：通用名 + 主题，例：`bg_pro.jpg`（任何 pro 版本都能用）
 
 ---
 
-## 📁 user/（用户专属 · 不入库）
+## 📁 scenes/（场景专属 · 不入库）
 
-每个用户**只本地保留**的素材：自拍口播、拍摄的训练视频、录音、截图、参考图等。
+按**场景维度**组织——每个 scene 独立目录。
 
 ```
-user/
-├── videos/<scene>/      # 用户自拍 / 拍摄的训练视频
-│   ├── a1/              # 每个 scene 一个子目录
-│   ├── a2/
-│   ├── b3/              # winged_scapula_b3 训练视频
-│   ├── b14/             # 推力日训练视频
-│   ├── b15/             # 腹肌训练视频
-│   └── misc/            # 未分类
+scenes/
+├── b3/                          # winged_scapula_b3 翼状肩胛
+│   ├── videos/                  # 7 个 .mov
+│   ├── audios/bgm/              # 场景专属 BGM（可空）
+│   └── images → ../../assets/overlays/   # 软链到公用背景
 │
-├── audios/<scene>/      # 用户录音旁白
-│   ├── a1/
-│   ├── a2/
-│   └── misc/
+├── b14/                         # 推力日
+│   ├── videos/                  # 7 个 .mov
+│   ├── audios/bgm/              # 场景专属音频
+│   └── images → ../../assets/overlays/   # 软链到公用背景
 │
-├── images/<scene>/      # 用户截图（小程序 UI / 拍摄参考）
-│   ├── winged_scapula_b3/   # 历史遗留
-│   └── misc/
+├── b15/                         # 腹肌
+│   ├── audios/bgm/lite_vibe_b15.mp3
+│   ├── videos/                  # 暂空（未来补）
+│   └── images → ../../assets/overlays/
 │
-├── photoshoots/         # 拍摄计划/参考资料
-│   └── README.md
+├── c01/                         # 未来：PM Fitness Log
+│   ├── videos/                  # 8 段口播（ta0-ta7）
+│   ├── audios/                  # 备用旁白
+│   └── images/                  # 小程序截图
 │
-└── exports/              # 用户本地中间产物（个人备份）
+└── _legacy/                     # 历史遗留（不影响渲染）
+    └── winged_scapula_b3/       # 旧结构的图（git untracked）
 ```
 
-**为什么用 `<scene>/` 子目录**：
-- 同一素材可能被多个 scene 复用 → 按 scene 命名
-- 删除某个 scene → 直接删除对应子目录
-- 不污染全局命名空间
+### 每个 scene 的标准结构
 
----
-
-## 🔁 迁移指南（旧 → 新）
-
-| 旧位置 | 新位置 | 入库？|
+| 子目录 | 用途 | 是否必有 |
 |---|---|---|
-| `resources/audios/bgm/*.mp3` | `resources/assets/bgm/*.mp3` | ✅ |
-| `resources/audios/sfx/*.mp3` | `resources/assets/sfx/*.mp3` | ✅ |
-| `resources/audios/*.m4a` | `resources/user/audios/<scene>/` | ❌ |
-| `resources/images/winged_scapula_b3_*.png` | `resources/user/images/winged_scapula_b3/` | ❌ |
-| `resources/images/B_pro_bg.JPG` | `resources/assets/overlays/bg_pro.jpg` | ✅ |
-| `resources/videos/*.mov` | `resources/user/videos/<scene>/` | ❌ |
+| `videos/` | 视频（动作演示、口播、B-roll）| ✅ |
+| `audios/bgm/` | 场景专属 BGM | ⚠️ 可选 |
+| `audios/` | 完整旁白录音（顶层）| ⚠️ 可选 |
+| `images/` | 小程序截图、参考图、临时元素 | ⚠️ 可选 |
+| `photoshoots/` | 拍摄计划 | ⚠️ 可选 |
+| `exports/` | 个人中间产物 | ⚠️ 可选 |
+
+**规则**：组件用 `video(name) = ${BASE}/videos/${name}` 模式，**所有 scene 必须有 videos/**（哪怕空的），否则组件会 404。其他目录按需。
+
+### 为什么用 `scenes/` 而不是 `user/`？
+
+- **`scenes/` 是描述性命名**（"这是场景素材"），`user/` 是访问控制描述（"这是用户私有的"）
+- 跟 `assets/`（公用资产）形成**对称**——`assets` + `scenes` 直观
+- 跟 `remotion/public/scenes/` 软链**同名**——心智模型一致
+
+### `images` 软链到 `assets/overlays/`
+
+每个 scene 都有 `images/` 子目录，软链到 `assets/overlays/`（公用背景）——这样：
+- 组件用 `scenes/<scene>/images/xxx.jpg` 一致访问
+- 不用每个 scene 复制背景图
+- 未来场景专属图片也可放这里，会覆盖软链
 
 ---
 
-## 📦 在 Remotion 中引用
+## 🔁 软链集成（remotion/public/）
 
-```tsx
-import { staticFile } from "remotion";
-
-// ✅ 公用素材（资产）
-<Audio src={staticFile("assets/bgm/c01_pm_fitness_log_a.mp3")} />
-<Audio src={staticFile("assets/sfx/whoosh.mp3")} />
-
-// ✅ 用户素材（local，git 忽略）
-<Video src={staticFile("user/videos/c01/ta0_hook.mp4")} />
-<Img src={staticFile("user/images/c01/miniapp_screenshot.png")} />
-<Audio src={staticFile("user/audios/c01/voiceover.m4a")} />
+```
+remotion/public/
+├── assets/      → resources/assets/
+│   ├── bgm/  (软链)
+│   ├── sfx/  (软链)
+│   └── overlays/  (软链)
+│
+└── scenes/      (自动维护)
+    ├── b3   → ../../../resources/scenes/b3
+    ├── b14  → ../../../resources/scenes/b14
+    └── b15  → ../../../resources/scenes/b15
 ```
 
-> **注意**：`staticFile()` 相对于 `remotion/public/`。
-> 实际部署时，需要把 `resources/user/` 软链或复制到 `remotion/public/user/`。
+**自动化**：`npm run dev` / `npm run build` 自动跑 `tools/sync-public-symlinks.js`，扫描 `resources/scenes/` 自动创建软链。
+
+---
+
+## 📦 添加新场景
+
+```bash
+# 1. 创建场景目录（标准结构）
+mkdir -p resources/scenes/c01/{videos,audios,images}
+ln -s ../../assets/overlays resources/scenes/c01/images
+
+# 2. 放素材
+cp ta0_hook.mp4 resources/scenes/c01/videos/
+
+# 3. 启动 Studio（自动 sync）或手动
+npm run dev
+# 自动创建: remotion/public/scenes/c01 → resources/scenes/c01
+
+# 4. 组件引用
+<Video src={staticFile("scenes/c01/videos/ta0_hook.mp4")} />
+```
 
 ---
 
 ## 🚫 .gitignore 规则
 
 ```gitignore
-# assets/ 入库
+# ===== 公用 · 入库 =====
 !resources/assets/
-!resources/assets/bgm/
-!resources/assets/sfx/
-!resources/assets/overlays/
-...
+!resources/assets/**/*
 
-# user/ 不入库
-resources/user/
-!resources/user/.gitkeep
-
-# 历史兼容
-resources/audios/*       # 旧位置不进
-resources/images/*      # 旧位置不进
-resources/videos/*       # 旧位置不进
+# ===== 场景 · 不入库 =====
+resources/scenes/
+!resources/scenes/.gitkeep
 ```
