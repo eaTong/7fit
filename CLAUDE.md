@@ -99,6 +99,16 @@ npm run lint                             # 类型检查
 
 ---
 
+## 网络代理
+
+遇到网络问题时设置本地代理：
+
+```bash
+export https_proxy=http://127.0.0.1:7897 http_proxy=http://127.0.0.1:7897 all_proxy=socks5://127.0.0.1:7897
+```
+
+---
+
 ## 视频制作流程
 
 ```

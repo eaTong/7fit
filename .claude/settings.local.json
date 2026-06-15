@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(npx remotion:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(* git *)",
+      "Bash(git fetch:*)",
+      "Bash(gh repo:*)",
+      "Bash(git ls-remote:*)",
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Bash(GIT_TRACE=1 git push:*)",
+      "Bash(git remote:*)",
+      "Bash(git config:*)",
+      "Bash(git rev-list:*)",
+      "Bash(ssh:*)"
     ]
   }
 }
