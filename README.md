@@ -278,6 +278,7 @@ export const RemotionRoot: React.FC = () => {
 ## 📌 当前状态
 
 - ✅ **12 份 rules 文件**全部就位（视频类型 → 发布与复盘全流程）
+- ✅ **双账号版本**已完成（支持主账号 + 子账号）
 - ✅ **第 1 个视频 B3 翼状肩胛** 已发布（[`resources/audios/winged_scapula_b3.mp3`](resources/audios/winged_scapula_b3.mp3)）
 - ✅ `rules/` 覆盖内容创作 → 拍摄 → 剪辑 → 成片 → 发布 → 复盘 全流程
 
