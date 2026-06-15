@@ -1,0 +1,17 @@
+[
+  { "id": "sub_001", "start": 0.0, "end": 1.0, "text": "健身计划没那么难——", "highlight": false },
+  { "id": "sub_002", "start": 1.0, "end": 1.6, "text": "第二天", "highlight": true },
+  { "id": "sub_003", "start": 1.6, "end": 2.5, "text": "你就拉。", "highlight": false },
+  { "id": "sub_004", "start": 2.5, "end": 6.0, "text": "向下拉——", "highlight": true },
+  { "id": "sub_005", "start": 6.0, "end": 9.5, "text": "把自己往上拉——", "highlight": true },
+  { "id": "sub_006", "start": 9.5, "end": 13.0, "text": "窄距下拉——", "highlight": true },
+  { "id": "sub_007", "start": 13.0, "end": 16.5, "text": "水平拉——", "highlight": true },
+  { "id": "sub_008", "start": 16.5, "end": 20.0, "text": "水平窄距拉——", "highlight": true },
+  { "id": "sub_009", "start": 20.0, "end": 23.5, "text": "分动拉——", "highlight": true },
+  { "id": "sub_010", "start": 23.5, "end": 25.5, "text": "拉的时候肩胛骨先沉下去。", "highlight": true },
+  { "id": "sub_011", "start": 25.5, "end": 26.5, "text": "从轻的重量开始。", "highlight": false },
+  { "id": "sub_012", "start": 26.5, "end": 27.5, "text": "加到 12 次力竭。", "highlight": true },
+  { "id": "sub_013", "start": 27.5, "end": 28.0, "text": "做 5 组。", "highlight": true },
+  { "id": "sub_014", "start": 28.0, "end": 33.0, "text": "拉力日计划，6 个动作 + 12 次 × 5 组。", "highlight": false },
+  { "id": "sub_015", "start": 33.0, "end": 35.0, "text": "评论区交作业。", "highlight": true }
+]

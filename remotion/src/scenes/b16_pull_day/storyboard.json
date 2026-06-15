@@ -1,0 +1,190 @@
+{
+  "id": "b16_pull_day",
+  "duration": 35.0,
+  "canvas": { "width": 1080, "height": 1920, "fps": 30 },
+  "bgm": { "type": "gym_beat", "volume_db": -8, "file": "gym_beat_b16.mp3" },
+  "transition_style": "alternating_power_cut",
+  "tts": true,
+  "shots": [
+    {
+      "shot_id": "hook_2x2_grid",
+      "data_shot_id": "hook_2x2_grid",
+      "start": 0.0,
+      "end": 2.5,
+      "duration": 2.5,
+      "content_type": "video_grid",
+      "content_source": "pull_latdown.mp4, pull_chinup.mp4, pull_seated_row.mp4, pull_straight_arm.mp4",
+      "voiceover": [
+        { "text": "健身计划没那么难——", "highlight": false },
+        { "text": "第二天", "highlight": true },
+        { "text": "你就拉。", "highlight": false }
+      ],
+      "description": "2×2 网格 4 格 stagger 入场 + 第 4 格 impulse 冲击 + LightLeak",
+      "transition_in": "zoom",
+      "transition_out": "wipe-h",
+      "grid_cells": [
+        { "position": "top-left", "source": "pull_latdown.mp4" },
+        { "position": "top-right", "source": "pull_chinup.mp4" },
+        { "position": "bottom-left", "source": "pull_seated_row.mp4" },
+        { "position": "bottom-right", "source": "pull_straight_arm.mp4" }
+      ],
+      "animation_overrides": {
+        "grid_stagger_frames": 5,
+        "grid_impulse_idx": 3,
+        "grid_impulse_scale": 1.15,
+        "light_leak": { "duration_frames": 12, "seed": 42, "hueShift": 200 }
+      }
+    },
+    {
+      "shot_id": "pull_latdown",
+      "data_shot_id": "pull_latdown",
+      "start": 2.5,
+      "end": 6.0,
+      "duration": 3.5,
+      "content_type": "video",
+      "content_source": "pull_latdown.mp4",
+      "voiceover": [{ "text": "向下拉", "highlight": true }],
+      "description": "高位下拉演示 + 动作名 chip + 1/6 进度环 + 肌群标签",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "高位下拉", "position": "top-left", "delay_frames": 5 },
+        "muscle_tag": { "muscle": "背阔肌宽幅", "position": "top-right", "delay_frames": 8 },
+        "key_point": { "text": "肩胛骨先沉", "position": "bottom-left", "delay_frames": 12 },
+        "progress_ring": { "current": 1, "total": 6, "position": "bottom-right", "delay_frames": 10 }
+      }
+    },
+    {
+      "shot_id": "pull_chinup",
+      "data_shot_id": "pull_chinup",
+      "start": 6.0,
+      "end": 9.5,
+      "duration": 3.5,
+      "content_type": "video",
+      "content_source": "pull_chinup.mp4",
+      "voiceover": [{ "text": "把自己往上拉", "highlight": true }],
+      "description": "引体向上演示 + 动作名 chip + 2/6 进度环 + 肌群标签",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "引体向上", "position": "top-left", "delay_frames": 5 },
+        "muscle_tag": { "muscle": "背阔肌长头", "position": "top-right", "delay_frames": 8 },
+        "key_point": { "text": "拉到底部停 1 秒", "position": "bottom-left", "delay_frames": 12 },
+        "progress_ring": { "current": 2, "total": 6, "position": "bottom-right", "delay_frames": 10 }
+      }
+    },
+    {
+      "shot_id": "pull_narrow_latdown",
+      "data_shot_id": "pull_narrow_latdown",
+      "start": 9.5,
+      "end": 13.0,
+      "duration": 3.5,
+      "content_type": "video",
+      "content_source": "pull_narrow_latdown.mp4",
+      "voiceover": [{ "text": "窄距下拉", "highlight": true }],
+      "description": "窄距下拉演示 + 动作名 chip + 3/6 进度环 + 肌群标签",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "窄距下拉", "position": "top-left", "delay_frames": 5 },
+        "muscle_tag": { "muscle": "下沿 + 大圆肌", "position": "top-right", "delay_frames": 8 },
+        "key_point": { "text": "肘部贴身", "position": "bottom-left", "delay_frames": 12 },
+        "progress_ring": { "current": 3, "total": 6, "position": "bottom-right", "delay_frames": 10 }
+      }
+    },
+    {
+      "shot_id": "pull_seated_row",
+      "data_shot_id": "pull_seated_row",
+      "start": 13.0,
+      "end": 16.5,
+      "duration": 3.5,
+      "content_type": "video",
+      "content_source": "pull_seated_row.mp4",
+      "voiceover": [{ "text": "水平拉", "highlight": true }],
+      "description": "坐姿划船演示 + 动作名 chip + 4/6 进度环 + 肌群标签",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "坐姿划船", "position": "top-left", "delay_frames": 5 },
+        "muscle_tag": { "muscle": "背阔肌厚度", "position": "top-right", "delay_frames": 8 },
+        "key_point": { "text": "拉到腹部停顿", "position": "bottom-left", "delay_frames": 12 },
+        "progress_ring": { "current": 4, "total": 6, "position": "bottom-right", "delay_frames": 10 }
+      }
+    },
+    {
+      "shot_id": "pull_tbar_row",
+      "data_shot_id": "pull_tbar_row",
+      "start": 16.5,
+      "end": 20.0,
+      "duration": 3.5,
+      "content_type": "video",
+      "content_source": "pull_tbar_row.mp4",
+      "voiceover": [{ "text": "水平窄距拉", "highlight": true }],
+      "description": "T杠划船演示 + 动作名 chip + 5/6 进度环 + 肌群标签",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "T 杠划船", "position": "top-left", "delay_frames": 5 },
+        "muscle_tag": { "muscle": "中下背厚度", "position": "top-right", "delay_frames": 8 },
+        "key_point": { "text": "窄握夹紧肘部", "position": "bottom-left", "delay_frames": 12 },
+        "progress_ring": { "current": 5, "total": 6, "position": "bottom-right", "delay_frames": 10 }
+      }
+    },
+    {
+      "shot_id": "pull_straight_arm",
+      "data_shot_id": "pull_straight_arm",
+      "start": 20.0,
+      "end": 23.5,
+      "duration": 3.5,
+      "content_type": "video",
+      "content_source": "pull_straight_arm.mp4",
+      "voiceover": [{ "text": "分动拉", "highlight": true }],
+      "description": "直臂下压演示 + 动作名 chip + 6/6 进度环 + 肌群标签",
+      "transition_in": "wipe-h",
+      "transition_out": "wipe-h",
+      "animation_overrides": {
+        "action_badge": { "name": "直臂下压", "position": "top-left", "delay_frames": 5 },
+        "muscle_tag": { "muscle": "背阔肌单独发力", "position": "top-right", "delay_frames": 8 },
+        "key_point": { "text": "手臂伸直只动肩", "position": "bottom-left", "delay_frames": 12 },
+        "progress_ring": { "current": 6, "total": 6, "position": "bottom-right", "delay_frames": 10 }
+      }
+    },
+    {
+      "shot_id": "key_points",
+      "data_shot_id": "key_points",
+      "start": 23.5,
+      "end": 28.0,
+      "duration": 4.5,
+      "content_type": "text_card",
+      "content_source": "4 个关键参数（4 短句）",
+      "voiceover": [
+        { "text": "拉的时候肩胛骨先沉下去。", "highlight": true },
+        { "text": "从轻的重量开始。", "highlight": false },
+        { "text": "加到 12 次力竭。", "highlight": true },
+        { "text": "做 5 组。", "highlight": true }
+      ],
+      "description": "文字卡 + 4 行 stagger 揭示 + 第 1/3/4 行 spring 弹入 + 2/3 行 stay + 数字 highlight",
+      "transition_in": "zoom",
+      "transition_out": "wipe-v"
+    },
+    {
+      "shot_id": "outro_cta",
+      "data_shot_id": "outro_cta",
+      "start": 28.0,
+      "end": 35.0,
+      "duration": 7.0,
+      "content_type": "text_card",
+      "content_source": "拉力日计划总结",
+      "voiceover": [
+        { "text": "拉力日计划，6 个动作 + 12 次 × 5 组。", "highlight": false },
+        { "text": "评论区交作业。", "highlight": true }
+      ],
+      "description": "文字卡 + 居中文字 + 第 2 行 spring 弹入 + LightLeak 收尾",
+      "transition_in": "wipe-v",
+      "transition_out": "fade",
+      "animation_overrides": {
+        "light_leak": { "duration_frames": 15, "seed": 88, "hueShift": 200 }
+      }
+    }
+  ]
+}
