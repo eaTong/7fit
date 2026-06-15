@@ -11,8 +11,8 @@
 | 场景 | 类型 | 状态 |
 |---|---|---|
 | [winged_scapula_b3](remotion/src/scenes/winged_scapula_b3) | B 类 · 健身知识 | ✅ 已发布 |
-| [b14_push_day](remotion/src/scenes/b14_push_day) | B 类 · 推胸日 | 🔄 开发中 |
-| [b15_abs](remotion/src/scenes/b15_abs) | B 类 · 腹肌日 | 🔄 开发中 |
+| [b14_push_day](remotion/src/scenes/b14_push_day) | B 类 · 推胸日 | ✅ 已发布 |
+| [b15_abs](remotion/src/scenes/b15_abs) | B 类 · 腹肌日 | 📅 6月17日发布 |
 | [a2_one_person_50_videos](remotion/src/scenes/a2_one_person_50_videos) | A 类 · 口播 | 🔄 开发中 |
 | [a2_transition_series](remotion/src/scenes/a2_transition_series) | A 类 · 转场系列 | 🔄 开发中 |
 | [talking_head_effect_demo](remotion/src/scenes/talking_head_effect_demo) | Demo · 口播特效 | 🔄 开发中 |
