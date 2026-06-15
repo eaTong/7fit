@@ -1,0 +1,166 @@
+{
+  "id": "b15_abs",
+  "language": "zh-CN",
+  "duration": 30,
+  "track_index": 0,
+  "version": "auto-generated",
+  "notes": "由 regenerate-subtitles.js 自动生成（基于 copy.md + 中速 3.4 字/秒）。音频实测时长可能与理论不同，需要录音后人工校准。",
+  "subtitles": [
+    {
+      "id": "sub_001",
+      "start": 0,
+      "end": 3,
+      "text": "腹肌没那么难——你就卷。",
+      "segments": [
+        {
+          "text": "腹肌没那么难——你就卷。",
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "sub_002",
+      "start": 3.5,
+      "end": 4.5875,
+      "text": "正着卷——",
+      "segments": [
+        {
+          "text": "正着卷——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_003",
+      "start": 5.0875,
+      "end": 6.175000000000001,
+      "text": "反向卷——",
+      "segments": [
+        {
+          "text": "反向卷——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_004",
+      "start": 6.675000000000001,
+      "end": 7.762500000000001,
+      "text": "两头卷——",
+      "segments": [
+        {
+          "text": "两头卷——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_005",
+      "start": 8.262500000000001,
+      "end": 9.350000000000001,
+      "text": "两侧卷——",
+      "segments": [
+        {
+          "text": "两侧卷——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_006",
+      "start": 9.850000000000001,
+      "end": 10.937500000000002,
+      "text": "负重卷——",
+      "segments": [
+        {
+          "text": "负重卷——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_007",
+      "start": 11.437500000000002,
+      "end": 13.250000000000002,
+      "text": "负重两侧卷——",
+      "segments": [
+        {
+          "text": "负重两侧卷——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_008",
+      "start": 13.750000000000002,
+      "end": 15.925,
+      "text": "腹肌要卷到底。",
+      "segments": [
+        {
+          "text": "腹肌要卷到底。",
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "sub_009",
+      "start": 16.425,
+      "end": 17.875,
+      "text": "不要借力。",
+      "segments": [
+        {
+          "text": "不要借力。",
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "sub_010",
+      "start": 18.375,
+      "end": 20.9125,
+      "text": "做到 15 次力竭。",
+      "segments": [
+        {
+          "text": "做到 15 次力竭。",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_011",
+      "start": 21.4125,
+      "end": 22.5,
+      "text": "做 4 组。",
+      "segments": [
+        {
+          "text": "做 4 组。",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_012",
+      "start": 23,
+      "end": 27,
+      "text": "腹肌日计划，6 个动作 + 15 次 × 4 组。",
+      "segments": [
+        {
+          "text": "腹肌日计划，6 个动作 + 15 次 × 4 组。",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_013",
+      "start": 27,
+      "end": 28.91,
+      "text": "评论区交作业。",
+      "segments": [
+        {
+          "text": "评论区交作业。",
+          "highlight": false
+        }
+      ]
+    }
+  ]
+}

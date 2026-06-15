@@ -133,7 +133,7 @@ function getAuxiliaryStyle(layout: LayoutState): React.CSSProperties {
       return { left: 470, top: 50, width: 980, height: 450, zIndex: z };
     case LayoutId.CenterDualAux:
     case LayoutId.OrbitingCenter:
-      // 这些布局内容复杂，在 workout_intro children 里直接渲染
+      // 这些布局内容复杂，在 talking_head_effect_demo children 里直接渲染
       return { display: "none" };
     case LayoutId.PipBottomRight:
     case LayoutId.PipBottomLeft:

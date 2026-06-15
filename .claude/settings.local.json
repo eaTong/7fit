@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx remotion:*)"
+      "Bash(npx remotion:*)",
+      "Bash(open:*)"
     ]
   }
 }

@@ -47,7 +47,7 @@
 | 文档同步 | 10 min | docs/SUMMARY.md |
 | 旁白 TTS | 5 min | mmx 文本转音频 |
 | BGM 选型 | 5 min | [[strategy.md]] 类型映射 |
-| mmx 识别字幕 | 5 min | 自动生成 subtitles.json |
+| 自动生成字幕 | 5 min | [regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js)（基于 copy.md，不再走 mmx ASR）|
 | 素材收集 | 30-60 min | [[accounts.md]] 资源隔离 |
 | 分镜 | 30 min | storyboard.md |
 | 实现 Scene 组件 | 60-90 min | script.md + animation.md |

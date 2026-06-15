@@ -217,7 +217,7 @@ Step 7: 确定辅助素材（contentType + contentSrc）
 Step 8: 编写 shotSequence，填入 Scene index.tsx
 ```
 
-### 6.2 示例： WorkoutIntro 4+1 Shot 设计
+### 6.2 示例： TalkingHeadEffectDemo 4+1 Shot 设计  # v3.5 改名（原 WorkoutIntro）
 
 ```ts
 const shotSequence: ShotEntry[] = [

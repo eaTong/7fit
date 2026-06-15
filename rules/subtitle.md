@@ -101,7 +101,7 @@ Scene 组件加载 + spring 弹跳入场
 | 字段 | 约束 |
 |---|---|
 | `id` | 全局唯一，`sub_001` 起步 |
-| `start` / `end` | 来自 mmx 转写，**手动校验 ≤ 4s + ≤ 24 字** |
+| `start` / `end` | 来自 [regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js)（v3.5+）：基于 copy.md + 中速 3.4 字/秒自动生成，**手动校验 ≤ 4s + ≤ 24 字** |
 | `text` | 无句末标点（参考 §7）|
 | `segments[].highlight` | 1 条字幕 ≤ 2 个 highlight segment |
 
@@ -286,7 +286,7 @@ const opacity = exitProgress;
 
 ## 8 · 拆条与合并策略
 
-> **核心问题**：mmx 转写出来的字幕常违反单条 ≤ 24 字 + ≤ 4s 的铁律。本节给出拆 / 合的判断标准。
+> **核心问题**（v3.5+ 改）：[regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) 自动切条时**默认按 ≤ 24 字 + ≤ 4s 切**（强制截断），但切条逻辑仍可能产生少量违规（特别是 ≥ 24 字的破折号 / 长句）。本节给出拆 / 合的判断标准。
 
 ### 8.1 长句拆条策略
 
@@ -465,7 +465,7 @@ const opacity = exitProgress;
 - ❌ 字号 < 28px（移动端不可读）
 - ❌ 全部 highlight（高亮无意义）
 - ❌ 用 CSS transition / animation 做入场（remotion 按帧渲染时不按帧推进）
-- ❌ 不校验时长直接用 mmx 输出（节奏可能与 [timing-sync.md](timing-sync.md) 锚点不符）
+- ❌ 不校验时长直接用 [regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) 输出（节奏可能与 [timing-sync.md](timing-sync.md) 锚点不符）
 - ❌ 录完旁白才发现节奏不对，回头改文案但不改字幕时间
 - ❌ **1 条字幕 3 个 highlight segment**（眼花）
 - ❌ **长句不拆直接用**（"36 字"违反 ≤ 24 字铁律）
@@ -481,7 +481,7 @@ const opacity = exitProgress;
 
 | 我想... | 看... |
 |---|---|
-| 跑 mmx 转写 | [§1 工作流](#1-工作流) |
+| 跑 [regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) | [§1 工作流](#1-工作流) |
 | 写 JSON | [§2 JSON 格式](#2-json-格式) |
 | 控制样式 | [§3 字幕样式硬约束](#3-字幕样式硬约束) |
 | 标 highlight | [§4 重点 segment 标记规则](#4-重点-segment-标记规则) |

@@ -1,211 +1,346 @@
 {
   "id": "a2_one_person_50_videos",
   "language": "zh-CN",
-  "duration": 99.1,
+  "duration": 134,
   "track_index": 0,
+  "version": "auto-generated",
+  "notes": "由 regenerate-subtitles.js 自动生成（基于 copy.md + 中速 3.4 字/秒）。音频实测时长可能与理论不同，需要录音后人工校准。",
   "subtitles": [
     {
       "id": "sub_001",
-      "start": 0.0,
-      "end": 2.6,
-      "text": "谁能想到——",
-      "segments": [{ "text": "谁能想到——", "highlight": true }]
+      "start": 0,
+      "end": 3,
+      "text": "谁能想到——产品经理下班后，也开始剪健身视频了。",
+      "segments": [
+        {
+          "text": "谁能想到——产品经理下班后，也开始剪健身视频了。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_002",
-      "start": 2.6,
-      "end": 6.7,
-      "text": "产品经理下班后，也开始剪健身视频了",
-      "segments": [{ "text": "产品经理下班后，也开始剪健身视频了", "highlight": false }]
+      "start": 3.5,
+      "end": 5.91,
+      "text": "我是个产品经理。",
+      "segments": [
+        {
+          "text": "我是个产品经理。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_003",
-      "start": 6.7,
-      "end": 10.8,
-      "text": "每周 6 天，9 点到 7 点，上班做产品；下班剪健身视频",
-      "segments": [{ "text": "每周 6 天，9 点到 7 点，上班做产品；下班剪健身视频", "highlight": false }]
+      "start": 5.91,
+      "end": 9.91,
+      "text": "上班朝九晚七——下班才是正事，剪视频。",
+      "segments": [
+        {
+          "text": "上班朝九晚七——下班才是正事，剪视频。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_004",
-      "start": 10.8,
-      "end": 14.2,
-      "text": "以前 1 条做 2 周，凌晨 2 点才收工",
-      "segments": [{ "text": "以前 1 条做 2 周，凌晨 2 点才收工", "highlight": true }]
+      "start": 9.91,
+      "end": 13.91,
+      "text": "健身 2 年，朋友看我练的还行，就问我怎么练的，",
+      "segments": [
+        {
+          "text": "健身 2 年，朋友看我练的还行，就问我怎么练的，",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_005",
-      "start": 14.2,
-      "end": 17.2,
-      "text": "我是一个产品经理",
-      "segments": [{ "text": "我是一个产品经理", "highlight": false }]
+      "start": 13.91,
+      "end": 17.91,
+      "text": "打字说不清，干脆剪视频讲清楚。",
+      "segments": [
+        {
+          "text": "打字说不清，干脆剪视频讲清楚。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_006",
-      "start": 17.2,
-      "end": 20.0,
-      "text": "每周 6 天，上班做产品",
-      "segments": [{ "text": "每周 6 天，上班做产品", "highlight": false }]
+      "start": 22.59142857142857,
+      "end": 26.59142857142857,
+      "text": "以前是文案、脚本、音乐、字幕、素材、剪辑、转场、调色、导出——",
+      "segments": [
+        {
+          "text": "以前是文案、脚本、音乐、字幕、素材、剪辑、转场、调色、导出——",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_007",
-      "start": 20.0,
-      "end": 22.5,
-      "text": "下班，才是正事——剪视频",
-      "segments": [{ "text": "下班，才是正事——剪视频", "highlight": false }]
+      "start": 26.59142857142857,
+      "end": 30.59142857142857,
+      "text": "1 条熬 1 周，每天凌晨 2 点才收工。",
+      "segments": [
+        {
+          "text": "1 条熬 1 周，每天凌晨 2 点才收工。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_008",
-      "start": 22.5,
-      "end": 25.7,
-      "text": "但以前剪 1 条，要熬到凌晨 2 点",
-      "segments": [{ "text": "但以前剪 1 条，要熬到凌晨 2 点", "highlight": true }]
+      "start": 30.59142857142857,
+      "end": 33.69,
+      "text": "第二天还要 9 点上班。",
+      "segments": [
+        {
+          "text": "第二天还要 9 点上班。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_009",
-      "start": 25.7,
-      "end": 28.7,
-      "text": "2 周，熬到凌晨",
-      "segments": [{ "text": "2 周，熬到凌晨", "highlight": true }]
+      "start": 38.239999999999995,
+      "end": 42.239999999999995,
+      "text": "后来我换了 3 个工具——专治\"白天上班、晚上创作\"的人。",
+      "segments": [
+        {
+          "text": "后来我换了 3 个工具——专治\"白天上班、晚上创作\"的人。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_010",
-      "start": 28.7,
-      "end": 31.4,
-      "text": "1 条视频，人力剪辑",
-      "segments": [{ "text": "1 条视频，人力剪辑", "highlight": true }]
+      "start": 42.239999999999995,
+      "end": 46.239999999999995,
+      "text": "Claude Code 实现 AI 工作流的串联——",
+      "segments": [
+        {
+          "text": "Claude Code 实现 AI 工作流的串联——",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_011",
-      "start": 31.4,
-      "end": 34.7,
-      "text": "每次收工都累得要死",
-      "segments": [{ "text": "每次收工都累得要死", "highlight": false }]
+      "start": 46.239999999999995,
+      "end": 49.68285714285714,
+      "text": "选题、内容规划、素材管理。",
+      "segments": [
+        {
+          "text": "选题、内容规划、素材管理。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_012",
-      "start": 34.7,
-      "end": 38.5,
-      "text": "后来我换了 3 个工具",
-      "segments": [{ "text": "后来我换了 3 个工具", "highlight": false }]
+      "start": 49.68285714285714,
+      "end": 53.68285714285714,
+      "text": "mmx 辅助出图，生成 BGM。",
+      "segments": [
+        {
+          "text": "mmx 辅助出图，生成 BGM。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_013",
-      "start": 38.5,
-      "end": 43.4,
-      "text": "Claude Code——写脚本、出创意、对镜头做决策",
-      "segments": [{ "text": "Claude Code——写脚本、出创意、对镜头做决策", "highlight": true }]
+      "start": 53.68285714285714,
+      "end": 57.68285714285714,
+      "text": "Remotion 定义视频框架——",
+      "segments": [
+        {
+          "text": "Remotion 定义视频框架——",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_014",
-      "start": 43.4,
-      "end": 47.5,
-      "text": "mmx——生成图片、BGM、做字幕",
-      "segments": [{ "text": "mmx——生成图片、BGM、做字幕", "highlight": true }]
+      "start": 57.68285714285714,
+      "end": 61.68285714285714,
+      "text": "自动做特效、转场、排版，剪辑成片。",
+      "segments": [
+        {
+          "text": "自动做特效、转场、排版，剪辑成片。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_015",
-      "start": 47.5,
-      "end": 51.2,
-      "text": "Remotion——按帧渲染，保证质量",
-      "segments": [{ "text": "Remotion——按帧渲染，保证质量", "highlight": true }]
+      "start": 69.72571428571428,
+      "end": 72.47999999999999,
+      "text": "AI 替我扛 9 成活。",
+      "segments": [
+        {
+          "text": "AI 替我扛 9 成活。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_016",
-      "start": 51.2,
-      "end": 54.5,
-      "text": "核心是这 3 个",
-      "segments": [{ "text": "核心是这 3 个", "highlight": false }]
+      "start": 72.47999999999999,
+      "end": 76.47999999999999,
+      "text": "我只判断方向——剩下的它自己跑完。",
+      "segments": [
+        {
+          "text": "我只判断方向——剩下的它自己跑完。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_017",
-      "start": 54.5,
-      "end": 57.5,
-      "text": "确定方向，睡觉就能剪完",
-      "segments": [{ "text": "确定方向，睡觉就能剪完", "highlight": true }]
+      "start": 76.47999999999999,
+      "end": 79.92285714285714,
+      "text": "再也不用熬夜剪视频了。",
+      "segments": [
+        {
+          "text": "再也不用熬夜剪视频了。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_018",
-      "start": 57.5,
-      "end": 61.2,
-      "text": "我只要确认方向对不对——剩下的全部自动跑",
-      "segments": [{ "text": "我只要确认方向对不对——剩下的全部自动跑", "highlight": false }]
+      "start": 79.92285714285714,
+      "end": 83.92285714285714,
+      "text": "健身、睡觉、剪视频，三件事不再打架。",
+      "segments": [
+        {
+          "text": "健身、睡觉、剪视频，三件事不再打架。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_019",
-      "start": 61.2,
-      "end": 64.7,
-      "text": "AI 帮我扛 90% 的苦活",
-      "segments": [{ "text": "AI 帮我扛 90% 的苦活", "highlight": true }]
+      "start": 83.92285714285714,
+      "end": 87.92285714285714,
+      "text": "产能翻的不是 2 倍，是 20 倍。",
+      "segments": [
+        {
+          "text": "产能翻的不是 2 倍，是 20 倍。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_020",
-      "start": 64.7,
-      "end": 67.7,
-      "text": "我只做判断，AI 做执行",
-      "segments": [{ "text": "我只做判断，AI 做执行", "highlight": true }]
+      "start": 87.92285714285714,
+      "end": 91.92285714285714,
+      "text": "之前熬到凌晨 2 点的日子，一去不复返。",
+      "segments": [
+        {
+          "text": "之前熬到凌晨 2 点的日子，一去不复返。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_021",
-      "start": 67.7,
-      "end": 71.5,
-      "text": "所以从来没有因为剪视频熬过夜",
-      "segments": [{ "text": "所以从来没有因为剪视频熬过夜", "highlight": false }]
+      "start": 95.70285714285714,
+      "end": 99.49,
+      "text": "7 点下班，健身顺便拍素材。",
+      "segments": [
+        {
+          "text": "7 点下班，健身顺便拍素材。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_022",
-      "start": 71.5,
-      "end": 76.2,
-      "text": "以前：2 周做 1 条，凌晨 2 点",
-      "segments": [{ "text": "以前：2 周做 1 条，凌晨 2 点", "highlight": true }]
+      "start": 99.49,
+      "end": 103.27714285714285,
+      "text": "回家把素材交给 AI，睡觉——",
+      "segments": [
+        {
+          "text": "回家把素材交给 AI，睡觉——",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_023",
-      "start": 76.2,
-      "end": 80.5,
-      "text": "现在：每天 1 条，7 点前收工",
-      "segments": [{ "text": "现在：每天 1 条，7 点前收工", "highlight": true }]
+      "start": 103.27714285714285,
+      "end": 106.72,
+      "text": "第二天起来，视频剪好了。",
+      "segments": [
+        {
+          "text": "第二天起来，视频剪好了。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_024",
-      "start": 80.5,
-      "end": 84.5,
-      "text": "产能提升——不是靠人，是靠工作流",
-      "segments": [{ "text": "产能提升——不是靠人，是靠工作流", "highlight": true }]
+      "start": 106.72,
+      "end": 110.16285714285715,
+      "text": "睁开眼，成片就在电脑里。",
+      "segments": [
+        {
+          "text": "睁开眼，成片就在电脑里。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_025",
-      "start": 84.5,
-      "end": 88.5,
-      "text": "身边朋友都觉得我开挂了",
-      "segments": [{ "text": "身边朋友都觉得我开挂了", "highlight": false }]
+      "start": 110.16285714285715,
+      "end": 114.16285714285715,
+      "text": "包括现在你看到的视频，也是用这套 AI 工作流生成的。",
+      "segments": [
+        {
+          "text": "包括现在你看到的视频，也是用这套 AI 工作流生成的。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_026",
-      "start": 88.5,
-      "end": 92.5,
-      "text": "其实——我只是把苦活外包给了 AI",
-      "segments": [{ "text": "其实——我只是把苦活外包给了 AI", "highlight": true }]
+      "start": 118.58142857142857,
+      "end": 122.58142857142857,
+      "text": "朋友都说我开挂了——其实我只是把剪视频变成了流水线。",
+      "segments": [
+        {
+          "text": "朋友都说我开挂了——其实我只是把剪视频变成了流水线。",
+          "highlight": false
+        }
+      ]
     },
     {
       "id": "sub_027",
-      "start": 92.5,
-      "end": 97.5,
-      "text": "不是人多才能做内容",
-      "segments": [{ "text": "不是人多才能做内容", "highlight": true }]
+      "start": 127,
+      "end": 131,
+      "text": "AI 时代，所有人的工作流都值得被重构一遍。",
+      "segments": [
+        {
+          "text": "AI 时代，所有人的工作流都值得被重构一遍。",
+          "highlight": true
+        }
+      ]
     },
     {
       "id": "sub_028",
-      "start": 97.5,
-      "end": 102.5,
-      "text": "是你的工作流——有没有被 AI 放大",
-      "segments": [{ "text": "是你的工作流——有没有被 AI 放大", "highlight": true }]
-    },
-    {
-      "id": "sub_029",
-      "start": 102.5,
-      "end": 107.5,
-      "text": "你平时做什么内容？评论区说说——看能不能用 AI 提效",
-      "segments": [{ "text": "你平时做什么内容？评论区说说——看能不能用 AI 提效", "highlight": false }]
+      "start": 131,
+      "end": 133.41,
+      "text": "评论区聊聊你的工作吧。",
+      "segments": [
+        {
+          "text": "评论区聊聊你的工作吧。",
+          "highlight": false
+        }
+      ]
     }
   ]
 }

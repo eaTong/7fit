@@ -315,8 +315,8 @@ export const MyScene: React.FC = () => (
 |---|---|---|
 | 30s | 4 Mbps | ~15 MB |
 | 60s | 5 Mbps | ~38 MB |
-| 90s | 6 Mbps | ~68 MB |
-| 120s | 7 Mbps | ~105 MB |
+| 90s（B/C 拆条线 / A 类起点）| 6 Mbps | ~68 MB |
+| 120s（A 类常见）| 7 Mbps | ~105 MB |
 
 > 小红书 / 抖音限制 ≤ 200 MB，控制在 100 MB 以内最优。
 
@@ -347,7 +347,8 @@ export const MyScene: React.FC = () => (
 
 ### 10.3 分段渲染（长视频应急）
 
-> 视频 > 90s 容易超时，分段渲染后用 ffmpeg 拼接。
+> B/C 类视频 > 90s 容易超时，分段渲染后用 ffmpeg 拼接。
+> **A 类不适用**（A 类 ≥ 90s 是正常时长，**不分段不拼接**）。
 
 ```bash
 # 1. 分段渲染

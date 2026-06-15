@@ -9,7 +9,8 @@ import type { ShotEntry } from "../../layout-state-machine/layouts/types";
 import { LayoutId } from "../../layout-state-machine/layouts/types";
 
 // ============================================================
-// 13-Shot A类布局展示（每种布局各一次，每镜 75 帧/2.5s @ 30fps）
+// 13-Shot 口播特效演示（v3.4 升级 / 原 workout_intro 不再是 A 类）
+// 每种布局各一次，每镜 75 帧/2.5s @ 30fps；时长 32.5s
 // 叙事弧：全屏 → 左文右口播 → PIP右下 → PIP左下 → 网格 → 50%等分
 //        → 右下角色口播 → 左下角色口播 → 顶部居中 → 左上角叠加
 //        → 口播背景层 → 居中双侧 → 环形环绕
@@ -151,7 +152,7 @@ const OrbitElements: React.FC = () => (
 );
 
 // ============================================================
-export const WorkoutIntro: React.FC = () => {
+export const TalkingHeadEffectDemo: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
       <LayoutTransitionEngine

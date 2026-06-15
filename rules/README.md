@@ -18,7 +18,7 @@
 | 1 | [video-types.md](video-types.md) | 3 类视频（A 个人人设 / B 健身知识 / C 七练介绍）判定 + BGM 配对 | 用户说"做 X 视频"后**第一件事** |
 | 2 | [docs-sync.md](docs-sync.md) | 增量同步 `fit_lc` + `7fit_opc` 到 `docs/` + SUMMARY.md | 写文案稿前强制 |
 | 3 | [copy.md](copy.md) | 文案稿撰写规范（口语化、3 秒钩子、违禁词自检、5 维评分卡）| 写 `docs/copy/<主题>.md` 时 |
-| 4 | [timing-sync.md](timing-sync.md) | ⏰ 统一语速控制（主体 50s 锚点 / 中速 3.4 字/秒 / 4 档速度） | **改任何时间字段必走** |
+| 4 | [timing-sync.md](timing-sync.md) | ⏰ 统一语速控制（B/C 主体 50s 锚点 / A 类 ≥ 90s 全文 / 中速 3.4 字/秒 / 4 档速度） | **改任何时间字段必走** |
 | 5 | [strategy.md](strategy.md) | 项目级发布策略（双账号矩阵、节奏、禁区）| 立项前 / 调整策略时 |
 | 6 | [backlog.md](backlog.md) | 选题池（按 A/B/C 类型分组 + 状态流转）| 每周一选题会议 |
 | 7 | [voice-anchor.md](voice-anchor.md) | 声音锚定（语气词/停顿/节奏控制）| 录音前 |
@@ -86,13 +86,13 @@
 ## 核心硬规则速查（10 条铁律）
 
 1. **视频类型开工第一步**——读 [video-types.md](video-types.md) 判断 A/B/C，否则不写脚本
-2. **⏰ 改任何时间字段必走** [timing-sync.md](timing-sync.md)——主体 50s 锚点 / 中速 3.4 字/秒 / 10 文件同步清单
+2. **⏰ 改任何时间字段必走** [timing-sync.md](timing-sync.md)——B/C 主体 50s 锚点 / A 类 ≥ 90s 全文 / 中速 3.4 字/秒 / 10 文件同步清单
 3. **段间停顿 0.5-1s**——让观众消化前段内容
 4. **场景的转入 + 转出动效必标注**（每个 shot 边界）
 5. **BGM 放最后**（总时长确定后才能选 BGM）
 6. **渲染触发**：`npm run dev` 预览；`npm run render` 必须用户显式指令
 7. **每个视频一个独立 scene 目录**——含 index.tsx + storyboard + subtitles + components/
-8. **mmx 是默认 AI 工具**——所有图片 / BGM / 字幕识别需求默认调 mmx CLI
+8. **mmx 是默认 AI 工具**——所有图片 / BGM 需求默认调 mmx CLI（**字幕**由 `regenerate-subtitles.js` 基于 copy.md 自动生成，不走 mmx ASR）
 9. **事实可追溯**——提到的功能/价格/数字都必须在 `docs/` 找到原文
 10. **用户确认门**——文案必须用户说"文案 OK"才能进 Phase 2
 

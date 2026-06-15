@@ -182,14 +182,14 @@ rm remotion/src/Composition.tsx
 ```tsx
 // remotion/src/Root.tsx
 import { Composition } from "remotion";
-import { WorkoutIntro } from "./scenes/workout_intro";  // 每个视频一行
+import { TalkingHeadEffectDemo } from "./scenes/talking_head_effect_demo";  // 每个视频一行
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="workout_intro"          // 唯一 ID，用于 render 命令
-        component={WorkoutIntro}
+        id="talking-head-effect-demo"          // 唯一 ID，用于 render 命令
+        component={TalkingHeadEffectDemo}
         durationInFrames={450}      // 15s @ 30fps = 450 帧（用 getAudioDuration 算真实时长）
         fps={30}
         width={1080}                // ← 默认竖屏 1080×1920

@@ -3,7 +3,7 @@ import { Composition } from "remotion";
 import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
 import { B14PushDay } from "./scenes/b14_push_day";
 import { B15Abs } from "./scenes/b15_abs";
-import { WorkoutIntro } from "./scenes/workout_intro";
+import { TalkingHeadEffectDemo } from "./scenes/talking_head_effect_demo";
 import { A2OnePerson50Videos } from "./scenes/a2_one_person_50_videos";
 import { A2TransitionSeries } from "./scenes/a2_transition_series";
 
@@ -55,10 +55,12 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      {/* === A 类：1920×1080 横屏（16:9）=== */}
+      {/* === 特效演示（D 类，口播特效演示）：1920×1080 横屏（16:9）===
+          v3.4 升级：原 workout_intro（被误归为 A 类），实际是布局/特效演示视频，
+          不符合 A 类 ≥ 90s 时长要求。重命名为 talking-head-effect-demo 并归为 D 类。 */}
       <Composition
-        id="workout-intro"
-        component={WorkoutIntro}
+        id="talking-head-effect-demo"
+        component={TalkingHeadEffectDemo}
         durationInFrames={975}  // 32.5s × 30fps（13镜×2.5s/镜）
         fps={30}
         width={1920}
@@ -68,7 +70,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="a2-one-person-50-videos"
         component={A2OnePerson50Videos}
-        durationInFrames={2974}  // 10镜 × ~99s（字幕全内容），末帧=2974
+        durationInFrames={4020}  // v4.1.1 拉长：用户录音 131.24s + 3s fade out = 134s × 30fps = 4020
         fps={30}
         width={1920}
         height={1080}

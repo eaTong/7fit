@@ -1,0 +1,154 @@
+{
+  "id": "b14_push_day",
+  "language": "zh-CN",
+  "duration": 32,
+  "track_index": 0,
+  "version": "auto-generated",
+  "notes": "由 regenerate-subtitles.js 自动生成（基于 copy.md + 中速 3.4 字/秒）。音频实测时长可能与理论不同，需要录音后人工校准。",
+  "subtitles": [
+    {
+      "id": "sub_001",
+      "start": 0,
+      "end": 3,
+      "text": "健身计划没那么难——第一天你就推。",
+      "segments": [
+        {
+          "text": "健身计划没那么难——第一天你就推。",
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "sub_002",
+      "start": 3.5,
+      "end": 4.775,
+      "text": "躺着推——",
+      "segments": [
+        {
+          "text": "躺着推——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_003",
+      "start": 5.275,
+      "end": 6.550000000000001,
+      "text": "靠着推——",
+      "segments": [
+        {
+          "text": "靠着推——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_004",
+      "start": 7.050000000000001,
+      "end": 8.325000000000001,
+      "text": "向上推——",
+      "segments": [
+        {
+          "text": "向上推——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_005",
+      "start": 8.825000000000001,
+      "end": 10.100000000000001,
+      "text": "向前推——",
+      "segments": [
+        {
+          "text": "向前推——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_006",
+      "start": 10.600000000000001,
+      "end": 11.875000000000002,
+      "text": "反着推——",
+      "segments": [
+        {
+          "text": "反着推——",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_007",
+      "start": 12.375000000000002,
+      "end": 15.775000000000002,
+      "text": "推的时候胸挺起来。",
+      "segments": [
+        {
+          "text": "推的时候胸挺起来。",
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "sub_008",
+      "start": 16.275000000000002,
+      "end": 19.25,
+      "text": "从轻的重量开始。",
+      "segments": [
+        {
+          "text": "从轻的重量开始。",
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "sub_009",
+      "start": 19.75,
+      "end": 22.725,
+      "text": "加到 12 次力竭。",
+      "segments": [
+        {
+          "text": "加到 12 次力竭。",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_010",
+      "start": 23.225,
+      "end": 24.5,
+      "text": "做 5 组。",
+      "segments": [
+        {
+          "text": "做 5 组。",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_011",
+      "start": 25,
+      "end": 29,
+      "text": "推力日计划，5 个动作 + 12 次 × 5 组。",
+      "segments": [
+        {
+          "text": "推力日计划，5 个动作 + 12 次 × 5 组。",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "id": "sub_012",
+      "start": 29,
+      "end": 30.91,
+      "text": "评论区交作业。",
+      "segments": [
+        {
+          "text": "评论区交作业。",
+          "highlight": false
+        }
+      ]
+    }
+  ]
+}

@@ -543,7 +543,7 @@ export const LayoutTransitionEngine: React.FC<LayoutTransitionEngineProps> = ({
 - [ ] **Step 2: 创建 Scene 入口示例**
 
 ```tsx
-// remotion/src/scenes/workout_intro/index.tsx
+// remotion/src/scenes/talking_head_effect_demo/index.tsx  // v3.5 改名（原 workout_intro → talking_head_effect_demo）
 
 import { AbsoluteFill } from "remotion";
 import { LayoutTransitionEngine } from "../LayoutTransitionEngine";
@@ -559,7 +559,7 @@ const shotSequence: ShotEntry[] = [
   { shotId: "s4", layoutId: "grid_2x2",                 transitionType: "fade",      startFrame: 360,  endFrame: 540 },
 ];
 
-export const WorkoutIntro: React.FC = () => {
+export const TalkingHeadEffectDemo: React.FC = () => {  // v3.5 改名（原 WorkoutIntro → TalkingHeadEffectDemo）
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
       <LayoutTransitionEngine
@@ -583,7 +583,7 @@ export const WorkoutIntro: React.FC = () => {
 - [ ] **Step 3: 提交**
 
 ```bash
-git add remotion/src/scenes/LayoutTransitionEngine.tsx remotion/src/scenes/workout_intro/index.tsx
+git add remotion/src/scenes/LayoutTransitionEngine.tsx remotion/src/scenes/talking_head_effect_demo/index.tsx  # v3.5 改名
 git commit -m "feat: integrate Scene entry with LayoutTransitionEngine"
 ```
 
@@ -619,7 +619,7 @@ registerLayout({
 - [ ] **Step 4: 提交**
 
 ```bash
-git add remotion/src/scenes/layouts/registry.ts remotion/src/scenes/workout_intro/index.tsx
+git add remotion/src/scenes/layouts/registry.ts remotion/src/scenes/talking_head_effect_demo/index.tsx  # v3.5 改名
 git commit -m "feat: verify extendability — add left_text_right_talking_50pct layout without core changes"
 ```
 

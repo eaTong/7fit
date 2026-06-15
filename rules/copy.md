@@ -185,14 +185,15 @@
 
 ### 5.1 4 档速度档位（语速控制）
 
-| 档位 | 字/秒 | 主体 50s 配套 | 适用场景 |
-|---|---|---|---|
-| 🐢 慢 | 2.5 | 68s | 知识密度高（专业术语多）/ 老年群体 / 小红书泛流量（让人停下来听）|
-| 🚶 **中** ⭐ | **3.4** | **50s** | **默认档**（健身类知识 / 抖音 + 小红书双平台）|
-| 🏃 快 | 4.0 | 42s | 动作演示型 / 节奏紧凑型（B 类动作密集时）|
-| ⚡ 原速 | 4.8 | 35s | 快剪 / 跳镜 / 4 镜以内的高密度视频 |
+| 档位 | 字/秒 | B/C 主体 | A 类主体（≥）| 适用场景 |
+|---|---|---|---|---|
+| 🐢 慢 | 2.5 | 68s | 108s | 知识密度高（专业术语多）/ 老年群体 / 小红书泛流量（让人停下来听）|
+| 🚶 **中** ⭐ | **3.4** | **50s** | **80s** | **默认档**（健身类知识 / 抖音 + 小红书双平台）|
+| 🏃 快 | 4.0 | 42s | 68s | 动作演示型 / 节奏紧凑型（B 类动作密集时）|
+| ⚡ 原速 | 4.8 | 35s | 56s | 快剪 / 跳镜 / 4 镜以内的高密度视频 |
 
 > **改档位的同步清单**：见 [timing-sync.md](timing-sync.md#改任何时间字段的同步清单必走否则下游会错)（10 文件必改）。
+> **A 类专属**：A 类 v3.4 全文 ≥ 90s 锚点（主体 ≥ 80s），详见 [video-types.md §6](video-types.md#6--3-类视频的全套差异对照表核心新增) + [timing-sync.md §1.2](timing-sync.md#12-a-类全文--90-秒无上限)。
 
 ### 5.2 句长分布（铁律）
 
@@ -557,7 +558,7 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 > 视频类型：A / B / C
 > 目标平台：小红书 / 抖音
 > 北极星引用：[来源: opc-niche.md §北极星]
-> 时长锚点：主体 50s（B/C 类）/ ≥ 60s 无上限（A 类，按 timing-sync.md）
+> 时长锚点：主体 50s（B/C 类）/ 全文 ≥ 90s 无上限（A 类 v3.4，按 timing-sync.md §1.2）
 > 钩子类型：<反常识 / 痛点共鸣 / 数字冲击 / 身份代入 / 悬念提问>
 > BGM 选型：<Cyber Pulse / Power Build / Quiet Think / Hop Pulse>
 > 5 维评分卡（写稿后填）：
@@ -688,8 +689,8 @@ sentenceDuration = speechChars / speed + dashCount * 0.5
 - **录音提示**：
   - 用 [`tools/recording-teleprompter.html`](../../tools/recording-teleprompter.html) 提词器试读
   - 4 档速度：🐢 慢 2.5 / 🚶 中 3.4 / 🏃 快 4.0 / ⚡ 原速 4.8
-  - 推荐中速（3.4 字/秒 = 主体 50s）
-- **mmx 转写**：录音后直传 mmx，输出 `subtitles.json`（m4a 无需转码）—— 详见 [tools/mmx.md §5](../../tools/mmx.md#5--语音识别mmx-speech-recognize)
+  - 推荐中速（3.4 字/秒 = B/C 主体 50s / A 类主体 ≥ 80s）
+- **mmx 转写**（v3.5 弃用）：字幕**不再**走 mmx ASR，改由 [tools/regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) 基于 copy.md 自动生成（理论时间戳，3.4 字/秒中速）。录音 m4a 仅作为时长参照。
 
 ---
 

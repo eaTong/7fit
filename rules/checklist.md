@@ -64,8 +64,8 @@
 | B.1 | `subtitles.json` 格式正确 | JSON.parse 不报错 + 字段完整 | [subtitle.md §2](subtitle.md#2-json-格式) |
 | B.2 | 字段完整 | `id` / `start` / `end` / `text` / `segments[]` 全部存在 | 同上 |
 | B.3 | highlight 标记 | 数字/动作/品牌句/CTA 已打 `highlight: true` | [subtitle.md §4](subtitle.md#4--重点-segment-标记规则) |
-| B.4 | 时间线连续 | `sub[i].start = sub[i-1].end`（±0.05s 误差）| 重新跑 mmx 转写 |
-| B.5 | 时长匹配 | 全文时长 > 60s（[timing-sync.md](timing-sync.md) 锚点）| 调整段数 / 收尾 |
+| B.4 | 时间线连续 | `sub[i].start = sub[i-1].end`（±0.05s 误差）| 重新跑 [regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) |
+| B.5 | 时长匹配 | B/C 类 > 60s / A 类 ≥ 90s（[timing-sync.md §1.1/§1.2](timing-sync.md) 锚点）| 调整段数 / 收尾 |
 | B.6 | 单条 ≤ 24 字 | 每条 `text` 字符数 ≤ 24 | [subtitle.md §8 拆条与合并策略](subtitle.md#8-拆条与合并策略) |
 | B.7 | 单条 ≤ 4s | 每条 `end - start` ≤ 4 | 同上 |
 | B.8 | 不带句末标点 | `text` 不含 `。！？，；：` 等 | 手动清理 |
@@ -91,7 +91,7 @@
 | D.5 | 训练动作 = 用户自拍 | 训练视频不是 mmx 生成 | [assets.md §5.1](assets.md#51-用户自拍-vs-mmx-生成-决策表) |
 | D.6 | 不含可代码实现内容 | assets.md 不含数字图表 / 简单色块 | [assets.md §1.3](assets.md#13-不进-assetsmd) |
 | D.7 | 混合类型分节 | A→B / B→C 等分"主体 + 辅助"两节 | [video-types.md §混合类型](video-types.md#混合类型进阶) |
-| **D.8** | **A 类主口播视频 P0**（v3 2026-06-10）| **A 类必须有 001_talking_head.webm，≥ 60s，不剪断** | [assets.md §8.1.1](assets.md#811-关键技术约束a-类-v3) |
+| **D.8** | **A 类主口播视频 P0**（v3 2026-06-10，v3.4 升级 ≥ 90s）| **A 类必须有 001_talking_head.webm，≥ 90s，不剪断** | [assets.md §8.1.1](assets.md#811-关键技术约束a-类-v3) |
 | **D.9** | **A 类圆头像用同源视频**（v3 2026-06-10）| 圆头像 = 主口播视频实时抽帧（**不用第二张图**）| [video-types.md §3.2.2](video-types.md#322-圆头像硬约束) |
 
 ### E · 分镜（10 项 · v3 2026-06-10 增 E.9/E.10 A 类）
@@ -184,9 +184,9 @@
 
 | # | 失败项 | 严重度 | 修复建议 |
 |---|---|---|---|
-| B.5 | 全文时长 45s（要求 > 60s）| 🔴 阻塞 | 增加段数 / 延长收尾 |
+| B.5 | 全文时长 45s（要求 B/C > 60s / A ≥ 90s）| 🔴 阻塞 | 增加段数 / 延长收尾 |
 | D.1 | §缺失 5 项 P0 未完成 | 🔴 阻塞 | 用户自拍 + mmx 生成 |
-| D.8 | A 类缺 001_talking_head.mp4 | 🔴 阻塞 | 用户补录 ≥ 60s 完整口播 |
+| D.8 | A 类缺 001_talking_head.mp4 | 🔴 阻塞 | 用户补录 ≥ 90s 完整口播（v3.4 升级）|
 | D.9 | 圆头像用了独立图片而非同源视频 | 🔴 阻塞 | 删图，改用视频抽帧 |
 | E.6 | 视频 shot 020 时长 3.2s（要求 > 5s）| 🟡 警告 | 合并相邻 shot |
 | E.10 | A 类圆头像/全屏切换仅 0.2s | 🟡 警告 | 延长到 0.3-0.5s power2.inOut |
@@ -319,6 +319,7 @@
 ### v3（2026-06-10）— 同步 CLAUDE.md v3 A 类硬约束
 
 - **新增 D.8** A 类主口播视频 P0：A 类必须有 `001_talking_head.mp4`，≥ 60s，不剪断
+- **v3.4 升级**（2026-06-15）：A 类时长下限 60s → 90s，**D.8 同步** 主口播视频 ≥ 90s，**B.5 同步** A 类 ≥ 90s
 - **新增 D.9** A 类圆头像同源约束：圆头像必须用主口播视频实时抽帧，**严禁用第二张图**
 - **新增 E.9** A 类 `layout_state` 字段必填：每 shot 标 `talking_head` 或 `visual_support`
 - **新增 E.10** A 类双态切换 ≥ 0.3s：圆头像/全屏人脸切换推荐 0.5s `power2.inOut`

@@ -21,6 +21,8 @@
 **总时长是 Phase 6 之前才确定的**（= 钩子 + 主体 + 转场 + 收尾 + 5s buffer）。提前选 BGM 长度会错。
 
 > 错误示范：先选了一个 60s 的 BGM，结果视频改到 75s，末尾 15s 没音乐。
+>
+> **A 类时长 ≥ 90s**（v3.4 升级）：A 类 BGM 至少 ≥ 全文 + 3s。例：A 类 110s → BGM ≥ 113s。
 
 ### 1.1 BGM 长度公式
 
@@ -148,7 +150,7 @@ tl.to(bgmEl, { volume: 0.4, duration: 0.5, ease: 'power2.in' }, 'voiceover-end')
 ### 5.2 Ducking 自动化 SOP
 
 ```
-1. 解析旁白时间表（mmx 转写结果）
+1. 解析旁白时间表（**v3.5 改**：[regenerate-subtitles.js](../../remotion/tools/regenerate-subtitles.js) 生成的 `subtitles.json` —— 理论时间戳，3.4 字/秒中速；不再走 mmx ASR）
 2. 为每条旁白创建 duck 事件
 3. 旁白前 0.3s 降 → 旁白结束 + 0.3s 升
 4. 段间停顿（无旁白）保持 -8 dB
@@ -170,7 +172,8 @@ tl.to(bgmEl, { volume: 0.4, duration: 0.5, ease: 'power2.in' }, 'voiceover-end')
 |---|---|
 | 视频 < 30s | fade in 0.8s + fade out 1.5s（缩短）|
 | 视频 30-60s | fade in 1.5s + fade out 2.5s（默认）|
-| 视频 > 60s | fade in 2s + fade out 3s（延长）|
+| 视频 60-90s | fade in 1.5s + fade out 3s（默认+延长）|
+| 视频 > 90s（A 类常见）| fade in 2s + fade out 3s（延长）|
 | 段间停顿 | 不影响 BGM（继续播放）|
 
 ---
