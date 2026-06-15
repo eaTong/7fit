@@ -42,7 +42,7 @@ import type { BVariantTheme } from "../../themes/b-variant-theme";
 const FPS = 30;
 const TRANSITION_FRAMES = 9;
 
-const BASE = "b14_push_day";
+const BASE = "scenes/b14";
 
 const video = (name: string) => `${BASE}/videos/${name}`;
 const audio = (name: string) => `${BASE}/audios/${name}`;

@@ -51,7 +51,7 @@ const TRANSITION_FRAMES = 9; // 0.3s @ 30fps（shot 边界的转入/转出动效
 const COMPOSITION_FRAMES = 2232; // 74.4s × 30fps（storyboard 总时长）
 
 /* === 资源根路径（必须在 public/winged_scapula_b3/ 下）=== */
-const BASE = "winged_scapula_b3";
+const BASE = "scenes/b3";
 
 /* === 旁白时长（实测 m4a = 68.07s）=== */
 const VOICEOVER_END_FRAME = Math.round(68.07 * FPS);
