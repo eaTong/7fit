@@ -26,21 +26,23 @@ out/
 !remotion/public/**/*.mp4
 
 # ───────── resources/ 资源管理 ─────────
-# 核心规则：assets/（公用）入库，user/（用户专属）不入库
+# 核心规则：assets/（公用）入库，scenes/（场景专属）不入库
 # 详见 resources/README.md
 
 # ===== 公用素材 · 入库 =====
 # 默认全量忽略，再用 ! 逐个/逐目录入库
-# （目前用白名单方式，简洁安全）
 !resources/assets/
 !resources/assets/**/*
 
-# ===== 用户素材 · 不入库 =====
-# 全量忽略 user/ 整个目录
+# ===== 场景素材 · 不入库 =====
+# 全量忽略 scenes/ 整个目录（用户本地视频/录音/截图）
+resources/scenes/
+!resources/scenes/.gitkeep
+
+# ===== 历史位置兼容（已废弃，保留规则防止误入库）=====
+# user/ 旧名 → scenes/ 新名
 resources/user/
 !resources/user/.gitkeep
-
-# ===== 历史位置兼容（已迁移，新位置在 assets/ 和 user/）=====
 # 旧 audios/ / images/ / videos/ 不再使用
 resources/audios/
 resources/images/
