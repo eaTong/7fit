@@ -2,6 +2,7 @@ import "./index.css";
 import { Composition } from "remotion";
 import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
 import { B14PushDay } from "./scenes/b14_push_day";
+import { B15Abs } from "./scenes/b15_abs";
 import { WorkoutIntro } from "./scenes/workout_intro";
 import { A2OnePerson50Videos } from "./scenes/a2_one_person_50_videos";
 import { A2TransitionSeries } from "./scenes/a2_transition_series";
@@ -36,7 +37,20 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{
-          bgmVolume: 0.25,
+          bgmVolume: 0.25,        // -12dB（对齐 winged_scapula_b3，防盖人声）
+          enableFadeIn: true,
+        }}
+      />
+
+      <Composition
+        id="b15-abs"
+        component={B15Abs}
+        durationInFrames={900}  // 30s × 30fps（9镜：钩子+6动作+要点+outro）
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          bgmVolume: 0.25,        // -12dB（对齐 winged_scapula_b3，防盖人声）
           enableFadeIn: true,
         }}
       />

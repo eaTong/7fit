@@ -127,6 +127,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
     return (
       <AbsoluteFill>
         <OffthreadVideo
+          muted
           src={staticFile(video(shot.content_source))}
           playbackRate={playbackRate}
           style={{
@@ -153,6 +154,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
         <AbsoluteFill>
           {shot.content_source && (
             <OffthreadVideo
+              muted
               src={staticFile(video(shot.content_source))}
               playbackRate={
                 VIDEO_DURATIONS[shot.content_source]

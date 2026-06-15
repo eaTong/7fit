@@ -68,7 +68,7 @@ export const PictureInPicture: React.FC<PictureInPictureProps> = ({
       {mainSrc && (
         <div style={{ position: "absolute", width: CANVAS_W, height: CANVAS_H, overflow: "hidden" }}>
           {mainType === "video" ? (
-            <OffthreadVideo src={staticFile(mainSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <OffthreadVideo muted src={staticFile(mainSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
             <Img src={staticFile(mainSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           )}
@@ -91,7 +91,7 @@ export const PictureInPicture: React.FC<PictureInPictureProps> = ({
           }}
         >
           {pipType === "video" ? (
-            <OffthreadVideo src={staticFile(pipSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <OffthreadVideo muted src={staticFile(pipSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
             <Img src={staticFile(pipSrc)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           )}

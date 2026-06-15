@@ -1,21 +1,23 @@
 /**
- * B14 PushDay — 健身推力日计划（v2 动画密度提升版）
+ * B15 Abs — 腹肌健身计划（6 动作卷腹系列）
  *
- * 视频时长：30s（9 镜 = 1 钩子 + 1 数字冲击 + 5 动作 + 1 要点 + 1 CTA）
+ * 视频时长：30s（9 镜 = 1 钩子 + 6 动作 + 1 要点 + 1 CTA）
  * 画布：1080×1920 竖屏（9:16）
- * BGM：gym_beat_b14.mp3（120 BPM，prominent kick drum）
+ * BGM：gym_beat_b15.mp3
  * 默认 bgmVolume=0.25（-12dB，对齐 winged_scapula_b3 防盖人声）
  *
- * v3 优化：
- * - 数字 5×12×5 作为 outro_cta 的 overlay（不是独立镜）
- * - 节省 2.5s（28.5s → 26s）
- * - 前 2.5s 数字弹入 + 视频同屏，后 1s 纯视频（评论 CTA）
- * - 每个动作镜：ActionBadge + ProgressRing
- * - 要点镜：双 ParamCard（12次 / 5组）呼吸辉光
+ * 文案：「腹肌健身计划——你就卷，正着卷、反向卷、两头卷、
+ *        两侧卷、负重卷、负重两侧卷，能做几个做几个，
+ *        能做几轮做几轮，评论区交作业」
+ *
+ * 结构（对标 B14 PushDay）：
+ * - 钩子：2×2 网格（4 格 stagger + impulse + LightLeak）
+ * - 6 个动作镜：ActionBadge + ProgressRing（1/6 → 6/6）
+ * - 要点镜：双 ParamCard（尽力 / 力竭）呼吸辉光
+ * - Outro：数字 6×尽力×尽轮 overlay + 评论 CTA
  * - 转场交替（wipe-h / zoom）避免单调
  *
  * 分镜来源：[storyboard.json](storyboard.json)
- * 关联文案：[copy.md](../../../docs/copy/b14_push_day.md)
  */
 
 import {
@@ -40,23 +42,22 @@ import type { Shot } from "../../types/shot";
 const FPS = 30;
 const TRANSITION_FRAMES = 9;
 
-const BASE = "b14_push_day";
+const BASE = "b15_abs";
 
 const video = (name: string) => `${BASE}/videos/${name}`;
 const audio = (name: string) => `${BASE}/audios/${name}`;
 
 /* === 视频真实时长（实测 via ffprobe）===
- * 用于动态计算 playbackRate——让视频铺满 shot 时长
- * 视频 < shot → 慢放（playbackRate < 1）
- * 视频 > shot → 快进（playbackRate > 1）*/
+ * 所有视频已裁剪至 ≤ shot时长×2，保证 playbackRate ≤ 2x */
 const VIDEO_DURATIONS: Record<string, number> = {
-  "push_lying.mp4": 5.873,
-  "push_seated.mp4": 6.231,
-  "push_overhead.mp4": 5.687,
-  "push_front.mp4": 13.747,
-  "push_reverse.mp4": 6.771,
-  "key_tips.mp4": 3.766,
-  "outro.mp4": 8.733,
+  "abs_standard.mp4": 6.006,
+  "abs_reverse.mp4": 6.006,
+  "abs_jackknife.mp4": 6.006,
+  "abs_side.mp4": 6.006,
+  "abs_weighted.mp4": 6.006,
+  "abs_weighted_side.mp4": 6.0,
+  "key_tips.mp4": 9.009,
+  "outro.mp4": 10.01,
 };
 
 /** AnimationOverrides 类型 */
@@ -126,8 +127,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
   // 视频镜
   if (shot.content_type === "video" && shot.content_source) {
     const videoDur = VIDEO_DURATIONS[shot.content_source] || shot.duration;
-    // push_front 1.5x 加速，超出部分自动截断
-    const playbackRate = shot.content_source === "push_front.mp4" ? 1.5 : videoDur / shot.duration;
+    const playbackRate = videoDur / shot.duration;
     return (
       <AbsoluteFill>
         <OffthreadVideo
@@ -155,7 +155,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
             impulse={anim.progress_ring.impulse}
           />
         )}
-        {/* 参数卡（12次/5组）*/}
+        {/* 参数卡 */}
         {anim.param_card?.map((card, i) => (
           <ParamCard
             key={i}
@@ -192,7 +192,7 @@ const ShotContent: React.FC<{ shot: Shot }> = ({ shot }) => {
 };
 
 /* === 主 Scene === */
-export const B14PushDay: React.FC<{
+export const B15Abs: React.FC<{
   bgmVolume?: number;
   enableFadeIn?: boolean;
   enableTransitions?: boolean;
@@ -205,13 +205,13 @@ export const B14PushDay: React.FC<{
   return (
     <AbsoluteFill style={{ background: "#0A0A0A" }}>
       <BGMWithDucking
-        src={staticFile(audio("bgm/gym_beat_b14.mp3"))}
+        src={staticFile(audio("bgm/gym_beat_b15.mp3"))}
         compositionFrames={compositionFrames}
         normalVolume={bgmVolume}
         fadeInFrames={enableFadeIn ? 30 : 0}
       />
-      {/* 旁白（m4a · 用户自录 29.85s） */}
-      <Audio src={staticFile(audio("b14_push_day.m4a"))} volume={1.0} />
+      {/* 旁白配音 */}
+      <Audio src={staticFile(audio("b15_abs.m4a"))} volume={1} />
       {shots.map((shot, idx, arr) => {
         const isFirst = idx === 0;
         const isLast = idx === arr.length - 1;

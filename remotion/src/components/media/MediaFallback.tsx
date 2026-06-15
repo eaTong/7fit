@@ -118,6 +118,7 @@ export const MediaFallback: React.FC<MediaFallbackProps> = ({
   if (type === "video") {
     return (
       <OffthreadVideo
+        muted
         src={staticFile(src!)}
         style={{ width: "100%", height: "100%", objectFit: "cover", ...style }}
       />

@@ -75,7 +75,7 @@ export const TripleSplit: React.FC<TripleSplitProps> = ({
         {media.type === "image" ? (
           <Img src={staticFile(media.src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
-          <OffthreadVideo src={staticFile(media.src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <OffthreadVideo muted src={staticFile(media.src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         )}
       </div>
     );

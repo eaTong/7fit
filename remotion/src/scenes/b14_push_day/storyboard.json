@@ -161,7 +161,7 @@
         { "text": "12", "highlight": true },
         { "text": " 次 × ", "highlight": false },
         { "text": "5", "highlight": true },
-        { "text": " 组。评论告诉我——你推了几个？", "highlight": false }
+        { "text": " 组。评论区交作业。", "highlight": false }
       ],
       "description": "用户 outro + 前 2.5s 中心数字 5×12×5 弹入 overlay + 评论图标脉冲",
       "transition_in": "zoom",

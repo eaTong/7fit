@@ -129,14 +129,14 @@ const VideoFillCell: React.FC<{ src: string; cellW: number; cellH: number }> = (
   if (VIDEO_W < VIDEO_H) {
     const scaledH = cellW * (VIDEO_H / VIDEO_W);
     const top = -(scaledH - cellH) / 2;
-    return <OffthreadVideo src={src} style={{ position: "absolute", width: cellW, height: scaledH, left: 0, top }} />;
+    return <OffthreadVideo muted src={src} style={{ position: "absolute", width: cellW, height: scaledH, left: 0, top }} />;
   }
 
   if (VIDEO_W > VIDEO_H) {
     const scaledW = cellH * (VIDEO_W / VIDEO_H);
     const left = -(scaledW - cellW) / 2;
-    return <OffthreadVideo src={src} style={{ position: "absolute", width: scaledW, height: cellH, left, top: 0 }} />;
+    return <OffthreadVideo muted src={src} style={{ position: "absolute", width: scaledW, height: cellH, left, top: 0 }} />;
   }
 
-  return <OffthreadVideo src={src} style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: 0 }} />;
+  return <OffthreadVideo muted src={src} style={{ position: "absolute", width: "100%", height: "100%", left: 0, top: 0 }} />;
 };

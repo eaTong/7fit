@@ -75,6 +75,7 @@ export const SplitLeftRight: React.FC<SplitLeftRightProps> = ({
         >
           {rightType === "video" ? (
             <OffthreadVideo
+              muted
               src={staticFile(rightSrc)}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />

@@ -18,7 +18,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const COPY_DIR = path.resolve(__dirname, '../../resources/docs/copy');
+const COPY_DIR = path.resolve(__dirname, '../../docs/copy');
 const TOOLS_DIR = __dirname;
 const SCENES_JSON = path.join(TOOLS_DIR, 'scenes.json');
 const HTML_PATH = path.join(TOOLS_DIR, 'recording-teleprompter.html');
@@ -136,7 +136,8 @@ function main() {
     .filter(f =>
       f.endsWith('.md') &&
       !f.startsWith('.') &&
-      !f.endsWith('.copy_notes.md')   // 排除人类作者备注文件（不影响工具）
+      !f.endsWith('.copy_notes.md') &&   // 排除人类作者备注文件（不影响工具）
+      !f.endsWith('.mmx_prompts.md')     // 排除 mmx 生图提示词（不是文案稿）
     );
 
   console.log(`   找到 ${files.length} 个 copy.md（已排除 *.copy_notes.md）\n`);
