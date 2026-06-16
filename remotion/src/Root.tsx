@@ -1,6 +1,5 @@
 import "./index.css";
 import { Composition } from "remotion";
-import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
 import { B14PushDay } from "./scenes/b14_push_day";
 import { B15Abs } from "./scenes/b15_abs";
 import { B16PullDay } from "./scenes/b16_pull_day";
@@ -22,14 +21,6 @@ export const RemotionRoot: React.FC = () => {
   return (
     <>
       {/* === B 类：1080×1920 竖屏（9:16）=== */}
-      <Composition
-        id="winged-scapula-b3"
-        component={WingedScapulaB3}
-        durationInFrames={2232}
-        fps={30}
-        width={1080}
-        height={1920}
-      />
 
       {/* B14：pro + lite 双版本 */}
       <Composition

@@ -18,8 +18,6 @@ out/
 *.webm
 *.mov
 *.webm
-*.gif
-!docs/**/*.gif
 !docs/**/*.mp4
 # 例外：Remotion 静态资源目录的视频必须进 git（小于 20MB，渲染输入）
 !remotion/public/**/*.mov

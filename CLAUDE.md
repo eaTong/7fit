@@ -132,13 +132,3 @@ Phase 6: BGM（放最后）
 | 北极星 | `7fit_opc/north-star.md` |
 | 利基/钩子句 | `7fit_opc/outputs/02-niche-positioning/02-niche-statement-v4.md` |
 | 转化漏斗 | `7fit_opc/outputs/07-conversion-loop/02-conversion-funnel.md` |
-
----
-
-## 网络代理
-
-遇到网络问题时设置本地代理：
-
-```bash
-export https_proxy=http://127.0.0.1:7897 http_proxy=http://127.0.0.1:7897 all_proxy=socks5://127.0.0.1:7897
-```

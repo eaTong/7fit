@@ -49,7 +49,7 @@
       "transition_out": "wipe-h",
       "animation_overrides": {
         "action_badge": { "name": "高位下拉", "position": "top-left", "delay_frames": 5 },
-        "muscle_tag": { "muscle": "背阔肌宽幅", "position": "top-right", "delay_frames": 8 },
+        "muscle_tag": { "muscle": "背部宽度", "position": "top-right", "delay_frames": 8 },
         "key_point": { "text": "肩胛骨先沉", "position": "bottom-left", "delay_frames": 12 },
         "progress_ring": { "current": 1, "total": 6, "position": "bottom-right", "delay_frames": 10 }
       }
@@ -68,7 +68,7 @@
       "transition_out": "wipe-h",
       "animation_overrides": {
         "action_badge": { "name": "引体向上", "position": "top-left", "delay_frames": 5 },
-        "muscle_tag": { "muscle": "背阔肌长头", "position": "top-right", "delay_frames": 8 },
+        "muscle_tag": { "muscle": "背阔肌", "position": "top-right", "delay_frames": 8 },
         "key_point": { "text": "拉到底部停 1 秒", "position": "bottom-left", "delay_frames": 12 },
         "progress_ring": { "current": 2, "total": 6, "position": "bottom-right", "delay_frames": 10 }
       }
@@ -106,7 +106,7 @@
       "transition_out": "wipe-h",
       "animation_overrides": {
         "action_badge": { "name": "坐姿划船", "position": "top-left", "delay_frames": 5 },
-        "muscle_tag": { "muscle": "背阔肌厚度", "position": "top-right", "delay_frames": 8 },
+        "muscle_tag": { "muscle": "背部厚度", "position": "top-right", "delay_frames": 8 },
         "key_point": { "text": "拉到腹部停顿", "position": "bottom-left", "delay_frames": 12 },
         "progress_ring": { "current": 4, "total": 6, "position": "bottom-right", "delay_frames": 10 }
       }
@@ -144,7 +144,7 @@
       "transition_out": "wipe-h",
       "animation_overrides": {
         "action_badge": { "name": "直臂下压", "position": "top-left", "delay_frames": 5 },
-        "muscle_tag": { "muscle": "背阔肌单独发力", "position": "top-right", "delay_frames": 8 },
+        "muscle_tag": { "muscle": "孤立刺激", "position": "top-right", "delay_frames": 8 },
         "key_point": { "text": "手臂伸直只动肩", "position": "bottom-left", "delay_frames": 12 },
         "progress_ring": { "current": 6, "total": 6, "position": "bottom-right", "delay_frames": 10 }
       }
