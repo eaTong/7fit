@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-15T04:02:53.693Z",
-  "totalScenes": 5,
+  "generatedAt": "2026-06-16T01:10:05.622Z",
+  "totalScenes": 7,
   "scenes": [
     {
       "id": "a2_one_person_50_videos",
@@ -37,6 +37,30 @@
       "audioPath": "../../resources/audios/b15_abs.m4a",
       "scriptText": "## 钩子（前 2.5 秒）\n腹肌没那么难——你就卷。\n\n## 主体（~22.5 秒）\n正着卷——\n反向卷——\n两头卷——\n两侧卷——\n负重卷——\n负重两侧卷——\n腹肌要卷到底。\n不要借力。\n做到 15 次力竭。\n做 4 组。\n\n## 收尾（~5 秒）\n腹肌日计划，6 个动作 + 15 次 × 4 组。\n评论区交作业。",
       "copyFile": "b15_abs.md"
+    },
+    {
+      "id": "b16_pull_day",
+      "title": "健身拉力日计划 · 文案稿",
+      "account": "主号（健身博主号）",
+      "type": "B 类 — 健身知识",
+      "duration": 35,
+      "bgm": "Gym Beat（tech house，120 BPM，prominent kick drum，NO vocals）",
+      "channel": "抖音主号（B 类）",
+      "audioPath": "../../resources/audios/b16_pull_day.m4a",
+      "scriptText": "## 钩子（前 3 秒）\n健身计划没那么难——第二天你就拉。\n\n## 主体（~25 秒）\n向下拉——\n把自己往上拉——\n窄距下拉——\n水平拉——\n水平窄距拉——\n分动拉——\n拉的时候肩胛骨先沉下去。\n从轻的重量开始。\n加到 12 次力竭。\n做 5 组。\n\n## 收尾（~7 秒）\n拉力日计划，6 个动作 + 12 次 × 5 组。\n评论区交作业。",
+      "copyFile": "b16_pull_day.md"
+    },
+    {
+      "id": "c01_pm_fitness_log",
+      "title": "C-1 · 一个产品经理的健身自救 · 文案稿 v3",
+      "account": "main",
+      "type": "",
+      "duration": 50,
+      "bgm": "",
+      "channel": "",
+      "audioPath": "../../resources/audios/c01_pm_fitness_log.m4a",
+      "scriptText": "",
+      "copyFile": "c01_pm_fitness_log.md"
     },
     {
       "id": "gym_machine_judge_b13",

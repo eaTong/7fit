@@ -10,3 +10,5 @@ export { FormulaCard } from "./FormulaCard";
 export { HeadlineCard } from "./HeadlineCard";
 export { FolderTree } from "./FolderTree";
 export { OrbitingContent } from "./OrbitingContent";
+export { MuscleTag } from "./MuscleTag";
+export { KeyPoint } from "./KeyPoint";

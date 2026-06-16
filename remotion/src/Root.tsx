@@ -3,6 +3,7 @@ import { Composition } from "remotion";
 import { WingedScapulaB3 } from "./scenes/winged_scapula_b3";
 import { B14PushDay } from "./scenes/b14_push_day";
 import { B15Abs } from "./scenes/b15_abs";
+import { B16PullDay } from "./scenes/b16_pull_day";
 import { TalkingHeadEffectDemo } from "./scenes/talking_head_effect_demo";
 import { A2OnePerson50Videos } from "./scenes/a2_one_person_50_videos";
 import { A2TransitionSeries } from "./scenes/a2_transition_series";
@@ -76,6 +77,34 @@ export const RemotionRoot: React.FC = () => {
         id="b15-abs-lite"
         component={B15Abs}
         durationInFrames={900}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          variant: 'lite',
+          bgmVolume: 0.25,
+          enableFadeIn: true,
+        }}
+      />
+
+      {/* B16：pro + lite 双版本 */}
+      <Composition
+        id="b16-pull-day-pro"
+        component={B16PullDay}
+        durationInFrames={1050}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          variant: 'pro',
+          bgmVolume: 0.25,
+          enableFadeIn: true,
+        }}
+      />
+      <Composition
+        id="b16-pull-day-lite"
+        component={B16PullDay}
+        durationInFrames={1050}
         fps={30}
         width={1080}
         height={1920}

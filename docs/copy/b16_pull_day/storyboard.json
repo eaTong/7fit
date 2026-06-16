@@ -138,7 +138,7 @@
       "duration": 3.5,
       "content_type": "video",
       "content_source": "pull_straight_arm.mp4",
-      "voiceover": [{ "text": "直臂拉", "highlight": true }],
+      "voiceover": [{ "text": "分动拉", "highlight": true }],
       "description": "直臂下压演示 + 动作名 chip + 6/6 进度环 + 肌群标签",
       "transition_in": "wipe-h",
       "transition_out": "wipe-h",
@@ -155,8 +155,8 @@
       "start": 23.5,
       "end": 28.0,
       "duration": 4.5,
-      "content_type": "video",
-      "content_source": "key_tips.mp4",
+      "content_type": "text_card",
+      "content_source": "4 个关键参数（4 短句）",
       "voiceover": [
         { "text": "拉的时候肩胛骨先沉下去。", "highlight": true },
         { "text": "从轻的重量开始。", "highlight": false },
@@ -173,8 +173,8 @@
       "start": 28.0,
       "end": 35.0,
       "duration": 7.0,
-      "content_type": "video",
-      "content_source": "outro.mp4",
+      "content_type": "text_card",
+      "content_source": "拉力日计划总结",
       "voiceover": [
         { "text": "拉力日计划，6 个动作 + 12 次 × 5 组。", "highlight": false },
         { "text": "评论区交作业。", "highlight": true }
@@ -183,7 +183,6 @@
       "transition_in": "wipe-v",
       "transition_out": "fade",
       "animation_overrides": {
-        "key_point": { "text": "看情况可以加个肩", "position": "bottom-left", "delay_frames": 15 },
         "light_leak": { "duration_frames": 15, "seed": 88, "hueShift": 200 }
       }
     }

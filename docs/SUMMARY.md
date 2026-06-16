@@ -99,8 +99,13 @@
 
 ---
 
-## 未同步/缺失
+## 已完成视频
 
+- [x] **B15_abs** — 腹肌计划（30s，已成片）📅 2026-06-16
+
+## Backlog（待制作）
+
+- [ ] **B16_pull_day** — 背部训练日
 - [ ] 7fit_opc/outputs/08-asset-ops/（空目录，暂无需同步）
 - [ ] 7fit_opc/outputs/09-dashboard-review/（空目录，暂无需同步）
 - [ ] fit_lc/docs/superpowers/（流程规范，非视频脚本源，按需）
